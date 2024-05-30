@@ -1,9 +1,13 @@
+## EC2 server ##
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_ENDPOINT}.com:3306/keyDeuk_shop?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: update
+    jpa:
+      database: mysql
+      database-platform: org.hibernate.dialect.MySQLDialect
+      hibernate:
+        ddl-auto: update
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://43.201.71.50:3306/keyDeuk_shop?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+      username: ${EC2_DB_USERNAME}
+      password: ${EC2_DB_PASSWORD}
+
