@@ -8,7 +8,7 @@ public class TestController {
 
     @GetMapping("/test1")
     public String test(){
-        System.out.println("check");
+        System.out.println("check check dev");
         return "test!!!";
     }
 }
