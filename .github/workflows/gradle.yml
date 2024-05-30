@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "cicd" ]
+    branches: [ "dev" ]
 
 env:
   PROJECT_NAME: keyDeuk-shop
