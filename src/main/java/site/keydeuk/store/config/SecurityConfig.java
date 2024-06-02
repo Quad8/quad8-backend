@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.keydeuk.store.domain.user.service.OAuth2UserService;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
@@ -21,6 +23,21 @@ public class SecurityConfig {
 
     public SecurityConfig(OAuth2UserService oAuth2UserService) {
         this.oAuth2UserService = oAuth2UserService;
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+                        .allowCredentials(true)
+                        .maxAge(3000);
+            }
+        };
     }
 
     @Bean
