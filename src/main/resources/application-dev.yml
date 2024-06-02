@@ -4,7 +4,7 @@ spring:
       database: mysql
       database-platform: org.hibernate.dialect.MySQLDialect
       hibernate:
-        ddl-auto: update
+        ddl-auto: none
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://43.201.71.50:3306/keyDeuk_shop?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
