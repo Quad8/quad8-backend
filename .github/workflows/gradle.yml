@@ -25,10 +25,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    #
-    #- name: Modify application.yml
-    #  run: |
-    #    sed -i "s|spring.profiles.active=local|spring.profiles.active=dev|" ./src/main/resources/application.yml
+    - name: Modify application.yml
+      run: |
+        sed -i "s|active: local|active: dev|" ./src/main/resources/application.yml
     
     - name: Modify application-dev.yml
       run: | 
