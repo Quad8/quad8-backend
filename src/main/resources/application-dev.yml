@@ -7,6 +7,6 @@ spring:
       ddl-auto: none
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://43.201.71.50:3306/keyDeuk_shop?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://43.201.71.50:3306/keyDeuk_shop?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${EC2_DB_USERNAME}
     password: ${EC2_DB_USERNAME}
