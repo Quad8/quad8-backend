@@ -32,8 +32,11 @@ jobs:
     
     - name: Modify application-dev.yml
       run: | 
-        sed -i "s|username: |username: ${{secrets.EC2_DB_USERNAME}}|" ./src/main/resources/application-dev.yml
-        sed -i "s|password: |password: ${{secrets.EC2_DB_PASSWORD}}|" ./src/main/resources/application-dev.yml
+        sed -i "s|username: |username: ${{ EC2_DB_USERNAME }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|password: |password: ${{ EC2_DB_PASSWORD }}|" ./src/main/resources/application-dev.yml
+      env:
+        EC2_DB_USERNAME: ${{ secrets.EC2_DB_USERNAME }}
+        EC2_DB_PASSWORD: ${{ secrets.EC2_DB_PASSWORD }}
 
     #(4)
     - name: Grant execute permission for gradlew
