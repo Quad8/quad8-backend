@@ -8,6 +8,6 @@ spring:
     datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://43.201.71.50:3306/keyDeuk_shop?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
-      username: ${EC2_DB_USERNAME}
-      password: ${EC2_DB_PASSWORD}
+      username: ${{secrets.EC2_DB_USERNAME}}
+      password: ${{secrets.EC2_DB_PASSWORD}}
 
