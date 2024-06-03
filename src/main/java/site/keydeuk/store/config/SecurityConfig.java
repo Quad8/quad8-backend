@@ -45,9 +45,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(config -> config.anyRequest().permitAll());
         http.oauth2Login(oauth2Configurer -> oauth2Configurer
-                .loginPage("/login")
-                .successHandler(successHandler()).userInfoEndpoint()
-                .userService(oAuth2UserService));
+                .loginPage("/login") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))//로그인 완료 후 회원 정보 받기
+                .successHandler(successHandler()));
 
         return http.build();
     }
