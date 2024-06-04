@@ -1,11 +1,10 @@
 package site.keydeuk.store.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
+import site.keydeuk.store.entity.enums.Gender;
+import site.keydeuk.store.entity.enums.RoleType;
 
 import java.time.LocalDate;
 
@@ -26,8 +25,9 @@ public class User extends BaseTimeEntity {
     private LocalDate birth;
     private String phone;
 
-    //TODO: enum 클래스 생성 -> gender
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @Enumerated(EnumType.STRING)
     private RoleType role;
     private boolean status;
     private String nickname;
