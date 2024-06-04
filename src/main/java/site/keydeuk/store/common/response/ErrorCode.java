@@ -23,6 +23,7 @@ public enum ErrorCode {
     USER_ORDER_NOT_MATCH(BAD_REQUEST,"해당 유저의 주문 정보가 아닙니다."),
 
     // Auth
+    ILLEGAL_REGISTRATION_ID(BAD_REQUEST, "올바르지 않은 소셜 로그인입니다"),
     EMPTY_EMAIL(BAD_REQUEST, "이메일은 필수 값 입니다."),
     EMPTY_PASSWORD(BAD_REQUEST, "비밀번호는 필수 값 입니다."),
     EMPTY_SUCCESS_HANDLER(INTERNAL_SERVER_ERROR, "SuccessHandler 필수 값 입니다."),
