@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.test;
+package site.keydeuk.store.test;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
