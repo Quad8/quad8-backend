@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.test;
+package site.keydeuk.store.test;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

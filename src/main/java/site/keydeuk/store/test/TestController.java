@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.test;
+package site.keydeuk.store.test;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,8 +42,8 @@ public class TestController {
 
     }
 
-    @Operation(summary = "회원 조회", description = "id로 회원을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = UserTestResponseDto.class)))
+    @Operation(summary = "회원 조회", description = "id로 회원을 조회합니다.")
     @Parameter(name = "id", description = "회원 ID" ,example = "107")
     @GetMapping("/userInfo/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable("id")Integer id){

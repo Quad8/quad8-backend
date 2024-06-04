@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.test;
+package site.keydeuk.store.test;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
