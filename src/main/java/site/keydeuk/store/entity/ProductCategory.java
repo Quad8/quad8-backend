@@ -6,21 +6,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_img")
-public class ProductImg {
+@Table(name = "product_category")
+public class ProductCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
+    private String name;
 
-    private String imgUrl;
+    @OneToMany(mappedBy = "productCategory")
+    private List<Product> products;
 }
