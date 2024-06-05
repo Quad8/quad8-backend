@@ -3,11 +3,13 @@ package site.keydeuk.store.domain.product.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListAndTotalResponseDto;
+import site.keydeuk.store.domain.product.dto.productlist.ProductListRequestDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.entity.Product;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,22 +19,21 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+
     /** 전체 상품 조회 */
-    public ProductListAndTotalResponseDto getProductAllList(){
+    public ProductListAndTotalResponseDto getProductAllList(String sort){
         List<Product> products = productRepository.findAll();
 
         // 리뷰수 -- 미구현
 
-        List<ProductListResponseDto> list =  products.stream()
-                .map(ProductListResponseDto::new)
-                .collect(Collectors.toList());
-
-        return new ProductListAndTotalResponseDto(list.size(), list);
+        return createResponseDto(sortProductList(sort,products));
     }
 
-    public ProductListAndTotalResponseDto getProductListByCategory(Integer categoryId){
 
-        List<Product> products = new ArrayList<>();
+    /**카테고리 별 상품 조회*/
+    public ProductListAndTotalResponseDto getProductListByCategory(Integer categoryId,String sort){
+
+        List<Product> products;
 
         if (categoryId<4){
             products = productRepository.findByProductCategoryId(categoryId);
@@ -42,7 +43,35 @@ public class ProductService {
 
         // 리뷰수 -- 미구현
 
-        List<ProductListResponseDto> list = products.stream()
+        return createResponseDto(sortProductList(sort,products));
+
+    }
+
+    /** 정렬 */
+    private List<Product> sortProductList(String sort, List<Product> products){
+
+        switch (sort){
+            case "createdAt_desc":
+                products.sort((Comparator.comparing(Product::getCreatedAt).reversed()));
+                break;
+            case "views_desc":
+                products.sort((Comparator.comparing(Product::getViews).reversed()));
+                break;
+            case "price_asc": //가격 낮은순
+                products.sort((Comparator.comparing(Product::getPrice)));
+                break;
+            case "price_desc":
+                products.sort((Comparator.comparing(Product::getPrice).reversed()));
+                break;
+            /** 인기순 -> default로 구현 필요*/
+        }
+        return products;
+    }
+
+    /** responseDto 생성*/
+    private ProductListAndTotalResponseDto createResponseDto(List<Product> products){
+
+        List<ProductListResponseDto> list =  products.stream()
                 .map(ProductListResponseDto::new)
                 .collect(Collectors.toList());
 

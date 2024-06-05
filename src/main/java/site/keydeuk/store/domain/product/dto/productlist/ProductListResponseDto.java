@@ -20,6 +20,8 @@ public class ProductListResponseDto {
 
     private int reviewscount;
 
+    private int views;
+
     private String thumbnail;
 
     public ProductListResponseDto(Product product){
@@ -27,6 +29,7 @@ public class ProductListResponseDto {
         this.name = product.getName();
         this.price = product.getPrice();
         this.reviewscount = 999;
+        this.views = product.getViews();
 
         List<ProductImg> productImgs = product.getProductImgs();
         if (!productImgs.isEmpty()){
