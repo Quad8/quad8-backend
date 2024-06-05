@@ -11,16 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_img")
-public class ProductImg {
+@Table(name = "product_category")
+public class ProductCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private Product product;
-
-    private String imgUrl;
+    private String name;
 }
