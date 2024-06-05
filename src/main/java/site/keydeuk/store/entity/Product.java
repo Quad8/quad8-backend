@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -24,7 +25,7 @@ public class Product {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "categoryId")
     private ProductCategory productCategory;
 
     private String name;
@@ -46,4 +47,7 @@ public class Product {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductImg> productImgs;
 }
