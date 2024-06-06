@@ -97,25 +97,4 @@ public class ProductService {
         );
     }
 
-    /** 정렬 */
-//    private Page<Product> sortProductList(String sort, Page<Product> products){
-//
-//        switch (sort){
-//            case "createdAt_desc":
-//                products.sort((Comparator.comparing(Product::getCreatedAt).reversed()));
-//                break;
-//            case "views_desc":
-//                products.sort((Comparator.comparing(Product::getViews).reversed()));
-//                break;
-//            case "price_asc": //가격 낮은순
-//                products.sort((Comparator.comparing(Product::getPrice)));
-//                break;
-//            case "price_desc":
-//                products.sort((Comparator.comparing(Product::getPrice).reversed()));
-//                break;
-//            /** 인기순 -> default로 구현 필요*/
-//        }
-//        return products;
-//    }
-
 }
