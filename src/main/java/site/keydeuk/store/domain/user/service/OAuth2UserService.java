@@ -57,6 +57,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                         .imgUrl(oAuth2UserInfo.getProfileImgUrl())
                         .nickname(oAuth2UserInfo.getNickname())
                         .role(RoleType.ROLE_GUEST)
+                        .provider(provider)
+                        .providerId(oAuth2UserInfo.getProviderId())
                         .build());
     }
 }
