@@ -56,4 +56,8 @@ public class Product {
     @OneToMany(mappedBy = "product")
     @JsonManagedReference
     private List<ProductSwitchOption> switchOptions;
+
+    public void setViews(int views){
+        this.views = views;
+    }
 }
