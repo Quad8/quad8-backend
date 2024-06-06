@@ -24,17 +24,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    #
+    #(2)
     - name: Modify application.yml
       run: |
-        sed -i "s|spring.profiles.active=local|spring.profiles.active=dev|" ./src/main/resources/application.yml
-    
+        sed -i "s|active: local|active: dev|" ./src/main/resources/application.yml
+    #(3)
     - name: Modify application-dev.yml
       run: | 
-        sed -i "s|\${{secrets.EC2_DB_USERNAME}}|${{secrets.EC2_DB_USERNAME}}|" ./src/main/resources/application-dev.yml
-        sed -i "s|\${{secrets.EC2_DB_PASSWORD}}|${{secrets.EC2_DB_PASSWORD}}|" ./src/main/resources/application-dev.yml
-
+        sed -i "s|username:.*|username: ${{ secrets.EC2_DB_USERNAME }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|password:.*|password: ${{ secrets.EC2_DB_PASSWORD }}|" ./src/main/resources/application-dev.yml
     #(4)
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
