@@ -37,4 +37,22 @@ public class User extends BaseTimeEntity {
     private String provider;
 
     private String providerId;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", birth=" + birth +
+                ", phone='" + phone + '\'' +
+                ", gender=" + gender +
+                ", role=" + role +
+                ", status=" + status +
+                ", nickname='" + nickname + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", provider='" + provider + '\'' +
+                ", providerId='" + providerId + '\'' +
+                '}';
+    }
 }

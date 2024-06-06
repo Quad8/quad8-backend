@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import site.keydeuk.store.domain.security.JwtService;
+import site.keydeuk.store.domain.security.handler.CustomOAuth2LoginSuccessHandler;
 import site.keydeuk.store.domain.user.service.OAuth2UserService;
 
 import java.util.List;
@@ -36,12 +38,15 @@ public class SecurityConfig {
             "/test/**",
             "/payments/**",
             "/home",
+            "/loginForm"
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
             "/favicon.ico",
             "/docs/**",
             "/products",
+            "/login.html",
+            "/oauth2/signUp"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
@@ -49,9 +54,15 @@ public class SecurityConfig {
     };
 
     private final OAuth2UserService oAuth2UserService;
+    private final JwtService jwtService;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+    @Bean
+    public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler() {
+        return new CustomOAuth2LoginSuccessHandler(jwtService);
     }
 
     @Bean
@@ -91,31 +102,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
-                        .loginPage("/login") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                        .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
-                        .successHandler(successHandler()));
+                        .successHandler(customOAuth2LoginSuccessHandler()));
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-        log.info("successHandler 실행");
-        return ((request, response, authentication) -> {
-            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-//
-//            String id = defaultOAuth2User.getAttributes().get("id").toString();
-//            String body = """
-//                    {"id":"%s"}
-//                    """.formatted(id);
-//
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-//
-//            PrintWriter writer = response.getWriter();
-//            writer.println(body);
-//            writer.flush();
-        });
     }
 
     @Bean
