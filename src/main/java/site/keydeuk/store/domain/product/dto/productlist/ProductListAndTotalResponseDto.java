@@ -3,6 +3,7 @@ package site.keydeuk.store.domain.product.dto.productlist;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -11,8 +12,8 @@ import java.util.List;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ProductListAndTotalResponseDto {
 
-    private int totalCount;
+    private long totalCount;
 
-    private List<ProductListResponseDto> list;
+    private Page<ProductListResponseDto> list;
 
 }
