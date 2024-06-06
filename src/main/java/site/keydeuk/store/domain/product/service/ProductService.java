@@ -23,6 +23,10 @@ public class ProductService {
 
         Product product = getProductById(productId);
 
+        // 조회수 증가
+        product.setViews(product.getViews()+1);
+        productRepository.save(product);
+
         return new ProductDetailResponseDto(product);
     }
 
