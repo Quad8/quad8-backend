@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -19,6 +20,12 @@ import site.keydeuk.store.domain.product.service.ProductService;
 public class ProductController {
 
     private final ProductService productService;
+    @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다.")
+    @Parameter(name = "id", description = "상품 ID", example = "11")
+    @GetMapping("/get-detail-info/{id}")
+    public CommonResponse<?> getProductDetailById(@PathVariable("id") Integer id){
+        return CommonResponse.ok(productService.getProductDetailById(id));
+    }
 
     @Operation(summary = "상품 목록 조회", description = "카테고리별(전체, 키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.")
     @GetMapping("/get-list")

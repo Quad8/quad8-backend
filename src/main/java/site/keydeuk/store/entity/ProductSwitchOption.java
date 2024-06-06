@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_img")
-public class ProductImg {
+@Table(name = "product_switch_option")
+public class ProductSwitchOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +24,5 @@ public class ProductImg {
     @JsonBackReference
     private Product product;
 
-    private String imgUrl;
+    private String optionName;
 }

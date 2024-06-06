@@ -1,5 +1,6 @@
 package site.keydeuk.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,5 +50,10 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<ProductImg> productImgs;
+
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<ProductSwitchOption> switchOptions;
 }

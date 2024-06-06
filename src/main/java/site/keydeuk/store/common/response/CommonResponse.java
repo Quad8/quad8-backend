@@ -1,6 +1,7 @@
 package site.keydeuk.store.common.response;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_SYSTEM_ERROR;
 import static site.keydeuk.store.common.response.Status.*;
@@ -49,4 +50,5 @@ public class CommonResponse<T> {
     public static CommonResponse<Void> error(String message) {
         return new CommonResponse<>(ERROR, message, null);
     }
+
 }
