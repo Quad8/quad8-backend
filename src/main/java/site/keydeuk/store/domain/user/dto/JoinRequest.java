@@ -30,8 +30,6 @@ public record JoinRequest(
         String imgUrl,
         String provider,
         String providerId
-
-
 ) {
 
     public User toEntity(String encodePassword) {
