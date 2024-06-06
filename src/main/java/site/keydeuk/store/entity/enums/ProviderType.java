@@ -1,8 +1,8 @@
 package site.keydeuk.store.entity.enums;
 
 import lombok.RequiredArgsConstructor;
-import site.keydeuk.store.domain.user.dto.KakaoOAuth2UserInfo;
-import site.keydeuk.store.domain.user.dto.OAuth2UserInfo;
+import site.keydeuk.store.domain.oauth2.dto.KakaoOAuth2UserInfo;
+import site.keydeuk.store.domain.oauth2.dto.OAuth2UserInfo;
 
 import java.util.Map;
 import java.util.function.Function;

@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.user.service;
+package site.keydeuk.store.domain.oauth2.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.security.PrincipalDetails;
-import site.keydeuk.store.domain.user.dto.OAuth2Attributes;
-import site.keydeuk.store.domain.user.dto.OAuth2UserInfo;
+import site.keydeuk.store.domain.oauth2.dto.OAuth2Attributes;
+import site.keydeuk.store.domain.oauth2.dto.OAuth2UserInfo;
 import site.keydeuk.store.domain.user.repository.UserRepository;
-import site.keydeuk.store.domain.user.utils.OAuth2Utils;
+import site.keydeuk.store.domain.oauth2.utils.OAuth2Utils;
 import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.enums.RoleType;
 import site.keydeuk.store.entity.enums.ProviderType;
@@ -44,7 +44,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         OAuth2Attributes oAuth2Attributes = OAuth2Attributes.of(providerType, userNameAttributeName, attributes);
         OAuth2UserInfo oAuth2UserInfo = oAuth2Attributes.getOAuth2UserInfo();
 
-        //TODO: 회원가입
         User user = getUser(oAuth2UserInfo);
         return new PrincipalDetails(user, attributes, userNameAttributeName);
     }

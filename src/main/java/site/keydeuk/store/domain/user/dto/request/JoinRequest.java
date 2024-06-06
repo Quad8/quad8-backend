@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.user.dto;
+package site.keydeuk.store.domain.user.dto.request;
 
 
 import jakarta.validation.constraints.Email;

@@ -1,8 +1,8 @@
-package site.keydeuk.store.domain.user.dto;
+package site.keydeuk.store.domain.oauth2.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import site.keydeuk.store.domain.user.utils.OAuth2Utils;
+import site.keydeuk.store.domain.oauth2.utils.OAuth2Utils;
 import site.keydeuk.store.entity.enums.ProviderType;
 
 import java.util.Map;

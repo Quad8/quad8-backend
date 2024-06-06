@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.user.dto;
+package site.keydeuk.store.domain.oauth2.dto;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

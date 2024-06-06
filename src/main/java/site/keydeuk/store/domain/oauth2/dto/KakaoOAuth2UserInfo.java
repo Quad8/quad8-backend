@@ -1,5 +1,6 @@
-package site.keydeuk.store.domain.user.dto;
+package site.keydeuk.store.domain.oauth2.dto;
 
+import site.keydeuk.store.domain.oauth2.dto.OAuth2UserInfo;
 import site.keydeuk.store.entity.enums.ProviderType;
 
 import java.util.Map;

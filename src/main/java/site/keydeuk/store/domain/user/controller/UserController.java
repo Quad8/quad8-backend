@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.user.dto.JoinRequest;
+import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.service.UserService;
 
 @RestController

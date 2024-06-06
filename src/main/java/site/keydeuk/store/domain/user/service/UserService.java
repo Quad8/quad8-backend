@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.common.exception.CustomException;
-import site.keydeuk.store.domain.user.dto.JoinRequest;
+import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.User;
 

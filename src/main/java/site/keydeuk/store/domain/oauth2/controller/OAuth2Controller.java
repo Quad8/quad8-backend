@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.user.controller;
+package site.keydeuk.store.domain.oauth2.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
