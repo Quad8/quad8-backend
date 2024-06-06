@@ -2,15 +2,14 @@ package site.keydeuk.store.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListAndTotalResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListRequestDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.entity.Product;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,6 +17,14 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+
+    /** 상품 상세 조회 */
+    public ProductDetailResponseDto getProductDetailById(Integer productId){
+
+        Product product = getProductById(productId);
+
+        return new ProductDetailResponseDto(product);
+    }
 
 
     /** 전체 상품 조회 */
@@ -45,6 +52,12 @@ public class ProductService {
 
         return createResponseDto(sortProductList(sort,products));
 
+    }
+
+    private Product getProductById(Integer productId){
+        return productRepository.findById(productId).orElseThrow(
+                ()-> new NoSuchElementException("Product not found with id: " + productId)
+        );
     }
 
     /** 정렬 */
