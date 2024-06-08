@@ -1,6 +1,6 @@
 package site.keydeuk.store.domain.security;
 
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-@Data
+@Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private User user;
@@ -31,7 +31,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        return user.getNickname();
+        return user.getEmail();
     }
 
 
