@@ -1,28 +1,33 @@
-package site.keydeuk.store.config;
+package site.keydeuk.store.common.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import site.keydeuk.store.domain.security.JwtService;
+import site.keydeuk.store.common.security.authentication.*;
+import site.keydeuk.store.common.security.authentication.token.service.TokenService;
+import site.keydeuk.store.domain.oauth2.service.OAuth2UserService;
 import site.keydeuk.store.domain.security.handler.CustomOAuth2LoginSuccessHandler;
-import site.keydeuk.store.domain.user.service.OAuth2UserService;
 
 import java.util.List;
 
@@ -53,16 +58,22 @@ public class SecurityConfig {
             "/users",
     };
 
+    private final ObjectMapper objectMapper;
+
     private final OAuth2UserService oAuth2UserService;
-    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+
+    //TODO: TokenService로 변경하기
+    private final TokenService tokenService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
     @Bean
     public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler() {
-        return new CustomOAuth2LoginSuccessHandler(jwtService);
+        return new CustomOAuth2LoginSuccessHandler(objectMapper, tokenService);
     }
 
     @Bean
@@ -104,7 +115,17 @@ public class SecurityConfig {
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
-                        .successHandler(customOAuth2LoginSuccessHandler()));
+                        .successHandler(customOAuth2LoginSuccessHandler()))
+                .with(
+                        new LoginAuthenticationConfigurer<>(createAuthenticationFilter()),
+                        SecurityAuthenticationFilter -> SecurityAuthenticationFilter
+                                .successHandler(createAuthenticationSuccessHandler())
+                                .failureHandler(createAuthenticationFailureHandler())
+                )
+                .with(
+                        new TokenAuthorityConfigurer(tokenService, userDetailsService),
+                        Customizer.withDefaults());
+
 
         return http.build();
     }
@@ -114,7 +135,8 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:3000" //프론트 주소
+                "http://localhost:3000", //프론트 주소
+                "http://localhost:8080/oauth2/signUp"
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
@@ -130,6 +152,18 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
 
         return source;
+    }
+
+    private AbstractAuthenticationProcessingFilter createAuthenticationFilter() {
+        return new LoginAuthenticationFilter(objectMapper);
+    }
+
+    private AuthenticationSuccessHandler createAuthenticationSuccessHandler() {
+        return new LoginAuthenticationSuccessHandler(objectMapper, tokenService);
+    }
+
+    private AuthenticationFailureHandler createAuthenticationFailureHandler() {
+        return new LoginAuthenticationFailureHandler(objectMapper);
     }
 }
 
