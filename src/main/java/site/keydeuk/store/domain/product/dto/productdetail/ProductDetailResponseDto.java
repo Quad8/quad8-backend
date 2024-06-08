@@ -27,6 +27,8 @@ public class ProductDetailResponseDto {
 
     private List optionList;
 
+    private String categoryName;
+
     public ProductDetailResponseDto(Product product){
         this.id = product.getId();
         this.name = product.getName();
@@ -42,6 +44,7 @@ public class ProductDetailResponseDto {
         }else {
             this.optionList = null;
         }
+        this.categoryName = product.getProductCategory().getName();
     }
 
 }
