@@ -16,7 +16,7 @@ import site.keydeuk.store.domain.user.service.UserService;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/join")
+    @PostMapping
     public CommonResponse<Long> join(@RequestBody @Validated JoinRequest joinRequest) {
         Long userId = userService.join(joinRequest);
         return CommonResponse.ok(userId);
