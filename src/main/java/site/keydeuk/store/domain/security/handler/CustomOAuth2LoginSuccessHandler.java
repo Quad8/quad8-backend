@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,7 +13,6 @@ import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
 import site.keydeuk.store.common.security.authentication.token.TokenService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
-import site.keydeuk.store.domain.security.constants.JwtConstants;
 import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.enums.RoleType;
 
@@ -37,22 +35,31 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        log.info("oauth2 login success");
+        log.info("OAuth2 login success");
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-        log.info("{}", ((PrincipalDetails) authentication.getPrincipal()).getUser());
+        log.info("Princpal Details: {}", ((PrincipalDetails) authentication.getPrincipal()).getUser());
 
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
         if (user.getRole().equals(RoleType.ROLE_GUEST)) {
             log.info("소셜 로그인 성공 -> 가입 안되어 있는 유저인것 확인 -> 회원가입 페이지 이동");
-            log.info("{}", user);
 
             String randomToken = UUID.randomUUID().toString();
             AuthenticationToken authenticationToken = tokenService.generatedToken(randomToken, user.getEmail());//여기 작성해야함
 
-            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + authenticationToken); //헤더 추가 안됨
+//TODO: 토큰 넘겨주기, 둘 중 하나의 방법으로
 
-            log.info("{}", authenticationToken);
-            log.info("{}", response.getHeader(JwtConstants.ACCESS));
+//            토큰 헤더에 포함
+//            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + authenticationToken);
+//            log.info("Added Authorization header: {} {}", JwtConstants.ACCESS, JwtConstants.JWT_TYPE + authenticationToken);
+
+//            토큰을 쿠키에 포함
+//            Cookie authCookie = new Cookie("authToken", authenticationToken.accessToken());
+//            authCookie.setHttpOnly(true);
+//            authCookie.setSecure(false);
+//            authCookie.setPath("/");
+//            authCookie.setMaxAge(60 * 60); // 1시간
+//            response.addCookie(authCookie);
+//            log.info("Added authToken cookie: {}", authCookie.getValue());
 
             String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/oauth2/signUp")
                     .queryParam("email", user.getEmail())
@@ -64,13 +71,9 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
 
-            // 응답 본문에 토큰을 포함시킴
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            objectMapper.writeValue(response.getWriter(), CommonResponse.ok(authenticationToken));
-
-            getRedirectStrategy().sendRedirect(request, response, redirectURL);
+            log.debug("회원가입으로 redirect");
+            clearAuthenticationAttributes(request);
+            response.sendRedirect(redirectURL);
         } else {
             String email = authentication.getName();
             log.info("Authentication Name = {}", email);
