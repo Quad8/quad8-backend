@@ -59,44 +59,11 @@ public class SecurityConfig {
     };
 
     private final ObjectMapper objectMapper;
-
     private final OAuth2UserService oAuth2UserService;
     private final UserDetailsService userDetailsService;
 
     //TODO: TokenService로 변경하기
     private final TokenService tokenService;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler() {
-        return new CustomOAuth2LoginSuccessHandler(objectMapper, tokenService);
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
-        return web -> web.ignoring()
-                // error endpoint를 열어줘야 함, favicon.ico 추가!
-                .requestMatchers("/error", "/favicon.ico");
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("/localhost:8080/")
-                        .allowedOriginPatterns("*")
-                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-                        .allowCredentials(true)
-                        .maxAge(3000);
-            }
-        };
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -131,6 +98,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
+        return web -> web.ignoring()
+                // error endpoint를 열어줘야 함, favicon.ico 추가!
+                .requestMatchers("/error", "/favicon.ico");
+    }
+
+    @Bean
     public CorsConfigurationSource createCorsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
@@ -152,6 +126,31 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
 
         return source;
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("/localhost:8080/")
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+                        .allowCredentials(true)
+                        .maxAge(3000);
+            }
+        };
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler() {
+        return new CustomOAuth2LoginSuccessHandler(objectMapper, tokenService);
     }
 
     private AbstractAuthenticationProcessingFilter createAuthenticationFilter() {
