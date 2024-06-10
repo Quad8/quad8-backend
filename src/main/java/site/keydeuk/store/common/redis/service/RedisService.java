@@ -15,20 +15,4 @@ public interface RedisService {
     boolean setIfAbsent(String key, Object value, Long expiredTime);
 
     boolean delete(String key);
-
-    <T> List<T> getList(String key, Class<T> type);
-
-    void rightPop(String key);
-
-    void leftPush(String key, Object value);
-
-    void removeList(String key, Object value);
-
-    Double getZScore(String key, String keyword);
-
-    void addZScore(String key, String keyword, Double score);
-
-    Set<ZSetOperations.TypedTuple<String>> getZRank(String key, long start, long end);
-
-    Set<String> getZRangeByLex(String key, String prefix, int limit);
 }
