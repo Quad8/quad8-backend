@@ -15,17 +15,24 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.keydeuk.store.common.security.authentication.*;
-import site.keydeuk.store.common.security.authentication.token.service.TokenService;
+import site.keydeuk.store.common.security.authentication.token.TokenService;
+import site.keydeuk.store.common.security.authorization.SecurityAccessDeniedHandler;
+import site.keydeuk.store.common.security.authorization.SecurityAuthenticationEntryPoint;
+import site.keydeuk.store.common.security.authorization.TokenAuthorityConfigurer;
 import site.keydeuk.store.domain.oauth2.service.OAuth2UserService;
 import site.keydeuk.store.domain.security.handler.CustomOAuth2LoginSuccessHandler;
 
@@ -79,6 +86,10 @@ public class SecurityConfig {
                         .requestMatchers(POST, PERMIT_ALL_POST_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
+                .logout(logoutConfigurer -> logoutConfigurer
+                        .addLogoutHandler(createLogoutHandler())
+                        .logoutSuccessHandler(createLogoutSuccessHandler())
+                )
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
@@ -91,10 +102,15 @@ public class SecurityConfig {
                 )
                 .with(
                         new TokenAuthorityConfigurer(tokenService, userDetailsService),
-                        Customizer.withDefaults());
+                        Customizer.withDefaults()
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(createAccessDeniedHandler())
+                        .authenticationEntryPoint(createAuthenticationEntryPoint())
+                );
 
 
-        return http.build();
+        return http.getOrBuild();
     }
 
     @Bean
@@ -147,6 +163,13 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+    private LogoutHandler createLogoutHandler() {
+        return new LogoutTokenHandler(objectMapper, tokenService);
+    }
+
+    private LogoutSuccessHandler createLogoutSuccessHandler() {
+        return new LogoutTokenSuccessHandler(objectMapper);
+    }
 
     @Bean
     public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler() {
@@ -163,6 +186,13 @@ public class SecurityConfig {
 
     private AuthenticationFailureHandler createAuthenticationFailureHandler() {
         return new LoginAuthenticationFailureHandler(objectMapper);
+    }
+    private AccessDeniedHandler createAccessDeniedHandler() {
+        return new SecurityAccessDeniedHandler();
+    }
+
+    private AuthenticationEntryPoint createAuthenticationEntryPoint() {
+        return new SecurityAuthenticationEntryPoint(objectMapper);
     }
 }
 
