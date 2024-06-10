@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
-import site.keydeuk.store.common.security.authentication.token.service.TokenService;
+import site.keydeuk.store.common.security.authentication.token.TokenService;
 
 import java.io.IOException;
 import java.util.UUID;
