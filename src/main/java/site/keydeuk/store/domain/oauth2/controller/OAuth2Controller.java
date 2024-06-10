@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Tag(name = "OAuth2", description = "OAuth2 관련 API 입니다.")
 @RestController
-@RequestMapping("/oauth2")
+@RequestMapping("/api/v1/oauth2")
 public class OAuth2Controller {
 
     @Operation(summary = "OAuth2 회원가입", description = "OAuth2를 통해 처음 로그인을 했다면 회원가입 페이지로 리다이렉트합니다. 아래 파라미터가 리다이렉트 되는 주소 뒤에 붙어져서 리다이렉트 됩니다")

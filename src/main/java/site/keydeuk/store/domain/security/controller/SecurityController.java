@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
@@ -17,6 +18,7 @@ import site.keydeuk.store.domain.security.service.SecurityService;
 
 @Tag(name = "Security", description = "Security 관련 API 입니다.")
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class SecurityController {
 

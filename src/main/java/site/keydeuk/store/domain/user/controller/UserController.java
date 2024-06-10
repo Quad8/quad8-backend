@@ -18,12 +18,11 @@ import site.keydeuk.store.domain.user.service.UserService;
 @Tag(name = "User", description = "User 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
 
     @Operation(summary = "회원가입", description = "회원가입을 위한 api 입니다.")
-    @Parameter(description = "회원가입 요청 데이터", required = true, content = @Content(schema = @Schema(implementation = JoinRequest.class)))
     @PostMapping
     public CommonResponse<Long> join(@RequestBody @Validated JoinRequest joinRequest) {
         Long userId = userService.join(joinRequest);

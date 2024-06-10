@@ -51,7 +51,6 @@ public class SecurityConfig {
             "/payments/**",
             "/login",
             "/",
-            "/api/v1/**"
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
@@ -59,7 +58,9 @@ public class SecurityConfig {
             "/docs/**",
             "/products",
             "/login.html",
-            "/oauth2/signUp"
+            "/oauth2/signUp",
+            "/swagger-ui/**",
+            "/api-docs/**"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
