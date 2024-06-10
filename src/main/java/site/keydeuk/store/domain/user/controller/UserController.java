@@ -28,14 +28,16 @@ public class UserController {
         return CommonResponse.ok(userId);
     }
 
+    @Operation(summary = "이메일 중복 확인", description = "주어진 이메일이 시스템에 이미 존재하는지 확인합니다.")
     @GetMapping("/check/email")
-    public CommonResponse<Boolean> duplicateEmail(@RequestParam String email) {
+    public CommonResponse<Boolean> duplicateEmail(@Parameter(description = "확인할 이메일 주소", example = "user@example.com") @RequestParam String email) {
         boolean response = userService.isExistEmail(email);
         return CommonResponse.ok(response);
     }
 
+    @Operation(summary = "닉네임 중복 확인", description = "주어진 닉네임이 시스템에 이미 존재하는지 확인합니다.")
     @GetMapping("/check/nickname")
-    public CommonResponse<Boolean> duplicateNickname(@RequestParam String nickname) {
+    public CommonResponse<Boolean> duplicateNickname(@Parameter(description = "확인할 닉네임", example = "nickname123") @RequestParam String nickname) {
         boolean response = userService.isExistNickname(nickname);
         return CommonResponse.ok(response);
     }
