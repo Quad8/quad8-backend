@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.User;
-
-import java.util.UUID;
 
 import static site.keydeuk.store.common.response.ErrorCode.ALREADY_EXIST_EMAIL;
 import static site.keydeuk.store.common.response.ErrorCode.ALREADY_EXIST_NICKNAME;
@@ -21,10 +20,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public Long join(JoinRequest joinRequest) {
         joinValidate(joinRequest);
         log.info("Join User Info = {}", joinRequest);
-        String encodePassword = getJoinPassword();
+
+        String encodePassword = getJoinPassword(joinRequest);
         User user = joinRequest.toEntity(encodePassword);
         userRepository.save(user);
         return user.getId();
@@ -48,9 +49,8 @@ public class UserService {
         }
         duplicateNickname(joinRequest.nickname());
     }
-    private String getJoinPassword() {
-        return passwordEncoder.encode(UUID.randomUUID().toString());
+    private String getJoinPassword(JoinRequest joinRequest) {
+        return passwordEncoder.encode(joinRequest.password());
     }
-
 
 }

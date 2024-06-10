@@ -1,4 +1,4 @@
-package site.keydeuk.store.common.security.authentication.token.service;
+package site.keydeuk.store.common.security.authentication.token;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.redis.service.RedisService;
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
-import site.keydeuk.store.common.security.authentication.token.TokenProvider;
 import site.keydeuk.store.common.security.authentication.token.dto.RefreshToken;
 import site.keydeuk.store.common.security.authentication.token.dto.Token;
 import site.keydeuk.store.common.security.exception.InvalidJwtException;
