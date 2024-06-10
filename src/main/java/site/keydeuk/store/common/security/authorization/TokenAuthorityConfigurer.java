@@ -1,4 +1,4 @@
-package site.keydeuk.store.common.security.authentication;
+package site.keydeuk.store.common.security.authorization;
 
 
 import lombok.RequiredArgsConstructor;
@@ -7,8 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import site.keydeuk.store.common.security.authentication.token.service.TokenService;
-import site.keydeuk.store.common.security.authorization.TokenAuthorizationFilter;
+import site.keydeuk.store.common.security.authentication.token.TokenService;
 
 @RequiredArgsConstructor
 public class TokenAuthorityConfigurer
