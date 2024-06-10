@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
+import site.keydeuk.store.common.security.authentication.token.dto.RefreshToken;
 import site.keydeuk.store.domain.security.constants.JwtConstants;
-import site.keydeuk.store.domain.security.dto.RefreshToken;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -19,8 +19,8 @@ public class JwtRepository {
 
     public RefreshToken save(RefreshToken refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(refreshToken.getToken(), refreshToken.getUserId().toString());
-        redisTemplate.expire(refreshToken.getToken(), JwtConstants.REFRESH_EXP_TIME, TimeUnit.MILLISECONDS); // 설정된 시간 동안 Redis에 저장
+        valueOperations.set(refreshToken.refreshToken(), refreshToken.email());
+        redisTemplate.expire(refreshToken.refreshToken(), JwtConstants.REFRESH_EXP_TIME, TimeUnit.MILLISECONDS); // 설정된 시간 동안 Redis에 저장
         return refreshToken;
     }
 
@@ -31,7 +31,7 @@ public class JwtRepository {
         if (Objects.isNull(userId)) {
             return Optional.empty();
         }
-        return Optional.of(new RefreshToken(refreshToken, Long.valueOf(userId)));
+        return Optional.of(new RefreshToken(refreshToken,userId));
     }
 
     public void deleteByToken(String refreshToken) {

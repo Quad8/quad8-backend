@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.ErrorCode;
-import site.keydeuk.store.domain.security.dto.RefreshToken;
+import site.keydeuk.store.common.security.authentication.token.dto.RefreshToken;
 import site.keydeuk.store.domain.security.repository.JwtRepository;
 import site.keydeuk.store.domain.security.utils.JwtUtils;
 import site.keydeuk.store.domain.user.repository.UserRepository;
@@ -31,7 +31,7 @@ public class JwtService {
     public String renewToken(String refreshToken) {
         // token 이 존재하는지 찾고, 존재한다면 RefreshToken 안의 memberId 를 가져와서 member 를 찾은 후 AccessToken 생성
         RefreshToken token = this.findByToken(refreshToken).orElseThrow(NoSuchElementException::new);
-        User user = userRepository.findById(token.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(Long.valueOf(token.email())).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return JwtUtils.generateAccessToken(user);
     }
 }
