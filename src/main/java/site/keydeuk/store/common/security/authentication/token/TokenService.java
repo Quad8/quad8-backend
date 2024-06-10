@@ -1,4 +1,4 @@
-package site.keydeuk.store.common.security.authentication.token.service;
+package site.keydeuk.store.common.security.authentication.token;
 
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
 
