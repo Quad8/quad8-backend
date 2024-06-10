@@ -40,6 +40,7 @@ public record JoinRequest(
                 .birth(birth)
                 .phone(phone)
                 .nickname(nickname)
+                .gender(gender)
                 .imgUrl(imgUrl)
                 .provider(provider)
                 .providerId(providerId)
