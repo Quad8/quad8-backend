@@ -36,34 +36,4 @@ public class RestTemplateServiceImpl implements RestTemplateService {
             throw new CustomException(COMMON_SYSTEM_ERROR);
         }
     }
-
-    @Override
-    public <T> List<T> getList(String url, Class<T[]> type) {
-        try {
-            return Arrays.asList(restTemplate.getForObject(url, type));
-        } catch (HttpClientErrorException e) {
-            log.error("RestTemplate Get List Exception Message = {}", e.getMessage());
-            return Collections.emptyList();
-        } catch (Exception e) {
-            log.error("RestTemplate Get List Exception", e);
-            throw new CustomException(COMMON_SYSTEM_ERROR);
-        }
-    }
-
-    @Override
-    public <T, R> Optional<T> post(String url, R request, Class<T> type) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(APPLICATION_JSON);
-        HttpEntity<R> entity = new HttpEntity<>(request, headers);
-
-        try {
-            return Optional.ofNullable(restTemplate.postForObject(url, entity, type));
-        } catch (HttpClientErrorException e) {
-            log.error("RestTemplate Post Exception Message = {}", e.getMessage());
-            return Optional.empty();
-        } catch (Exception e) {
-            log.error("RestTemplate Post Exception", e);
-            throw new CustomException(COMMON_SYSTEM_ERROR);
-        }
-    }
 }
