@@ -19,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import site.keydeuk.store.common.security.authentication.token.service.TokenService;
+import site.keydeuk.store.common.security.authentication.token.TokenService;
 import site.keydeuk.store.common.security.exception.InvalidJwtException;
 
 import java.io.IOException;
@@ -59,7 +59,6 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
             try {
                 String username = tokenService.getUsername(token);
                 log.info("Authority username = {}", username);
-
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 Authentication authenticated = createAuthentication(userDetails);
                 setSecurityContext(authenticated);
