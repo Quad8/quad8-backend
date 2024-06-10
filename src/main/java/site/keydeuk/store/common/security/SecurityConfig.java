@@ -50,7 +50,8 @@ public class SecurityConfig {
             "/test/**",
             "/payments/**",
             "/home",
-            "/loginForm"
+            "/loginForm",
+            "/login"
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
@@ -69,7 +70,6 @@ public class SecurityConfig {
     private final OAuth2UserService oAuth2UserService;
     private final UserDetailsService userDetailsService;
 
-    //TODO: TokenService로 변경하기
     private final TokenService tokenService;
 
     @Bean
@@ -90,16 +90,16 @@ public class SecurityConfig {
                         .addLogoutHandler(createLogoutHandler())
                         .logoutSuccessHandler(createLogoutSuccessHandler())
                 )
-                .oauth2Login(oauth2Configurer -> oauth2Configurer
-                        .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
-                        .successHandler(customOAuth2LoginSuccessHandler()))
                 .with(
                         new LoginAuthenticationConfigurer<>(createAuthenticationFilter()),
                         SecurityAuthenticationFilter -> SecurityAuthenticationFilter
                                 .successHandler(createAuthenticationSuccessHandler())
                                 .failureHandler(createAuthenticationFailureHandler())
                 )
+                .oauth2Login(oauth2Configurer -> oauth2Configurer
+                        .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
+                        .successHandler(customOAuth2LoginSuccessHandler()))
                 .with(
                         new TokenAuthorityConfigurer(tokenService, userDetailsService),
                         Customizer.withDefaults()
@@ -163,6 +163,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
     private LogoutHandler createLogoutHandler() {
         return new LogoutTokenHandler(objectMapper, tokenService);
     }
@@ -194,5 +195,6 @@ public class SecurityConfig {
     private AuthenticationEntryPoint createAuthenticationEntryPoint() {
         return new SecurityAuthenticationEntryPoint(objectMapper);
     }
+
 }
 
