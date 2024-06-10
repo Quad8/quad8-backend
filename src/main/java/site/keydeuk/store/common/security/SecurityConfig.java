@@ -49,10 +49,9 @@ public class SecurityConfig {
             "/dummy/**",
             "/test/**",
             "/payments/**",
-            "/home",
-            "/loginForm",
             "/login",
-            "/"
+            "/",
+            "/api/v1/**"
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
