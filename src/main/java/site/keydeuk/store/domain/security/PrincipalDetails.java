@@ -2,6 +2,7 @@ package site.keydeuk.store.domain.security;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import site.keydeuk.store.entity.User;
@@ -13,7 +14,7 @@ import java.util.Map;
 @Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
-    private User user;
+    private final User user;
     private Map<String, Object> attributes;
     private String attributeKey;
 
@@ -29,57 +30,49 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         this.attributeKey = attributeKey;
     }
 
-    @Override
-    public String getName() {
-        return user.getEmail();
-    }
-
 
     @Override
     public <A> A getAttribute(String name) {
         return OAuth2User.super.getAttribute(name);
     }
 
-    /**
-     * SecurityFilterChain에서 권한 체크시 사용
-     * @return 해당 User 권한 리턴
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(
-                (GrantedAuthority) () -> String.valueOf(user.getRole())
-        );
-        return collection;
+        return AuthorityUtils.createAuthorityList(user.getRole().name());
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return user.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return user.getEmail();
     }
 }
