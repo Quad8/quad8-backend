@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.web.util.UriComponentsBuilder;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken;
-import site.keydeuk.store.common.security.authentication.token.service.TokenService;
+import site.keydeuk.store.common.security.authentication.token.TokenService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.security.constants.JwtConstants;
 import site.keydeuk.store.entity.User;
