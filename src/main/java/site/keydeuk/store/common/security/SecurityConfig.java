@@ -46,21 +46,18 @@ import static org.springframework.http.HttpMethod.*;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private static final String[] PERMIT_ALL_URLS = new String[]{
-            "/dummy/**",
             "/test/**",
-            "/payments/**",
             "/login",
             "/",
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
-            "/favicon.ico",
-            "/docs/**",
-            "/products",
             "/login.html",
-            "/api/v1/oauth2/signUp",
+            "/favicon.ico",
+            "/api-docs/**",
             "/swagger-ui/**",
-            "/api-docs/**"
+            "/api/v1/product/**",
+            "/api/v1/oauth2/signUp"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
