@@ -2,15 +2,16 @@ package site.keydeuk.store.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
-import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.service.UserService;
 
 @Tag(name = "User", description = "User 관련 API 입니다.")
@@ -50,4 +51,12 @@ public class UserController {
         userService.updateProfile(userId, updateProfileRequest);
         return CommonResponse.ok();
     }
+    @GetMapping("/me")
+    public CommonResponse<UserResponse> getMyInfo(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+            ) {
+        User user = userService.findById(principalDetails.getUserId());
+        return CommonResponse.ok(UserResponse.from(user));
+    }
+
 }

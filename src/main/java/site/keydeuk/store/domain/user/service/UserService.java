@@ -83,4 +83,8 @@ public class UserService {
         return passwordEncoder.encode(joinRequest.password());
     }
 
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
 }
