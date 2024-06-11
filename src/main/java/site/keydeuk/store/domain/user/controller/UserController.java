@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
-import site.keydeuk.store.domain.user.dto.request.UpdateProflieRequest;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.service.UserService;
 
 @Tag(name = "User", description = "User 관련 API 입니다.")
@@ -44,10 +44,10 @@ public class UserController {
     @PutMapping("/me")
     public CommonResponse<Void> updateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated UpdateProflieRequest updateProflieRequest
+            @RequestBody @Validated UpdateProfileRequest updateProfileRequest
             ) {
         Long userId = principalDetails.getUserId();
-        userService.updateProfile(userId, updateProflieRequest);
+        userService.updateProfile(userId, updateProfileRequest);
         return CommonResponse.ok();
     }
 }

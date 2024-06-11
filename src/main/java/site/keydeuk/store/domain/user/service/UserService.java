@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
-import site.keydeuk.store.domain.user.dto.request.UpdateProflieRequest;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.User;
 
@@ -32,12 +32,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(Long userId, UpdateProflieRequest updateProflieRequest) {
-        log.info("User ID [{}] Update Profile = {}", userId, updateProflieRequest);
-        updateProfileValidate(updateProflieRequest);
+    public void updateProfile(Long userId, UpdateProfileRequest updateProfileRequest) {
+        log.info("User ID [{}] Update Profile = {}", userId, updateProfileRequest);
+        updateProfileValidate(updateProfileRequest);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        user.updateProfile(updateProflieRequest.phone(), updateProflieRequest.gender(), updateProflieRequest.nickname(), updateProflieRequest.imgUrl());
+        user.updateProfile(updateProfileRequest.phone(), updateProfileRequest.gender(), updateProfileRequest.nickname(), updateProfileRequest.imgUrl());
     }
 
     public boolean isExistNickname(String nickname) {
@@ -74,9 +74,9 @@ public class UserService {
         duplicateNickname(joinRequest.nickname());
     }
 
-    private void updateProfileValidate(UpdateProflieRequest updateProflieRequest) {
-        duplicateNickname(updateProflieRequest.nickname());
-        duplicatePhoneNUm(updateProflieRequest.phone());
+    private void updateProfileValidate(UpdateProfileRequest updateProfileRequest) {
+        duplicateNickname(updateProfileRequest.nickname());
+        duplicatePhoneNUm(updateProfileRequest.phone());
     }
 
     private String getJoinPassword(JoinRequest joinRequest) {
