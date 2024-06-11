@@ -27,9 +27,15 @@ public class CustomOption {
 
     private String appearanceColor;
 
+    private String baseKeyColor;
+
     private String keyboardSwitch;
 
     private boolean hasPointKey;
+
+    private String pointKeyType;
+
+    private String pointSetColor;
 
     private String imgUrl;
 
