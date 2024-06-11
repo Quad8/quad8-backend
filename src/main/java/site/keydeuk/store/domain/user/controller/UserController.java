@@ -8,11 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
+import site.keydeuk.store.domain.user.dto.response.UserResponse;
 import site.keydeuk.store.domain.user.service.UserService;
+import site.keydeuk.store.entity.User;
 
 @Tag(name = "User", description = "User 관련 API 입니다.")
 @RestController
@@ -42,6 +47,13 @@ public class UserController {
         return CommonResponse.ok(response);
     }
 
+    @GetMapping("/me")
+    public CommonResponse<UserResponse> getMyInfo(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        User user = userService.findById(principalDetails.getUserId());
+        return CommonResponse.ok(UserResponse.from(user));
+    }
     @PutMapping("/me")
     public CommonResponse<Void> updateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
@@ -50,13 +62,6 @@ public class UserController {
         Long userId = principalDetails.getUserId();
         userService.updateProfile(userId, updateProfileRequest);
         return CommonResponse.ok();
-    }
-    @GetMapping("/me")
-    public CommonResponse<UserResponse> getMyInfo(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-            ) {
-        User user = userService.findById(principalDetails.getUserId());
-        return CommonResponse.ok(UserResponse.from(user));
     }
 
 }
