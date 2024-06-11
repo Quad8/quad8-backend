@@ -10,8 +10,7 @@ import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.User;
 
-import static site.keydeuk.store.common.response.ErrorCode.ALREADY_EXIST_EMAIL;
-import static site.keydeuk.store.common.response.ErrorCode.ALREADY_EXIST_NICKNAME;
+import static site.keydeuk.store.common.response.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -53,4 +52,8 @@ public class UserService {
         return passwordEncoder.encode(joinRequest.password());
     }
 
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
 }
