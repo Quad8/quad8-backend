@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import site.keydeuk.store.entity.enums.Gender;
 
-public record UpdateProflieRequest(
+public record UpdateProfileRequest(
         String imgUrl,
         @NotEmpty(message = "닉네임은 필수 입력 항목입니다.")
         @Size(max = 15, message = "닉네임은 1글자 이상, 15자 이하여야 합니다.")
