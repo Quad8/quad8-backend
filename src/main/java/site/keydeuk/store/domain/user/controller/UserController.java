@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public CommonResponse<UserResponse> getUserInfo(
+    public CommonResponse<UserResponse> getMyInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails
             ) {
         User user = userService.findById(principalDetails.getUserId());
