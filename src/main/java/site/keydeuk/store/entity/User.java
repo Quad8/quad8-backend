@@ -55,4 +55,11 @@ public class User extends BaseTimeEntity {
                 ", providerId='" + providerId + '\'' +
                 '}';
     }
+
+    public void updateProfile(String phone, Gender gender, String nickname, String imgUrl) {
+        this.phone = phone;
+        this.gender = gender;
+        this.nickname = nickname;
+        this.imgUrl = imgUrl;
+    }
 }
