@@ -58,13 +58,13 @@ public class SecurityConfig {
             "/docs/**",
             "/products",
             "/login.html",
-            "/oauth2/signUp",
+            "/api/v1/oauth2/signUp",
             "/swagger-ui/**",
             "/api-docs/**"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
-            "/users",
+            "/api/v1/users",
     };
 
     private final ObjectMapper objectMapper;
@@ -126,8 +126,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:3000", //프론트 주소
-                "http://localhost:8080/oauth2/signUp"
+                "http://localhost:3000" //프론트 주소
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
