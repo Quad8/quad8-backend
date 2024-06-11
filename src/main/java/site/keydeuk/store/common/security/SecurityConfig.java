@@ -46,25 +46,23 @@ import static org.springframework.http.HttpMethod.*;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private static final String[] PERMIT_ALL_URLS = new String[]{
-            "/dummy/**",
             "/test/**",
-            "/payments/**",
             "/login",
-            "/",
+            "/logout",
+            "/"
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
-            "/favicon.ico",
-            "/docs/**",
-            "/products",
             "/login.html",
-            "/oauth2/signUp",
+            "/favicon.ico",
+            "/api-docs/**",
             "/swagger-ui/**",
-            "/api-docs/**"
+            "/api/v1/product/**",
+            "/api/v1/oauth2/signUp"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
-            "/users",
+            "/api/v1/users/**",
     };
 
     private final ObjectMapper objectMapper;
@@ -126,8 +124,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:3000", //프론트 주소
-                "http://localhost:8080/oauth2/signUp"
+                "http://localhost:3000" //프론트 주소
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
@@ -151,7 +148,9 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("/localhost:8080/")
+                        .allowedOrigins(
+                                "/localhost:8080/"
+                                ,"/43.201.71.50:8080")
                         .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowCredentials(true)
@@ -189,6 +188,7 @@ public class SecurityConfig {
     private AuthenticationFailureHandler createAuthenticationFailureHandler() {
         return new LoginAuthenticationFailureHandler(objectMapper);
     }
+
     private AccessDeniedHandler createAccessDeniedHandler() {
         return new SecurityAccessDeniedHandler();
     }
