@@ -149,7 +149,7 @@ public class SecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "/localhost:8080/"
+                                "/localhost:8080"
                                 ,"/43.201.71.50:8080")
                         .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
