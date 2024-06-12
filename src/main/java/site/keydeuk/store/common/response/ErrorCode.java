@@ -38,7 +38,8 @@ public enum ErrorCode {
 
     // User
     ALREADY_EXIST_EMAIL(BAD_REQUEST, "이미 사용중인 이메일입니다. 이미 가입하신 적이 있다면 로그인을 시도해주세요"),
-    ALREADY_EXIST_NICKNAME(BAD_REQUEST, "이미 사용중인 아이디입니다."),
+    ALREADY_EXIST_NICKNAME(BAD_REQUEST, "이미 사용중인 닉네임입니다."),
+    ALREADY_EXIST_PHONENUM(BAD_REQUEST, "이미 사용중인 전화번호입니다."),
     USER_NOT_FOUND(NOT_FOUND, "유저 정보가 존재하지 않습니다"),
     INVALID_PASSWORD(BAD_REQUEST, "비밀번호를 확인해 주세요."),
     ALREADY_DELETE_USER(BAD_REQUEST, "이미 삭제된 사용자입니다."),

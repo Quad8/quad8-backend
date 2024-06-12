@@ -2,14 +2,19 @@ package site.keydeuk.store.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.dto.response.UserResponse;
 import site.keydeuk.store.domain.user.service.UserService;
 import site.keydeuk.store.entity.User;
@@ -46,9 +51,18 @@ public class UserController {
     @Operation(summary = "내 정보 조회", description = "로그인된 사용자의 정보를 반환합니다.")
     public CommonResponse<UserResponse> getMyInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails
-            ) {
+    ) {
         User user = userService.findById(principalDetails.getUserId());
         return CommonResponse.ok(UserResponse.from(user));
+    }
+    @PutMapping("/me")
+    public CommonResponse<Void> updateProfile(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody @Validated UpdateProfileRequest updateProfileRequest
+            ) {
+        Long userId = principalDetails.getUserId();
+        userService.updateProfile(userId, updateProfileRequest);
+        return CommonResponse.ok();
     }
 
 }
