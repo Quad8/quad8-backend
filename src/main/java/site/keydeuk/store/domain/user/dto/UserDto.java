@@ -17,5 +17,4 @@ public record UserDto(
     String provider,
     String providerId
 ){
-//    public static UserDto of(){}
 }

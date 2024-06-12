@@ -49,6 +49,8 @@ public class SecurityConfig {
             "/test/**",
             "/login",
             "/",
+            "/logout",
+            "/",
             "/api/v1/custom/**",
     };
 
