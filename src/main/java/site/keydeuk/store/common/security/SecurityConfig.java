@@ -48,8 +48,10 @@ public class SecurityConfig {
     private static final String[] PERMIT_ALL_URLS = new String[]{
             "/test/**",
             "/login",
+            "/",
             "/logout",
-            "/"
+            "/",
+            "/api/v1/custom/**",
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
