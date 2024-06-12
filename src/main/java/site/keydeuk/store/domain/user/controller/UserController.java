@@ -48,6 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "내 정보 조회", description = "로그인된 사용자의 정보를 반환합니다.")
     public CommonResponse<UserResponse> getMyInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
