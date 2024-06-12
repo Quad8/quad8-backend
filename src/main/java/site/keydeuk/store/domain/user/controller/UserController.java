@@ -2,15 +2,12 @@ package site.keydeuk.store.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
@@ -28,8 +25,10 @@ public class UserController {
 
     @Operation(summary = "회원가입", description = "회원가입을 위한 api 입니다.")
     @PostMapping
-    public CommonResponse<Long> join(@RequestBody @Validated JoinRequest joinRequest) {
-        Long userId = userService.join(joinRequest);
+    public CommonResponse<Long> join(
+            @Validated @RequestPart("joinRequest") JoinRequest joinRequest,
+            @RequestPart("imgFile") MultipartFile imgFile) {
+        Long userId = userService.join(joinRequest, imgFile);
         return CommonResponse.ok(userId);
     }
 
@@ -55,11 +54,12 @@ public class UserController {
         User user = userService.findById(principalDetails.getUserId());
         return CommonResponse.ok(UserResponse.from(user));
     }
+
     @PutMapping("/me")
     public CommonResponse<Void> updateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody @Validated UpdateProfileRequest updateProfileRequest
-            ) {
+    ) {
         Long userId = principalDetails.getUserId();
         userService.updateProfile(userId, updateProfileRequest);
         return CommonResponse.ok();
