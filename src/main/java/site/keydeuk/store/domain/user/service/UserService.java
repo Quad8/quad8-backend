@@ -34,7 +34,7 @@ public class UserService {
     @Transactional
     public void updateProfile(Long userId, UpdateProfileRequest updateProfileRequest) {
         log.info("User ID [{}] Update Profile = {}", userId, updateProfileRequest);
-        updateProfileValidate(userId, updateProfileRequest);
+        updateProfileValidate(updateProfileRequest);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         user.updateProfile(updateProfileRequest.phone(), updateProfileRequest.gender(), updateProfileRequest.nickname(), updateProfileRequest.imgUrl());
@@ -50,23 +50,9 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public boolean isExistPhoneNum(String phoneNum) {
-        log.info("Duplicated Check phoneNum = {}", phoneNum);
-        return userRepository.findByPhone(phoneNum).isPresent();
-    }
-
     private void duplicateNickname(String nickname) {
         if (isExistNickname(nickname)) {
             throw new CustomException(ALREADY_EXIST_NICKNAME);
-        }
-    }
-
-    private void duplicatePhoneNum(Long userId, String phoneNum) {
-        if (findById(userId).getPhone().equals(phoneNum)) {
-            return;
-        }
-        if (isExistPhoneNum(phoneNum)) {
-            throw new CustomException(ALREADY_EXIST_PHONENUM);
         }
     }
 
@@ -77,9 +63,8 @@ public class UserService {
         duplicateNickname(joinRequest.nickname());
     }
 
-    private void updateProfileValidate(Long userId, UpdateProfileRequest updateProfileRequest) {
+    private void updateProfileValidate(UpdateProfileRequest updateProfileRequest) {
         duplicateNickname(updateProfileRequest.nickname());
-        duplicatePhoneNum(userId, updateProfileRequest.phone());
     }
 
     private String getJoinPassword(JoinRequest joinRequest) {
