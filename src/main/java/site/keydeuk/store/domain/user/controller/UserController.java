@@ -43,6 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "내 정보 조회", description = "내 정보 조회 api 입니다.")
     public CommonResponse<UserResponse> getMyInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails
             ) {
