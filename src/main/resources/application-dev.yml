@@ -45,4 +45,4 @@ cloud:
 jwt:
   secret:
   grant-type: Bearer
-  token-validate-in-seconds: 3600
+  token-validate-in-seconds: 36000
