@@ -31,7 +31,18 @@ spring:
               - profile_nickname
               - profile_image
               - account_email
+cloud:
+  aws:
+    credentials:
+      access-key:
+      secret-key:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    s3:
+      bucket:
 jwt:
   secret:
   grant-type: Bearer
-  token-validate-in-seconds: 3600
+  token-validate-in-seconds: 36000

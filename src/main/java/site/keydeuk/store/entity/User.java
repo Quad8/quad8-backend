@@ -13,7 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "users")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseTimeEntity {
@@ -54,5 +54,18 @@ public class User extends BaseTimeEntity {
                 ", provider='" + provider + '\'' +
                 ", providerId='" + providerId + '\'' +
                 '}';
+    }
+
+    public void updateProfile(String phone, Gender gender, String nickname, String imgUrl) {
+        this.phone = phone;
+        this.gender = gender;
+        this.nickname = nickname;
+        this.imgUrl = imgUrl;
+    }
+
+    public User updateImgUrl(String imgUrl) {
+        return this.toBuilder()
+                .imgUrl(imgUrl)
+                .build();
     }
 }
