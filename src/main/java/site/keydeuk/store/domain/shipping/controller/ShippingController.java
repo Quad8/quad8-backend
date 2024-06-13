@@ -33,6 +33,7 @@ public class ShippingController {
     }
 
     @GetMapping("/address")
+    @Operation(summary = "배송지 조회", description = "등록된 모든 배송지 정보를 조회합니다.")
     public CommonResponse<List<ShippingAddressResponse>> getShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
