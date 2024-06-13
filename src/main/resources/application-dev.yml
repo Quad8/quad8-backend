@@ -12,7 +12,7 @@ spring:
     password:
   data:
     mongodb:
-      uri: mongodb://keydeuk:quadeight@13.209.82.8:27017/keydeuk_shop
+      uri: mongodb://
   security:
     oauth2:
       client:
