@@ -5,6 +5,7 @@ import site.keydeuk.store.entity.ShippingAddress;
 
 @Builder
 public record ShippingAddressResponse (
+        Long id,
         String name,
         String zoneCode,
         String address,
@@ -14,6 +15,7 @@ public record ShippingAddressResponse (
 ){
     public static ShippingAddressResponse from(ShippingAddress shippingAddress) {
         return ShippingAddressResponse.builder()
+                .id(shippingAddress.getId())
                 .name(shippingAddress.getName())
                 .zoneCode(shippingAddress.getZoneCode())
                 .address(shippingAddress.getAddress())
