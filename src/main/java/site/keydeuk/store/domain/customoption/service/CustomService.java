@@ -13,18 +13,18 @@ public class CustomService {
         //base64 -> s3저
     }
 
-//    private CustomOption toEntity(CustomKeyboardRequestDto dto, String imgUrl) {
-//        return CustomOption.builder()
-//                .layout(dto.getType())
-//                .appearanceTexture(dto.getTexture())
-//                .appearanceColor(dto.getBoardColor())
-//                .baseKeyColor(dto.getBaseKeyColor())
-//                .keyboardSwitch(dto.getSwitchType())
-//                .hasPointKey(dto.getHasPointKeyCap())
-//                .pointKeyType(dto.getPointKeyType())
-//                .pointSetColor(dto.getPointSetColor())
-//                .imgUrl(imgUrl)
-//                .price(dto.getPrice())
-//                .build();
-//    }
+    private CustomOption toEntity(CustomKeyboardRequestDto dto, String imgUrl) {
+        return CustomOption.builder()
+                .layout(dto.getType())
+                .appearanceTexture(dto.getTexture())
+                .appearanceColor(dto.getBoardColor())
+                .baseKeyColor(dto.getBaseKeyColor())
+                .keyboardSwitch(dto.getSwitchType())
+                .hasPointKey(dto.getHasPointKeyCap())
+                .pointKeyType(dto.getPointKeyType())
+                .pointSetColor(dto.getPointSetColor())
+                .imgUrl(imgUrl)
+                .price(dto.getPrice())
+                .build();
+    }
 }

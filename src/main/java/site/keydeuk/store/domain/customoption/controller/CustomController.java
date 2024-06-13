@@ -42,7 +42,7 @@ public class CustomController {
 
         // 3. 장바구니 저장
 
-        return CommonResponse.ok(objectUrl);
+        return CommonResponse.ok( requestDto);
     }
     @Operation(summary = "옵셥 상품 목록", description = "카테고리 별 옵션 상품 5개을 보여줍니다.")
     @GetMapping("/get/random-option-products")
