@@ -2,40 +2,47 @@ package site.keydeuk.store.domain.customoption.dto.custom;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import site.keydeuk.store.entity.CustomOption;
 
 import java.util.List;
 
 @Getter@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class CustomOptionDto {
 
-    private String type;
+    private String layout; //type
 
-    private String texture;
+    private String appearanceTexture; //texture
 
-    private String boardColor;
-
-    private String switchType;
-
-    private Boolean hasPointKeyCap;
+    private String appearanceColor; //boardcolor
 
     private String baseKeyColor;
+
+    private String keyboardSwitch; //switchtype
+
+    private boolean hasPointKey; //hasPointKeyCap
 
     private String pointKeyType;
 
     private String pointSetColor;
 
-    private int price;
-
-    private Object individualColor;
-
-    private List<Integer> option;
-
     private String imgUrl;
 
+    private int price;
+
+    public CustomOption toEntity(){
+        return CustomOption.builder()
+                .layout(this.layout)
+                .appearanceTexture(this.appearanceTexture)
+                .appearanceColor(this.appearanceColor)
+                .baseKeyColor(this.baseKeyColor)
+                .keyboardSwitch(this.keyboardSwitch)
+                .hasPointKey(this.hasPointKey)
+                .pointKeyType(this.pointKeyType)
+                .pointSetColor(this.pointSetColor)
+                .imgUrl(this.imgUrl)
+                .price(this.price)
+                .build();
+    }
 }

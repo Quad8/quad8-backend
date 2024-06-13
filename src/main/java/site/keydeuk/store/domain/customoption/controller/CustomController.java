@@ -23,19 +23,12 @@ public class CustomController {
 
     private final CustomService customService;
 
-    private final ImageService imageService;
-
     @Operation(summary = "커스텀 키보드 주문",description = "조합한 커스텀 키보드를 저장합니다.")
     @PostMapping("/create")
     public CommonResponse<?> createCustomKeyboard(@RequestBody @Valid CustomKeyboardRequestDto requestDto){
 
         // 1. 커스텀 키보드 옵션 저장
-        // 1-1. base^4 -> byte[]
-        String base64Image = requestDto.getImgBase64();
-        String base64Data = base64Image.replaceAll("^data:image/[a-zA-Z]+;base64,", "");
-
-        byte[] imageByte = Base64.getDecoder().decode(base64Data);
-        String objectUrl = imageService.uploadBase64ToImage(imageByte);
+        customService.saveCustomOption(requestDto);
 
         // 2, color option 저장
 
