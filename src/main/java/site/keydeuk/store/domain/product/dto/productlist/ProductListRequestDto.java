@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @NoArgsConstructor
 public class ProductListRequestDto {
     @NotNull
-    @Schema(description = "all, keyboard, keycap, switch, etc", example = "all")
+    @Schema(description = " keyboard, keycap, switch, etc", example = "keyboard")
     private String keyword;
 
     @NotNull
@@ -31,14 +31,14 @@ public class ProductListRequestDto {
     @Schema(description = "제조사", example = "몬스타기어")
     private String company;
 
-    @Schema(description = "스위치", example = "적축")
+    @Schema(description = "(구현 XXXX)스위치", example = "적축")
     private String switchType;
 
     @Schema(description = "최소 가격", example = "1000")
-    private int lowPrice;
+    private Integer minPrice;
 
     @Schema(description = "최대 가격", example = "199000")
-    private int highPrice;
+    private Integer maxPrice;
 
     public ProductListRequestDto(String keyword, String sort){
         this.keyword = keyword;
@@ -50,7 +50,7 @@ public class ProductListRequestDto {
 
     @AssertTrue(message = "Invalid product type")
     private boolean isValidType() {
-        return keyword != null && (keyword.equals("all") || keyword.equals("keyboard") || keyword.equals("keycap") || keyword.equals("switch") || keyword.equals("etc"));
+        return keyword != null && ( keyword.equals("keyboard") || keyword.equals("keycap") || keyword.equals("switch") || keyword.equals("etc"));
     }
 
 }
