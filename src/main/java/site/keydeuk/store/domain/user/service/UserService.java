@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.repository.UserRepository;
@@ -19,16 +21,25 @@ import static site.keydeuk.store.common.response.ErrorCode.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     @Transactional
-    public Long join(JoinRequest joinRequest) {
+    public Long join(JoinRequest joinRequest, MultipartFile imgFile) {
         joinValidate(joinRequest);
         log.info("Join User Info = {}", joinRequest);
 
         String encodePassword = getJoinPassword(joinRequest);
         User user = joinRequest.toEntity(encodePassword);
-        userRepository.save(user);
-        return user.getId();
+
+        if (imgFile.isEmpty()) { //소셜 회원가입 햇거나 프로필 이미지 등록 안하는 사람
+            User savedUser = userRepository.save(user);
+            return savedUser.getId();
+        }else {
+            String imgUrl = imageService.uploadImage(imgFile);
+            User updateUser = user.updateImgUrl(imgUrl);
+            User savedUser = userRepository.save(updateUser);
+            return savedUser.getId();
+        }
     }
 
     @Transactional
