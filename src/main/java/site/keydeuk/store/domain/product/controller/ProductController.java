@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.product.dto.allproductlist.AllProductListRequestDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListRequestDto;
 import site.keydeuk.store.domain.product.service.ProductService;
 
@@ -23,6 +24,7 @@ import site.keydeuk.store.domain.product.service.ProductService;
 public class ProductController {
 
     private final ProductService productService;
+
     @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다. (미구현 : 리뷰 & 찜 관련 )")
     @Parameter(name = "id", description = "상품 ID", example = "11")
     @GetMapping("/get-detail-info/{id}")
@@ -30,10 +32,24 @@ public class ProductController {
         return CommonResponse.ok(productService.getProductDetailById(id));
     }
 
-    @Operation(summary = "상품 목록 조회", description = "카테고리별(전체, 키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.(미구현: 검색, 리뷰&찜 관련)")
-    @GetMapping("/get-list")
+    @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.(인기순 미구현)")
+    @GetMapping("/get/all-list")
+    public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto){
+        //all : 전체
+        // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
+        // 인기순 추후 구현
+
+        //paging 처리
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+
+        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable));
+
+    }
+
+    @Operation(summary = "카테고리별 상품 목록 조회", description = "카테고리별(키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.(인기순)")
+    @GetMapping("/get/category-list")
     public CommonResponse<?> getProductList(@ParameterObject @Valid ProductListRequestDto dto){
-        //all : 전체, 1 keyboard, 2 keycap, 3 switch, 4-8 others
+        //all : 전체, 1 keyboard, 2 keycap, 3 switch, 4-8 etc
         // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         // 인기순 추후 구현
         String word = dto.getKeyword();
@@ -44,19 +60,18 @@ public class ProductController {
         //paging 처리
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
-        if (word.equals("all")){
-            return CommonResponse.ok(productService.getProductAllList(sort,pageable));
-        }else if (word.equals("keyboard")) {
+        if (word.equals("keyboard")) {
             return CommonResponse.ok(productService.getProductListByCategory(1,sort,pageable));
         }else if (word.equals("keycap")) {
             return CommonResponse.ok(productService.getProductListByCategory(2,sort,pageable));
         }else if (word.equals("switch")) {
             return CommonResponse.ok(productService.getProductListByCategory(3,sort,pageable));
-        }else if (word.equals("others")) {
+        }else if (word.equals("etc")) {
             return CommonResponse.ok(productService.getProductListByCategory(4,sort,pageable));
         }
 
         return CommonResponse.fail("Invalid keyword");
     }
+
 
 }
