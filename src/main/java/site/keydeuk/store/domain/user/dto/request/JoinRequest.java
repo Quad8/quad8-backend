@@ -42,7 +42,7 @@ public record JoinRequest(
         @Size(max = 15, message = "닉네임은 1글자 이상, 15자 이하여야 합니다.")
         String nickname,
 
-        @Schema(description = "사용자 프로필 이미지 URL", example = "http://example.com/image.jpg")
+        @Schema(description = "사용자 프로필 이미지 URL, 소셜 회원가입 시 url로 넘어옴", example = "http://example.com/image.jpg")
         String imgUrl,
 
         @Schema(description = "OAuth2 제공자", example = "GOOGLE")
