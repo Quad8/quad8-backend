@@ -34,7 +34,7 @@ public class CustomKeyboardRequestDto {
     private String switchType;
 
     @NotNull
-    @Schema(description = "포인트 키캡 선택 여부(Y or N)", example = "Y")
+    @Schema(description = "포인트 키캡 선택 여부(true or false)", example = "true")
     private Boolean hasPointKeyCap;
 
     @Schema(description = "baseKeyColor", example = "#ffffff")
@@ -50,7 +50,11 @@ public class CustomKeyboardRequestDto {
     @Schema(description = "가격", example = "99000")
     private int price;
 
-    @Schema(description = "키캡 옵션")
+    @Schema(description = "키캡 옵션", example = "{\n" +
+            "    \"Q\": \"#ffffff\",\n" +
+            "    \"T\": \"#ffffff\",\n" +
+            "    \"1\": \"#ffffff\"\n" +
+            "  }")
     private Object individualColor;
 
     @Schema(description = "선택한 옵션 상품 목록")
