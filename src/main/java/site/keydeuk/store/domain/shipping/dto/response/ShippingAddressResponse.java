@@ -2,7 +2,6 @@ package site.keydeuk.store.domain.shipping.dto.response;
 
 import lombok.Builder;
 import site.keydeuk.store.entity.ShippingAddress;
-import site.keydeuk.store.entity.User;
 
 @Builder
 public record ShippingAddressResponse (
