@@ -23,4 +23,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Page<Product> findProductsByCategoryIdBetween(
             @Param("startCategoryId") Integer startId, @Param("endCategoryId") Integer endId, Pageable pageable);
 
+    Page<Product> findByProductCategory_IdBetweenAndCompanyAndPriceBetween(
+            Integer startCategoryId, Integer endCategoryId,
+            String company, Integer minPrice, Integer maxPrice,
+            Pageable pageable);
+
+
 }

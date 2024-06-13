@@ -12,12 +12,8 @@ import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.entity.CustomOption;
-import site.keydeuk.store.entity.Product;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
