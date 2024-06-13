@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.customoption.dto.custom.CustomKeyboardRequestDto;
@@ -26,9 +27,9 @@ public class CustomController {
 
     private final ProductService productService;
 
-    @Operation(summary = "커스텀 키보드 주문",description = "조합한 커스텀 키보드를 장바구니에 저장합니다.")
+    @Operation(summary = "(미완성)커스텀 키보드 주문",description = "조합한 커스텀 키보드를 장바구니에 저장합니다. !!장바구니 담기 미구현, DB 저장까지 구현!!")
     @PostMapping("/create")
-    public CommonResponse<?> createCustomKeyboard(@RequestBody @Valid CustomKeyboardRequestDto requestDto){
+    public CommonResponse<?> createCustomKeyboard(@ParameterObject @RequestBody @Valid CustomKeyboardRequestDto requestDto){
 
         // 1. 커스텀 키보드 옵션 저장
         customService.saveCustomOption(requestDto);
