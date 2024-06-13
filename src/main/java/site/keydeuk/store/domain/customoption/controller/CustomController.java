@@ -11,6 +11,7 @@ import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.customoption.dto.custom.CustomKeyboardRequestDto;
 import site.keydeuk.store.domain.customoption.service.CustomService;
 import site.keydeuk.store.domain.image.service.ImageService;
+import site.keydeuk.store.domain.product.service.ProductService;
 
 import java.util.Base64;
 
@@ -23,17 +24,16 @@ public class CustomController {
 
     private final CustomService customService;
 
-    @Operation(summary = "커스텀 키보드 주문",description = "조합한 커스텀 키보드를 저장합니다.")
+    private final ProductService productService;
+
+    @Operation(summary = "커스텀 키보드 주문",description = "조합한 커스텀 키보드를 장바구니에 저장합니다.")
     @PostMapping("/create")
     public CommonResponse<?> createCustomKeyboard(@RequestBody @Valid CustomKeyboardRequestDto requestDto){
 
         // 1. 커스텀 키보드 옵션 저장
         customService.saveCustomOption(requestDto);
 
-        // 2, color option 저장
-
-
-        // 3. 장바구니 저장
+        // 2. 장바구니 저장
 
         return CommonResponse.ok( requestDto);
     }
@@ -41,6 +41,6 @@ public class CustomController {
     @GetMapping("/get/random-option-products")
     public CommonResponse<?> getRandomOptionProducts(){
 
-        return CommonResponse.ok();
+        return CommonResponse.ok(productService.getOptionProductList());
     }
 }

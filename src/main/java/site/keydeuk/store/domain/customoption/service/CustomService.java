@@ -1,16 +1,23 @@
 package site.keydeuk.store.domain.customoption.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
 import site.keydeuk.store.domain.customoption.dto.custom.CustomKeyboardRequestDto;
 import site.keydeuk.store.domain.customoption.dto.custom.CustomOptionDto;
 import site.keydeuk.store.domain.customoption.dto.custom.ObjectDto;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.image.service.ImageService;
+import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.entity.CustomOption;
+import site.keydeuk.store.entity.Product;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +29,10 @@ public class CustomService {
 
     private final CustomObjectRepository customObjectRepository;
 
+    private final ProductRepository productRepository;
+
+
+    /** 커스텀 키보드 옵션 저장 */
     public void saveCustomOption(CustomKeyboardRequestDto dto){
         //1. base64 -> s3저장
         String base64Image = dto.getImgBase64();
@@ -45,10 +56,15 @@ public class CustomService {
                 .build();
         CustomOption customOption = customRepository.save(customOptionDto.toEntity());
 
-        //3. color option DB저장
-        ObjectDto objectDto = new ObjectDto(dto.getIndividualColor());
-        customObjectRepository.save(objectDto.toEntity(customOption.getId()));
+        // 3. color option DB저장 (포인트키캡 선택 : true 시)
+         if (dto.getHasPointKeyCap()){
+             ObjectDto objectDto = new ObjectDto(dto.getIndividualColor());
+             customObjectRepository.save(objectDto.toEntity(customOption.getId()));
+         }
+
+        //4. 옵션 상품들과 장바구니 저장
 
     }
+
 
 }
