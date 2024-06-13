@@ -44,6 +44,7 @@ public class ShippingController {
     }
 
     @PutMapping("/address/{addressId}")
+    @Operation(summary = "배송지 수정", description = "배송지 정보를 수정합니다.")
     public CommonResponse<ShippingAddressResponse> modifyShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long addressId,
@@ -55,11 +56,13 @@ public class ShippingController {
     }
 
     @DeleteMapping("/address/{addressId}")
+    @Operation(summary = "배송지 삭제", description = "배송지 정보를 삭제합니다.")
     public CommonResponse<Void> deleteShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long addressId
     ) {
         Long userId = principalDetails.getUserId();
         shippingService.deleteShippingAddress(userId, addressId);
+        return CommonResponse.ok();
     }
 }
