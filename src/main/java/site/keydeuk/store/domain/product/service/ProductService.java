@@ -1,18 +1,20 @@
 package site.keydeuk.store.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
 import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.entity.Product;
 
 import java.util.*;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -89,6 +91,25 @@ public class ProductService {
         // 리뷰수 -- 미구현
 
         return products.map(ProductListResponseDto::new);
+    }
+
+
+    /** 옵션 상품 목록 */
+    public List<OptionProductsResponseDto> getOptionProductList(){
+        List<OptionProductsResponseDto> productlist = new ArrayList<>();
+
+        for (int i=4;i<=8; i++){
+            productlist.add(getRandomOptionProduct(i ));
+        }
+        return productlist;
+    }
+
+    private OptionProductsResponseDto getRandomOptionProduct(int categoryId){
+        Random random = new Random();
+        List<Product> productsIdBy4 =  productRepository.findByProductCategoryId(categoryId);
+        int randomIndex = random.nextInt(productsIdBy4.size());
+        log.info("index={}",randomIndex);
+        return new OptionProductsResponseDto(productsIdBy4.get(randomIndex));
     }
 
     private Product getProductById(Integer productId){

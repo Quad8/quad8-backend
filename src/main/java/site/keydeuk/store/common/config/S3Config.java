@@ -1,4 +1,4 @@
-package site.keydeuk.store.common.s3;
+package site.keydeuk.store.common.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

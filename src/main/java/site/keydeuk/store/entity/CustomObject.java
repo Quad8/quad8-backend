@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@Document(collection = "custom_keyboard_option")
+@Document(collection = "color_option")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomObject {
@@ -19,6 +19,4 @@ public class CustomObject {
 
     private Object objects;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 }
