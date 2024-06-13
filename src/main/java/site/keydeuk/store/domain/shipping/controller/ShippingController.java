@@ -48,9 +48,18 @@ public class ShippingController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long addressId,
             @RequestBody @Validated UpdateShippingAddressRequest request
-            ) {
+    ) {
         Long userId = principalDetails.getUserId();
         ShippingAddressResponse response = shippingService.updateShippingAddress(userId, addressId, request);
         return CommonResponse.ok(response);
+    }
+
+    @DeleteMapping("/address/{addressId}")
+    public CommonResponse<Void> deleteShippingAddress(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long addressId
+    ) {
+        Long userId = principalDetails.getUserId();
+        shippingService.deleteShippingAddress(userId, addressId);
     }
 }

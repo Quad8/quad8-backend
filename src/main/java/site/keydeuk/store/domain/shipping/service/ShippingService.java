@@ -53,4 +53,11 @@ public class ShippingService {
 
         return ShippingAddressResponse.from(shippingAddress);
     }
+
+    @Transactional
+    public void deleteShippingAddress(Long userId, Long addressId) {
+        ShippingAddress shippingAddress = shippingRepository.findByIdAndUserId(addressId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 배송지 ID 또는 사용자 ID입니다."));
+        shippingRepository.delete(shippingAddress);
+    }
 }
