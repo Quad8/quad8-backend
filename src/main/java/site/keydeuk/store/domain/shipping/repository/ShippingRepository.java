@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import site.keydeuk.store.entity.ShippingAddress;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ShippingRepository extends JpaRepository<ShippingAddress, Long> {
     @Modifying
@@ -13,4 +14,6 @@ public interface ShippingRepository extends JpaRepository<ShippingAddress, Long>
     void updateDefaultAddressToFalse(Long userId);
 
     List<ShippingAddress> findAllByUserId(Long userId);
+
+    Optional<ShippingAddress> findByIdAndUserId(Long addressId, Long userId);
 }

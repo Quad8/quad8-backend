@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.shipping.dto.request.SaveShippingAddressRequest;
+import site.keydeuk.store.domain.shipping.dto.request.UpdateShippingAddressRequest;
 import site.keydeuk.store.domain.shipping.dto.response.ShippingAddressResponse;
 import site.keydeuk.store.domain.shipping.service.ShippingService;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 
 import java.util.List;
 
@@ -39,5 +41,28 @@ public class ShippingController {
     ) {
         List<ShippingAddressResponse> shippingAddresses = shippingService.getShippingAddresses(principalDetails.getUserId());
         return CommonResponse.ok(shippingAddresses);
+    }
+
+    @PutMapping("/address/{addressId}")
+    @Operation(summary = "배송지 수정", description = "배송지 정보를 수정합니다.")
+    public CommonResponse<ShippingAddressResponse> modifyShippingAddress(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long addressId,
+            @RequestBody @Validated UpdateShippingAddressRequest request
+    ) {
+        Long userId = principalDetails.getUserId();
+        ShippingAddressResponse response = shippingService.updateShippingAddress(userId, addressId, request);
+        return CommonResponse.ok(response);
+    }
+
+    @DeleteMapping("/address/{addressId}")
+    @Operation(summary = "배송지 삭제", description = "배송지 정보를 삭제합니다.")
+    public CommonResponse<Void> deleteShippingAddress(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long addressId
+    ) {
+        Long userId = principalDetails.getUserId();
+        shippingService.deleteShippingAddress(userId, addressId);
+        return CommonResponse.ok();
     }
 }
