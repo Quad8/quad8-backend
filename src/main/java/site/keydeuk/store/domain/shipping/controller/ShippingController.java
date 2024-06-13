@@ -5,15 +5,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.shipping.dto.request.SaveShippingAddressRequest;
 import site.keydeuk.store.domain.shipping.dto.response.ShippingAddressResponse;
 import site.keydeuk.store.domain.shipping.service.ShippingService;
+
+import java.util.List;
 
 @Tag(name = "Shipping", description = "배송 관련 API 입니다.")
 @RestController
@@ -31,5 +30,13 @@ public class ShippingController {
     ) {
         ShippingAddressResponse response = shippingService.saveShippingAddress(principalDetails, saveShippingAddressRequest);
         return CommonResponse.ok(response);
+    }
+
+    @GetMapping("/address")
+    public CommonResponse<List<ShippingAddressResponse>> getShippingAddress(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        List<ShippingAddressResponse> shippingAddresses = shippingService.getShippingAddresses(principalDetails.getUserId());
+        return CommonResponse.ok(shippingAddresses);
     }
 }
