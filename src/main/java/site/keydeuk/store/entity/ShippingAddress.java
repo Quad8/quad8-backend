@@ -23,4 +23,13 @@ public class ShippingAddress extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void update(String name, String zoneCode, String address, String detailAddress, String phone, Boolean isDefault) {
+        this.name = name;
+        this.zoneCode = zoneCode;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.phone = phone;
+        this.isDefault = isDefault;
+    }
 }

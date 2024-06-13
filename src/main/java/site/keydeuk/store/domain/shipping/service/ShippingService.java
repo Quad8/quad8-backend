@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.shipping.dto.request.SaveShippingAddressRequest;
+import site.keydeuk.store.domain.shipping.dto.request.UpdateShippingAddressRequest;
 import site.keydeuk.store.domain.shipping.dto.response.ShippingAddressResponse;
 import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
 import site.keydeuk.store.entity.ShippingAddress;
@@ -36,5 +37,20 @@ public class ShippingService {
         return addresses.stream()
                 .map(ShippingAddressResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ShippingAddressResponse updateShippingAddress(Long userId, Long addressId, UpdateShippingAddressRequest request) {
+        ShippingAddress shippingAddress = shippingRepository.findByIdAndUserId(addressId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 배송지 ID 또는 사용자 ID입니다."));
+
+        if (request.isDefault()) {
+            shippingRepository.updateDefaultAddressToFalse(userId);
+        }
+
+        shippingAddress.update(request.name(), request.zoneCode(), request.address(), request.detailAddress(), request.phone(), request.isDefault());
+        shippingRepository.save(shippingAddress);
+
+        return ShippingAddressResponse.from(shippingAddress);
     }
 }
