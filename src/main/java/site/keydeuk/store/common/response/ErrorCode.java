@@ -15,6 +15,9 @@ public enum ErrorCode {
     COMMON_ENTITY_NOT_FOUND(BAD_REQUEST, "존재하지 않는 엔티티입니다."),
     COMMON_JSON_PROCESSING_ERROR(BAD_REQUEST, "Json 변환 중 오류"),
 
+    //Product
+    PRODUCT_NOT_FOUND(NOT_FOUND, "상품 정보를 찾을 수 없습니다"),
+
     //Payment,
     PRODUCT_NOT_ON_SALE(NOT_FOUND, "현재 판매중이지 않은 상품입니다."),
     INVALID_PAYMENT_AMOUNT_ERROR(CONFLICT,"주문금액과 실 결제금액이 다릅니다."),
@@ -43,6 +46,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "유저 정보가 존재하지 않습니다"),
     INVALID_PASSWORD(BAD_REQUEST, "비밀번호를 확인해 주세요."),
     ALREADY_DELETE_USER(BAD_REQUEST, "이미 삭제된 사용자입니다."),
+
+    //Likes
+    ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다.")
     ;
 
     private final HttpStatus httpStatus;
