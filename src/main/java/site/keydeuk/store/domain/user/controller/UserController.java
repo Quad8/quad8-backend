@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,10 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "회원가입", description = "회원가입을 위한 api 입니다.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<Long> join(
             @Validated @RequestPart("joinRequest") @ParameterObject JoinRequest joinRequest,
-            @RequestPart("imgFile") @ParameterObject MultipartFile imgFile) {
+            @RequestPart(value = "imgFile", required = false) MultipartFile imgFile) {
         Long userId = userService.join(joinRequest, imgFile);
         return CommonResponse.ok(userId);
     }
