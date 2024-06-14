@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
+import site.keydeuk.store.common.entity.BaseTimeEntity;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "cart_item")
-public class CartItem {
+public class CartItem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +31,16 @@ public class CartItem {
 
     private int count;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    public static CartItem createCartItem(Cart cart, Product product, int count){
+        CartItem cartItem = new CartItem();
+        cartItem.setCart(cart);
+        cartItem.setProduct(product);
+        cartItem.setCount(count);
+        return cartItem;
+    }
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    public void addCount(int Count){
+        this.count += count;
+    }
 
 }
