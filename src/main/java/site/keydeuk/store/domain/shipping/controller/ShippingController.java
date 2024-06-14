@@ -3,6 +3,7 @@ package site.keydeuk.store.domain.shipping.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class ShippingController {
     @Operation(summary = "배송지 저장", description = "새로운 배송지 정보를 저장합니다.")
     public CommonResponse<ShippingAddressResponse> saveShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated SaveShippingAddressRequest saveShippingAddressRequest
+            @RequestBody @Validated @ParameterObject SaveShippingAddressRequest saveShippingAddressRequest
     ) {
         ShippingAddressResponse response = shippingService.saveShippingAddress(principalDetails, saveShippingAddressRequest);
         return CommonResponse.ok(response);
@@ -48,7 +49,7 @@ public class ShippingController {
     public CommonResponse<ShippingAddressResponse> modifyShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long addressId,
-            @RequestBody @Validated UpdateShippingAddressRequest request
+            @RequestBody @Validated @ParameterObject UpdateShippingAddressRequest request
     ) {
         Long userId = principalDetails.getUserId();
         ShippingAddressResponse response = shippingService.updateShippingAddress(userId, addressId, request);
