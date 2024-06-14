@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +17,8 @@ import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.domain.user.dto.response.UserResponse;
 import site.keydeuk.store.domain.user.service.UserService;
 import site.keydeuk.store.entity.User;
+
+import java.io.File;
 
 @Slf4j
 @Tag(name = "User", description = "User 관련 API 입니다.")
@@ -61,13 +62,15 @@ public class UserController {
         return CommonResponse.ok(UserResponse.from(user));
     }
 
-    @PutMapping("/me")
+    @PutMapping(name = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "내 정보 수정", description = "사용자 프로필 정보를 수정합니다.")
     public CommonResponse<Void> updateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated @ParameterObject UpdateProfileRequest updateProfileRequest
+            @RequestPart("updateProfileRequest") @Validated UpdateProfileRequest updateProfileRequest,
+            @RequestPart(value = "imgFile", required = false) @Parameter(description = "프로필 이미지 파일") MultipartFile imgFile
     ) {
         Long userId = principalDetails.getUserId();
-        userService.updateProfile(userId, updateProfileRequest);
+        userService.updateProfile(userId, updateProfileRequest, imgFile);
         return CommonResponse.ok();
     }
 
