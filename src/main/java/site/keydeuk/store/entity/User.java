@@ -3,6 +3,7 @@ package site.keydeuk.store.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
+import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 import site.keydeuk.store.entity.enums.Gender;
 import site.keydeuk.store.entity.enums.RoleType;
 
@@ -56,10 +57,10 @@ public class User extends BaseTimeEntity {
                 '}';
     }
 
-    public void updateProfile(String phone, Gender gender, String nickname, String imgUrl) {
-        this.phone = phone;
-        this.gender = gender;
-        this.nickname = nickname;
+    public void updateProfile(UpdateProfileRequest request, String imgUrl) {
+        this.phone = request.phone();
+        this.gender = request.gender();
+        this.nickname = request.nickname();
         this.imgUrl = imgUrl;
     }
 
