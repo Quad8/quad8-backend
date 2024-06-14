@@ -28,7 +28,7 @@ public class UserController {
     @Operation(summary = "회원가입", description = "회원가입을 위한 api 입니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<Long> join(
-            @Validated @RequestPart("joinRequest") @ParameterObject JoinRequest joinRequest,
+            @Validated @RequestPart("joinRequest") JoinRequest joinRequest,
             @RequestPart(value = "imgFile", required = false) MultipartFile imgFile) {
         Long userId = userService.join(joinRequest, imgFile);
         return CommonResponse.ok(userId);
