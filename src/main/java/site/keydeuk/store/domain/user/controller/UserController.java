@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +19,7 @@ import site.keydeuk.store.domain.user.dto.response.UserResponse;
 import site.keydeuk.store.domain.user.service.UserService;
 import site.keydeuk.store.entity.User;
 
+@Slf4j
 @Tag(name = "User", description = "User 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class UserController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<Long> join(
             @Validated @RequestPart("joinRequest") JoinRequest joinRequest,
-            @RequestPart(value = "imgFile", required = false) MultipartFile imgFile) {
+            @RequestPart(value = "imgFile", required = false) @Parameter(description = "프로필 이미지 파일") MultipartFile imgFile) {
         Long userId = userService.join(joinRequest, imgFile);
         return CommonResponse.ok(userId);
     }
