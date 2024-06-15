@@ -19,6 +19,14 @@ public class CartItemWithProduct extends CartItem{
         cartItem.setCount(count);
         return cartItem;
     }
+    public static CartItemWithProduct createCartItem(Cart cart, Product product, int count, Long optionId){
+        CartItemWithProduct cartItem = new CartItemWithProduct();
+        cartItem.setCart(cart);
+        cartItem.setProduct(product);
+        cartItem.setCount(count);
+        cartItem.setOptionId(optionId);
+        return cartItem;
+    }
 
     @Override
     public void addCount(int count) {

@@ -25,5 +25,7 @@ public abstract class CartItem extends BaseTimeEntity {
 
     private int count;
 
+    private Long optionId;
+
     public abstract void addCount(int count);
 }

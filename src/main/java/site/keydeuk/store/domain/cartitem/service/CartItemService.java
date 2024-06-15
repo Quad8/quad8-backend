@@ -17,6 +17,10 @@ public class CartItemService {
         return cartItemRepository.findByCartIdAndProductId(cartId, productId);
     }
 
+    public CartItemWithProduct findByCartIdAndProductIdAndOptionId(Long cartId,Integer productId, Long optionId){
+        return cartItemRepository.findByCartIdAndProductIdAndOptionId(cartId,productId,optionId);
+    }
+
     public CartItemWithCustom findCartItemByCartIdAndCustomOptionId(Long cartId, Integer customOptionId) {
         return cartItemRepository.findByCartIdAndCustomOptionId(cartId, customOptionId);
     }
