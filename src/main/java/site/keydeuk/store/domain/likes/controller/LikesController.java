@@ -25,7 +25,17 @@ public class LikesController {
             @PathVariable Integer productId
     ) {
         Likes like = likesService.addLikes(principalDetails.getUserId(), productId);
-        return CommonResponse.ok(LikesResponse.from(like));
+        return CommonResponse.ok("좋아요가 등록되었습니다.",LikesResponse.from(like));
+    }
+
+    @DeleteMapping("/{productId}")
+    public CommonResponse<Integer> deleteLike(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Integer productId
+    ) {
+        Long userId = principalDetails.getUserId();
+        likesService.deleteLike(userId, productId);
+        return CommonResponse.ok("좋아요가 삭제되었습니다.", productId);
     }
 
     @GetMapping("/products")

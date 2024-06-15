@@ -40,6 +40,15 @@ public class LikesService {
         return likesRepository.save(like);
     }
 
+    @Transactional
+    public void deleteLike(Long userId, Integer productId) {
+        Likes like = likesRepository.findByUserIdAndProductId(userId, productId)
+                .orElseThrow(() -> new IllegalArgumentException("찜한 상품이 존재하지 않습니다."));
+
+        likesRepository.delete(like);
+    }
+
+    @Transactional(readOnly = true)
     public List<LikedProductsResponse> getLikedProducts(Long userId) {
         List<Likes> likes = likesRepository.findByUserId(userId);
         List<Integer> productIds = likes.stream()
