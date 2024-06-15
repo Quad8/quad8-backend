@@ -9,6 +9,7 @@ import site.keydeuk.store.entity.CartItemWithProduct;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     CartItemWithProduct findByCartIdAndProductId(Long cartId, Integer productId);
+    CartItemWithProduct findByCartIdAndProductIdAndOptionId(Long cartId, Integer productId,Long OptionId);
     CartItemWithCustom findByCartIdAndCustomOptionId(Long cartId, Integer customOptionId);
 
 }

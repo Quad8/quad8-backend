@@ -14,7 +14,6 @@ import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.cart.service.CartService;
 import site.keydeuk.store.domain.cartitem.dto.CartItemReqeustDto;
 import site.keydeuk.store.domain.security.PrincipalDetails;
-import site.keydeuk.store.entity.User;
 
 @Slf4j
 @Tag(name = "Cart", description = "장바구니 관련 API 입니다.")
