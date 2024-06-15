@@ -13,11 +13,11 @@ import java.util.List;
 
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,Integer> {
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByProductCategoryId(Integer categoryId);
 
-    Page<Product> findByProductCategoryId(Integer categoryId,Pageable pageable);
+    Page<Product> findByProductCategoryId(Integer categoryId, Pageable pageable);
 
     @Query("select p from Product p where p.productCategory.id between :startCategoryId and :endCategoryId")
     Page<Product> findProductsByCategoryIdBetween(
