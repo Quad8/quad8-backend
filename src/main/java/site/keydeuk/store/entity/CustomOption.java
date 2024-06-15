@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.keydeuk.store.common.entity.BaseTimeEntity;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "custom_option")
 @EntityListeners(AuditingEntityListener.class)
-public class CustomOption {
+public class CustomOption extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -43,10 +44,4 @@ public class CustomOption {
     private String imgUrl;
 
     private int price;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 }

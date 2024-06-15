@@ -28,7 +28,7 @@ public class CartController {
     @Operation(summary = "장바구니 담기", description = "상품을 장바구니에 담습니다.")
     @PostMapping("/add")
     public CommonResponse<?> addProductToCart(@AuthenticationPrincipal PrincipalDetails principalDetails, @ParameterObject @RequestBody CartItemReqeustDto reqeustDto){
-        Long cartItemId = cartService.addCart(reqeustDto,principalDetails.getUserId());
+        Long cartItemId = cartService.addProductToCart(reqeustDto,principalDetails.getUserId());
 
         return CommonResponse.ok(cartItemId);
     }
