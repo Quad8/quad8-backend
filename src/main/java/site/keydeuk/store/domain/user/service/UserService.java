@@ -22,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private Long id;
 
     @Transactional
     public Long join(JoinRequest joinRequest, MultipartFile imgFile) {
@@ -31,24 +32,32 @@ public class UserService {
         String encodePassword = getJoinPassword(joinRequest);
         User user = joinRequest.toEntity(encodePassword);
 
-        if (imgFile.isEmpty()) { //소셜 회원가입 햇거나 프로필 이미지 등록 안하는 사람
+        if (imgFile == null || imgFile.isEmpty()) {
+            //소셜 회원가입 햇거나 프로필 이미지 등록 안하는 사람
             User savedUser = userRepository.save(user);
             return savedUser.getId();
-        }else {
-            String imgUrl = imageService.uploadImage(imgFile);
-            User updateUser = user.updateImgUrl(imgUrl);
-            User savedUser = userRepository.save(updateUser);
-            return savedUser.getId();
         }
+        String imgUrl = imageService.uploadImage(imgFile);
+        User updateUser = user.updateImgUrl(imgUrl);
+        User savedUser = userRepository.save(updateUser);
+        return savedUser.getId();
+
+
     }
 
     @Transactional
-    public void updateProfile(Long userId, UpdateProfileRequest updateProfileRequest) {
+    public void updateProfile(Long userId, UpdateProfileRequest updateProfileRequest, MultipartFile imgFile) {
         log.info("User ID [{}] Update Profile = {}", userId, updateProfileRequest);
-        updateProfileValidate(updateProfileRequest);
+        updateProfileValidate(userId, updateProfileRequest);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        user.updateProfile(updateProfileRequest.phone(), updateProfileRequest.gender(), updateProfileRequest.nickname(), updateProfileRequest.imgUrl());
+
+        if (imgFile == null || imgFile.isEmpty()) {
+            user.updateProfile(updateProfileRequest, updateProfileRequest.imgUrl());
+            return;
+        }
+        String imgUrl = imageService.uploadImage(imgFile);
+        user.updateProfile(updateProfileRequest, imgUrl);
     }
 
     public boolean isExistNickname(String nickname) {
@@ -74,15 +83,22 @@ public class UserService {
         duplicateNickname(joinRequest.nickname());
     }
 
-    private void updateProfileValidate(UpdateProfileRequest updateProfileRequest) {
+    private void updateProfileValidate(Long userId, UpdateProfileRequest updateProfileRequest) {
+        if (getCurrentNickname(userId).equals(updateProfileRequest.nickname())) {
+            return;
+        }
         duplicateNickname(updateProfileRequest.nickname());
+    }
+
+    private String getCurrentNickname(Long userId) {
+        return findById(userId).getNickname();
     }
 
     private String getJoinPassword(JoinRequest joinRequest) {
         return passwordEncoder.encode(joinRequest.password());
     }
 
-    public User findById(Long userId){
+    public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }

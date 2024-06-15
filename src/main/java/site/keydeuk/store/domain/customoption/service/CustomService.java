@@ -29,7 +29,7 @@ public class CustomService {
 
 
     /** 커스텀 키보드 옵션 저장 */
-    public void saveCustomOption(CustomKeyboardRequestDto dto){
+    public Integer saveCustomOption(CustomKeyboardRequestDto dto){
         //1. base64 -> s3저장
         String base64Image = dto.getImgBase64();
         String base64Data = base64Image.replaceAll("^data:image/[a-zA-Z]+;base64,", "");
@@ -57,9 +57,7 @@ public class CustomService {
              ObjectDto objectDto = new ObjectDto(dto.getIndividualColor());
              customObjectRepository.save(objectDto.toEntity(customOption.getId()));
          }
-
-        //4. 옵션 상품들과 장바구니 저장
-
+         return customOption.getId();
     }
 
 
