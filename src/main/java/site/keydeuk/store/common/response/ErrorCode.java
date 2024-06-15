@@ -48,7 +48,9 @@ public enum ErrorCode {
     ALREADY_DELETE_USER(BAD_REQUEST, "이미 삭제된 사용자입니다."),
 
     //Likes
-    ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다.")
+    ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다."),
+    LIKED_PRODUCTS_NOT_FOUND(BAD_REQUEST, "찜한 상품이 존재하지 않습니다.")
+
     ;
 
     private final HttpStatus httpStatus;

@@ -16,6 +16,8 @@ import site.keydeuk.store.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static site.keydeuk.store.common.response.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class LikesService {
@@ -26,12 +28,12 @@ public class LikesService {
     @Transactional
     public Likes addLikes(Long userId, Integer productId) {
         if (likesRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_LIKE);
+            throw new CustomException(ALREADY_EXIST_LIKE);
         }
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         Likes like = Likes.builder()
                 .user(user)
                 .product(product)
@@ -43,7 +45,7 @@ public class LikesService {
     @Transactional
     public void deleteLike(Long userId, Integer productId) {
         Likes like = likesRepository.findByUserIdAndProductId(userId, productId)
-                .orElseThrow(() -> new IllegalArgumentException("찜한 상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(LIKED_PRODUCTS_NOT_FOUND));
 
         likesRepository.delete(like);
     }
