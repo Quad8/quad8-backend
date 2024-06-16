@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.cart.dto.cartlist.CartByUserResponseDto;
@@ -40,7 +37,7 @@ public class CartController {
     private final CustomObjectRepository customObjectRepository;
 
     @Operation(summary = "장바구니 조회", description = "로그인한 유저의 장바구니 목록을 조회합니다.")
-    @RequestMapping("/get")
+    @GetMapping("/get")
     private CommonResponse<?> getUserCartList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         CartByUserResponseDto dto = cartService.getCartByUserId(principalDetails.getUserId());
