@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CustomObjectRepository extends MongoRepository<CustomObject, Integer> {
-    List<CustomObject> findById(int id);
+    CustomObject findById(int id);
 }

@@ -1,9 +1,11 @@
 package site.keydeuk.store.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 @Setter
+@Getter
 @Entity
 @DiscriminatorValue("PRODUCT")
 public class CartItemWithProduct extends CartItem{
