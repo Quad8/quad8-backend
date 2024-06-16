@@ -6,13 +6,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.cart.dto.cartlist.CartByUserResponseDto;
+import site.keydeuk.store.domain.cart.dto.cartlist.CartItemListDto;
 import site.keydeuk.store.domain.cart.repository.CartRepository;
+import site.keydeuk.store.domain.cartitem.dto.CartCustomResponseDto;
 import site.keydeuk.store.domain.cartitem.dto.CartItemReqeustDto;
+import site.keydeuk.store.domain.cartitem.dto.CartProductResponseDto;
+import site.keydeuk.store.domain.cartitem.repository.CartItemRepository;
 import site.keydeuk.store.domain.cartitem.service.CartItemService;
+import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
+import site.keydeuk.store.domain.productswitchoption.repository.ProductSwitchOptionRepository;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
 
@@ -26,6 +37,9 @@ public class CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CustomRepository customRepository;
+    private final CartItemRepository cartItemRepository;
+    private final CustomObjectRepository customObjectRepository;
+    private final ProductSwitchOptionRepository productSwitchOptionRepository;
 
     private final CartItemService cartItemService;
 
@@ -91,7 +105,7 @@ public class CartService {
         }
     }
 
-    /* 커스텀 키보드 장바구니 담기**/
+    /** 커스텀 키보드 장바구니 담기**/
     public Long addCustomToCart(CartItemReqeustDto dto, Long userId){
         CustomOption custom = customRepository.findById(dto.getProductId())
                 .orElseThrow(EntityNotFoundException::new);
@@ -117,4 +131,39 @@ public class CartService {
             return cartItem.getId();
         }
     }
+
+    /** user 장바구니 조회*/
+    public CartByUserResponseDto getCartByUserId(Long userId){
+
+        CartItemListDto dto = CartItemListDto.fromEntity(cartRepository.findByUserId(userId));
+
+        List<CartProductResponseDto> cartProducts = new ArrayList<>();
+        List<CartCustomResponseDto> cartCustoms = new ArrayList<>();
+
+        for (CartItem item : dto.getCartItems()){
+            CartItem cartItem = cartItemRepository.findById(item.getId()).orElseThrow(EntityNotFoundException::new);
+
+            if (cartItem instanceof CartItemWithCustom) {
+                CartItemWithCustom customItem = (CartItemWithCustom) cartItem;
+                CustomObject object = customObjectRepository.findById(customItem.getCustomOption().getId())
+                        .orElseThrow(EntityNotFoundException::new);
+                CartCustomResponseDto cartCustomDto = CartCustomResponseDto.fromEntity(customItem.getId(),customItem.getCustomOption(),object);
+                cartCustoms.add(cartCustomDto);
+
+            } else if (cartItem instanceof CartItemWithProduct) {
+                CartItemWithProduct productItem = (CartItemWithProduct) cartItem;
+                CartProductResponseDto cartProductDto;
+                if (productItem.getProduct().getProductCategory().getId()==1){
+                    ProductSwitchOption option = productSwitchOptionRepository.findById(cartItem.getOptionId()).orElseThrow(EntityNotFoundException::new);
+                    cartProductDto = CartProductResponseDto.fromEntity(item,productItem.getProduct(),option.getOptionName());
+                }else {
+                    cartProductDto = CartProductResponseDto.fromEntity(item,productItem.getProduct());
+                }
+                cartProducts.add(cartProductDto);
+            }
+        }
+        Cart cart = cartRepository.findByUserId(userId);
+        return new CartByUserResponseDto(cart.getTotalCount(), cartCustoms,cartProducts);
+    }
+
 }

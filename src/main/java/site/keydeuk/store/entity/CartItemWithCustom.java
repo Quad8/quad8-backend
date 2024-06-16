@@ -1,8 +1,9 @@
 package site.keydeuk.store.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
-
+@Getter
 @Setter
 @Entity
 @DiscriminatorValue("CUSTOM_OPTION")
