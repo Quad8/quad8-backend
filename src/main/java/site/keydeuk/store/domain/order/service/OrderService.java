@@ -16,6 +16,8 @@ import site.keydeuk.store.entity.Product;
 
 import java.util.List;
 
+import static site.keydeuk.store.common.response.ErrorCode.ORDER_NOT_FOUND;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +31,18 @@ public class OrderService {
         return orders.stream()
                 .map(this::toOrderResponse)
                 .toList();
+    }
+
+    @Transactional
+    public void deleteOrders(Long userId, List<Long> orderIds) {
+        List<Order> orders = orderRepository.findAllById(orderIds).stream()
+                .filter(order -> order.getUserId().equals(userId))
+                .toList();
+
+        if (orders.size() != orderIds.size()) {
+            throw new CustomException(ORDER_NOT_FOUND);
+        }
+        orderRepository.deleteAll(orders);
     }
 
     private OrderResponse toOrderResponse(Order order) {
