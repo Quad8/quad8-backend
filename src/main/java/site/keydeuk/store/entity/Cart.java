@@ -2,13 +2,8 @@ package site.keydeuk.store.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.LastModifiedDate;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

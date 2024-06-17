@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.cart.repository.CartRepository;
+import site.keydeuk.store.domain.cartitem.dto.CustomUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.dto.delete.DeleteCartItemRequestDto;
 import site.keydeuk.store.domain.cartitem.repository.CartItemRepository;
+import site.keydeuk.store.domain.customoption.service.CustomService;
 import site.keydeuk.store.entity.Cart;
 import site.keydeuk.store.entity.CartItem;
 import site.keydeuk.store.entity.CartItemWithCustom;
@@ -19,6 +21,7 @@ public class CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final CustomService customService;
 
     public CartItemWithProduct findCartItemByCartIdAndProductId(Long cartId, Integer productId) {
         return cartItemRepository.findByCartIdAndProductId(cartId, productId);
@@ -34,6 +37,13 @@ public class CartItemService {
 
     public void save(CartItem cartItem) {
         cartItemRepository.save(cartItem);
+    }
+
+    @Transactional
+    public void updateCustom(Long cartItemId, CustomUpdateRequestDto dto){
+        CartItemWithCustom cartItem = (CartItemWithCustom) cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+        log.info("customId: {}",cartItem.getCustomOption().getId());
+        customService.updateCustomOption(cartItem.getCustomOption().getId(),dto);
     }
 
     @Transactional

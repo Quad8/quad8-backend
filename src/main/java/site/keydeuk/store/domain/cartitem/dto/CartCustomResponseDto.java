@@ -19,11 +19,11 @@ public class CartCustomResponseDto {
 
     private String texture; //texture
 
-    private String boardcolor; //boardcolor
+    private String boardColor; //boardcolor
 
     private String baseKeyColor;
 
-    private String switchtype; //switchtype
+    private String switchType; //switchtype
 
     private boolean hasPointKeyCap; //hasPointKeyCap
 
@@ -44,11 +44,12 @@ public class CartCustomResponseDto {
                 .id(id)
                 .type(custom.getLayout())
                 .texture(custom.getAppearanceTexture())
-                .boardcolor(custom.getAppearanceColor())
+                .boardColor(custom.getAppearanceColor())
                 .baseKeyColor(custom.getBaseKeyColor())
-                .switchtype(custom.getKeyboardSwitch())
+                .switchType(custom.getKeyboardSwitch())
                 .hasPointKeyCap(custom.isHasPointKey())
                 .pointKeyType(custom.getPointKeyType())
+                .pointSetColor(custom.getPointSetColor())
                 .imgUrl(custom.getImgUrl())
                 .price(custom.getPrice())
                 .individualColor(object.getObjects())
