@@ -5,6 +5,8 @@ import lombok.*;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
+import java.util.List;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -16,10 +18,11 @@ public class Order extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private boolean isCustom;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Long totalPrice;
     @OneToOne
     private Payment payment;
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems;
 }
