@@ -42,6 +42,7 @@ public class CartCustomResponseDto {
     public static CartCustomResponseDto fromEntity(Long id, CustomOption custom, CustomObject object){
         return CartCustomResponseDto.builder()
                 .id(id)
+                .productId(custom.getId())
                 .type(custom.getLayout())
                 .texture(custom.getAppearanceTexture())
                 .boardColor(custom.getAppearanceColor())
