@@ -17,12 +17,12 @@ public class CartItemWithCustom extends CartItem{
         CartItemWithCustom cartItem = new CartItemWithCustom();
         cartItem.setCart(cart);
         cartItem.setCustomOption(customOption);
-        cartItem.setCount(count);
+        cartItem.setCount(1);
         return cartItem;
     }
 
     @Override
     public void addCount(int count) {
-        this.setCount(this.getCount() + count);
+        this.setCount(1);
     }
 }

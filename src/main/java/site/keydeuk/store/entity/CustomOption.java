@@ -1,17 +1,14 @@
 package site.keydeuk.store.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
 
 import java.time.LocalDateTime;
-
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor

@@ -4,13 +4,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.cart.dto.cartlist.CartByUserResponseDto;
 import site.keydeuk.store.domain.cart.service.CartService;
 import site.keydeuk.store.domain.cartitem.dto.CartItemReqeustDto;
+import site.keydeuk.store.domain.cartitem.dto.CustomUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.dto.delete.DeleteCartItemRequestDto;
+import site.keydeuk.store.domain.cartitem.dto.update.ProductUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.service.CartItemService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
@@ -39,6 +42,22 @@ public class CartController {
         Long cartItemId = cartService.addProductToCart(reqeustDto,principalDetails.getUserId());
 
         return CommonResponse.ok(cartItemId);
+    }
+
+    @Operation(summary = "장바구니 커스텀 키보드 수정", description = "장바구니에 담긴 커스텀 키보드 옵션을 수정합니다.")
+    @PutMapping("/update/custom/{id}")
+    public CommonResponse<?> updateCustomToCart(@PathVariable("id")Long id, @RequestBody CustomUpdateRequestDto requestDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+        cartItemService.updateCustom(id,requestDto);
+
+        return CommonResponse.ok("장바구니 수정 완료",null);
+    }
+
+    @Operation(summary = "장바구니 상품 수정", description = "장바구니에 담긴 상품 수량 및 옵션을 수정합니다.")
+    @PutMapping("/update/product/{id}")
+    public CommonResponse<?> updateProductToCart(@PathVariable("id")Long id, @RequestBody ProductUpdateRequestDto requestDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+        cartItemService.updateProduct(id, requestDto);
+
+        return CommonResponse.ok("장바구니 수정 완료", null);
     }
 
     @Operation(summary = "장바구니 상품 삭제", description = "장바구니에서 상품을 삭제합니다.")

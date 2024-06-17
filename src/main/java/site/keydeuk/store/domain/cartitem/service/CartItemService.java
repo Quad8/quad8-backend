@@ -5,13 +5,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.cart.repository.CartRepository;
+import site.keydeuk.store.domain.cartitem.dto.CustomUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.dto.delete.DeleteCartItemRequestDto;
+import site.keydeuk.store.domain.cartitem.dto.update.ProductUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.repository.CartItemRepository;
-import site.keydeuk.store.entity.Cart;
-import site.keydeuk.store.entity.CartItem;
-import site.keydeuk.store.entity.CartItemWithCustom;
-import site.keydeuk.store.entity.CartItemWithProduct;
+import site.keydeuk.store.domain.customoption.service.CustomService;
+import site.keydeuk.store.entity.*;
+
+import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -19,6 +23,7 @@ public class CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final CustomService customService;
 
     public CartItemWithProduct findCartItemByCartIdAndProductId(Long cartId, Integer productId) {
         return cartItemRepository.findByCartIdAndProductId(cartId, productId);
@@ -33,6 +38,40 @@ public class CartItemService {
     }
 
     public void save(CartItem cartItem) {
+        cartItemRepository.save(cartItem);
+    }
+
+    @Transactional
+    public void updateCustom(Long cartItemId, CustomUpdateRequestDto dto){
+        CartItemWithCustom cartItem = (CartItemWithCustom) cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+        log.info("customId: {}",cartItem.getCustomOption().getId());
+        customService.updateCustomOption(cartItem.getCustomOption().getId(),dto);
+    }
+
+    @Transactional
+    public void updateProduct(Long cartItemId, ProductUpdateRequestDto dto){
+        CartItemWithProduct cartItem = (CartItemWithProduct) cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+        log.info("customId: {}",cartItem.getProduct().getId());
+        int categoryId = cartItem.getProduct().getProductCategory().getId();
+
+        if (categoryId == 1) {
+            boolean flag = true;
+            if (dto.getSwitchOptionId() == null){
+                throw new CustomException("키보드 스위치 옵션 선택 필수입니다.", COMMON_INVALID_PARAMETER);
+            }else {
+                for (ProductSwitchOption switchOption : cartItem.getProduct().getSwitchOptions()){
+                    if (switchOption.getId() == dto.getSwitchOptionId()){
+                        flag = false;
+                    }
+                }
+                if (flag){
+                    throw new CustomException("존재하지 않는 스위치 옵션입니다.", COMMON_INVALID_PARAMETER);
+                }
+            }
+        }
+
+        cartItem.setCount(dto.getCount());
+        if (dto.getSwitchOptionId() != null) cartItem.setOptionId(dto.getSwitchOptionId());
         cartItemRepository.save(cartItem);
     }
 
