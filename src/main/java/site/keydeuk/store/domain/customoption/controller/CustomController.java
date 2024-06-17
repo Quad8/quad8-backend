@@ -29,7 +29,7 @@ public class CustomController {
 
     @Operation(summary = "커스텀 키보드 주문",description = "스웨거XXXXX, 조합한 커스텀 키보드를 장바구니에 저장합니다.")
     @PostMapping("/create")
-    public CommonResponse<?> createCustomKeyboard(@AuthenticationPrincipal PrincipalDetails principalDetails,@ParameterObject @RequestBody @Valid CustomKeyboardRequestDto requestDto){
+    public CommonResponse<?> createCustomKeyboard(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody @Valid CustomKeyboardRequestDto requestDto){
 
         // 1. 커스텀 키보드 옵션 저장
         Integer productId = customService.saveCustomOption(requestDto);
