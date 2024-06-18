@@ -18,6 +18,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByProductCategoryId(Integer categoryId);
 
     Page<Product> findByProductCategoryId(Integer categoryId, Pageable pageable);
+    @Query("select p from Product p JOIN p.switchOptions s where s.optionName like %:optionName% and p.productCategory.id = :categoryId")
+    List<Product> findByProductCategoryIdAndSwitchOptions_OptionName(int categoryId,String optionName);
+
+    @Query("select p from Product p where p.price <= 100000 and p.productCategory.id = :categoryId")
+    List<Product> findByProductCategoryIdAndPriceLessThanEqual(int categoryId);
 
     @Query("select p from Product p where p.productCategory.id between :startCategoryId and :endCategoryId")
     Page<Product> findProductsByCategoryIdBetween(
