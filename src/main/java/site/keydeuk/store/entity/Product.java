@@ -1,6 +1,6 @@
 package site.keydeuk.store.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "product")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product {
 
     @Id
@@ -27,6 +28,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
+    @JsonIgnore
     private ProductCategory productCategory;
 
     private String name;
@@ -54,8 +56,11 @@ public class Product {
     private List<ProductImg> productImgs;
 
     @OneToMany(mappedBy = "product")
-    @JsonManagedReference
     private List<ProductSwitchOption> switchOptions;
+    @JsonProperty("categoryId")
+    public int getCategoryId(){
+        return productCategory.getId();
+    }
 
     public void setViews(int views){
         this.views = views;

@@ -105,9 +105,30 @@ public class ProductService {
         List<OptionProductsResponseDto> productlist = new ArrayList<>();
 
         for (int i=4;i<=8; i++){
-            productlist.add(getRandomOptionProduct(i ));
+            productlist.add(getRandomOptionProduct(i));
         }
         return productlist;
+    }
+
+    /** 키득pick 스위치로 검색  */
+    public List<ProductListResponseDto> getProductListByswitch(String param){
+        if (param.equals("가성비")){
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1));
+        }else {
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param));
+        }
+    }
+
+    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products){
+
+        List<ProductListResponseDto> dtos = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i <4 ; i++) {
+            int randomIndex = random.nextInt(products.size());
+            ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex));
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     private OptionProductsResponseDto getRandomOptionProduct(int categoryId){
@@ -208,5 +229,6 @@ public class ProductService {
 
         return entityManager.createQuery(countQuery).getSingleResult();
     }
+
 
 }

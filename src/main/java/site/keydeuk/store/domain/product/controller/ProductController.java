@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.product.dto.allproductlist.AllProductListRequestDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListRequestDto;
@@ -74,6 +75,15 @@ public class ProductController {
         return CommonResponse.fail("Invalid keyword");
     }
 
+    @Operation(summary = "메인페이지 키득 PICK 상품 목록", description = "메인페이지 키득 PICK 상품 목록을 조회합니다.")
+    @Parameter(name = "param", description = "직장인을 위한 -> 저소음, 가성비 -> 가성비, 타건감 -> 청축", example = "저소음")
+    @GetMapping("/get/keydeuk-pick")
+    public CommonResponse<?> getKeydeukPick(@RequestParam String param){
 
+        if (!param.equals("저소음") && !param.equals("청축") && !param.equals("가성비")){
+           return CommonResponse.fail("잘못된 요청입니다.");
+        }
+        return CommonResponse.ok(productService.getProductListByswitch(param));
+    }
 
 }
