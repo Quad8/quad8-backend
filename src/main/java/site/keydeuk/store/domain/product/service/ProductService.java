@@ -113,17 +113,22 @@ public class ProductService {
     /** 키득pick 스위치로 검색  */
     public List<ProductListResponseDto> getProductListByswitch(String param){
         if (param.equals("가성비")){
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1));
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1),4);
         }else {
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param));
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param),4);
         }
     }
 
-    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products){
+    /** 키득BEST 구매순 20위까지 조회*/
+    public List<ProductListResponseDto> getBestProductList(){
+        return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20);
+    }
+
+    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size){
 
         List<ProductListResponseDto> dtos = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i <4 ; i++) {
+        for (int i = 0; i <size ; i++) {
             int randomIndex = random.nextInt(products.size());
             ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex));
             dtos.add(dto);
