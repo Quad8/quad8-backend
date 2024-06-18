@@ -59,32 +59,33 @@ public class ProductController {
         //paging 처리
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
-        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable));
+        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable,principalDetails.getUserId()));
 
     }
 
     @Operation(summary = "(스위치 검색 미구현!!)카테고리별 상품 목록 조회", description = "카테고리별(키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.(인기순 미구현)")
     @GetMapping("/get/category-list")
-    public CommonResponse<?> getProductList(@ParameterObject @Valid ProductListRequestDto dto){
+    public CommonResponse<?> getProductList(@ParameterObject @Valid ProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         //all : 전체, 1 keyboard, 2 keycap, 3 switch, 4-8 etc
         // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         // 인기순 추후 구현
         String word = dto.getKeyword();
+        Long userId = principalDetails.getUserId();
 
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
         if (word.equals("keyboard")) {
             return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    1, 1, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable));
+                    1, 1, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
         }else if (word.equals("keycap")) {
             return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    2, 2, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable));
+                    2, 2, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
         }else if (word.equals("switch")) {
             return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    3, 3, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable));
+                    3, 3, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
         }else if (word.equals("etc")) {
             return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    4, 8, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable));
+                    4, 8, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
         }
         return CommonResponse.fail("Invalid keyword");
     }
@@ -92,18 +93,18 @@ public class ProductController {
     @Operation(summary = "메인페이지 키득 PICK 상품 목록", description = "메인페이지 키득 PICK 상품 목록을 조회합니다.")
     @Parameter(name = "param", description = "직장인을 위한 -> 저소음, 가성비 -> 가성비, 타건감 -> 청축", example = "저소음")
     @GetMapping("/get/keydeuk-pick")
-    public CommonResponse<?> getKeydeukPick(@RequestParam String param){
+    public CommonResponse<?> getKeydeukPick(@RequestParam String param,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         if (!param.equals("저소음") && !param.equals("청축") && !param.equals("가성비")){
            return CommonResponse.fail("잘못된 요청입니다.");
         }
-        return CommonResponse.ok(productService.getProductListByswitch(param));
+        return CommonResponse.ok(productService.getProductListByswitch(param,principalDetails.getUserId()));
     }
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
     @GetMapping("/get/keyduek-best")
-    public CommonResponse<?> getKeydeukBest(){
+    public CommonResponse<?> getKeydeukBest(@AuthenticationPrincipal PrincipalDetails principalDetails){
         /** 구매나 리뷰 완료되면 로직 재구성 */
-        return CommonResponse.ok(productService.getBestProductList());
+        return CommonResponse.ok(productService.getBestProductList(principalDetails.getUserId()));
     }
 
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
+import site.keydeuk.store.domain.likes.service.LikesService;
 import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
-
+    private final LikesService likesService;
     private final EntityManager entityManager;
 
     /** 상품 상세 조회 */
@@ -41,7 +42,7 @@ public class ProductService {
 
 
     /** 전체 상품 조회 */
-    public Page<ProductListResponseDto>  getProductAllList(String sort, Pageable pageable) {
+    public Page<ProductListResponseDto>  getProductAllList(String sort, Pageable pageable,Long userId) {
         Page<Product> products;
 
         // 정렬 방식에 따라 페이지 정렬 설정
@@ -63,12 +64,18 @@ public class ProductService {
 
         products = productRepository.findAll(pageable);
 
-        return products.map(ProductListResponseDto::new);
+        return products.map(product -> {
+            boolean isLiked = false;
+            if (userId != null) {
+                isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
+            }
+            return new ProductListResponseDto(product,isLiked);
+        });
     }
 
 
     /**카테고리 별 상품 조회*/
-    public Page<ProductListResponseDto> getProductListByCategory(Integer categoryId,String sort,Pageable pageable){
+    public Page<ProductListResponseDto> getProductListByCategory(Integer categoryId,String sort,Pageable pageable, Long userId){
 
         Page<Product> products;
 
@@ -95,8 +102,13 @@ public class ProductService {
         }
 
         // 리뷰수 -- 미구현
-
-        return products.map(ProductListResponseDto::new);
+        return products.map(product -> {
+            boolean isLiked = false;
+            if (userId != null) {
+                isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
+            }
+            return new ProductListResponseDto(product,isLiked);
+        });
     }
 
 
@@ -111,26 +123,31 @@ public class ProductService {
     }
 
     /** 키득pick 스위치로 검색  */
-    public List<ProductListResponseDto> getProductListByswitch(String param){
+    public List<ProductListResponseDto> getProductListByswitch(String param, Long userId){
         if (param.equals("가성비")){
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1),4);
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1),4,userId);
         }else {
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param),4);
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param),4,userId);
         }
     }
 
     /** 키득BEST 구매순 20위까지 조회*/
-    public List<ProductListResponseDto> getBestProductList(){
-        return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20);
+    public List<ProductListResponseDto> getBestProductList(Long userId){
+
+        return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20,userId);
     }
 
-    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size){
+    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size, Long userId){
 
         List<ProductListResponseDto> dtos = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i <size ; i++) {
             int randomIndex = random.nextInt(products.size());
-            ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex));
+            boolean isLiked = false;
+            if (userId != null) {
+                isLiked = likesService.existsByUserIdAndProductId(userId, products.get(randomIndex).getId());
+            }
+            ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex),isLiked);
             dtos.add(dto);
         }
         return dtos;
@@ -154,7 +171,7 @@ public class ProductService {
     public Page<ProductListResponseDto> getProductListByCategoryAndFilters(
             Integer startCategoryId, Integer endCategoryId,
             String company, Integer minPrice, Integer maxPrice,
-            String sort, Pageable pageable) {
+            String sort, Pageable pageable,Long userId) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Product> cq = cb.createQuery(Product.class);
@@ -207,7 +224,13 @@ public class ProductService {
 
         long total = getTotalCount(startCategoryId, endCategoryId, company, minPrice, maxPrice);
 
-        return new PageImpl<>(resultList.stream().map(ProductListResponseDto::new).collect(Collectors.toList()), pageable, total);
+        List<ProductListResponseDto> dtos = resultList.stream().map(product -> {
+           boolean isLiked = false;
+           if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,product.getId());
+           return new ProductListResponseDto(product,isLiked);
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, total);
     }
 
     private long getTotalCount(Integer startCategoryId, Integer endCategoryId, String company, Integer minPrice, Integer maxPrice) {
