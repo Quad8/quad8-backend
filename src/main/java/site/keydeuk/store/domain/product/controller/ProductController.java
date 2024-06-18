@@ -10,13 +10,18 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.likes.service.LikesService;
 import site.keydeuk.store.domain.product.dto.allproductlist.AllProductListRequestDto;
+import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListRequestDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.service.ProductService;
+import site.keydeuk.store.domain.security.PrincipalDetails;
+import site.keydeuk.store.domain.user.service.UserService;
 
 
 @Slf4j
@@ -27,17 +32,26 @@ import site.keydeuk.store.domain.product.service.ProductService;
 public class ProductController {
 
     private final ProductService productService;
+    private final LikesService likesService;
 
-    @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다. (미구현 : 리뷰 & 찜 관련 )")
+    @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다. (미구현 : 리뷰 )")
     @Parameter(name = "id", description = "상품 ID", example = "11")
     @GetMapping("/get-detail-info/{id}")
-    public CommonResponse<?> getProductDetailById(@PathVariable("id") Integer id){
-        return CommonResponse.ok(productService.getProductDetailById(id));
+    public CommonResponse<?> getProductDetailById(@PathVariable("id") Integer id,@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        ProductDetailResponseDto dto = productService.getProductDetailById(id);
+
+        if (principalDetails != null){
+            Long userId = principalDetails.getUserId();
+            boolean isLiked = likesService.existsByUserIdAndProductId(userId,id);
+            dto.setLiked(isLiked);
+        }
+        return CommonResponse.ok(dto);
     }
 
     @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.(인기순 미구현)")
     @GetMapping("/get/all-list")
-    public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto){
+    public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         //all : 전체
         // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         // 인기순 추후 구현
