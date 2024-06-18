@@ -85,5 +85,11 @@ public class ProductController {
         }
         return CommonResponse.ok(productService.getProductListByswitch(param));
     }
+    @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
+    @GetMapping("/get/keyduek-best")
+    public CommonResponse<?> getKeydeukBest(){
+        /** 구매나 리뷰 완료되면 로직 재구성 */
+        return CommonResponse.ok(productService.getBestProductList());
+    }
 
 }

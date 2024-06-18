@@ -57,6 +57,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<ProductSwitchOption> switchOptions;
+
     @JsonProperty("categoryId")
     public int getCategoryId(){
         return productCategory.getId();
