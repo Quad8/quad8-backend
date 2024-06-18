@@ -67,4 +67,8 @@ public class LikesService {
                         ).build())
                 .toList();
     }
+
+    public boolean existsByUserIdAndProductId(Long userId, Integer productId){
+        return likesRepository.existsByUserIdAndProductId(userId,productId);
+    }
 }

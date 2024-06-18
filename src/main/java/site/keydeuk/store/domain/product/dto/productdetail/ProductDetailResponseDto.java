@@ -2,7 +2,11 @@ package site.keydeuk.store.domain.product.dto.productdetail;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Setter;
+import site.keydeuk.store.domain.productswitchoption.dto.ProductSwitchOptionDto;
 import site.keydeuk.store.entity.Product;
+import site.keydeuk.store.entity.ProductSwitchOption;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -29,6 +33,8 @@ public class ProductDetailResponseDto {
 
     private String categoryName;
 
+    private boolean isLiked;
+
     public ProductDetailResponseDto(Product product){
         this.id = product.getId();
         this.name = product.getName();
@@ -39,12 +45,15 @@ public class ProductDetailResponseDto {
         this.detailsImg = product.getDetailUrl();
         this.thubmnailList = product.getProductImgs();
         if(!product.getSwitchOptions().isEmpty()){
-            this.optionList = product.getSwitchOptions();
-
+            this.optionList = new ArrayList<>();
+            for (ProductSwitchOption switchOption : product.getSwitchOptions()){
+                this.optionList.add(new ProductSwitchOptionDto(switchOption));
+            }
         }else {
             this.optionList = null;
         }
         this.categoryName = product.getProductCategory().getName();
+        this.isLiked = false;
     }
 
 }

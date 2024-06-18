@@ -27,4 +27,5 @@ public class ProductSwitchOption {
     private Product product;
 
     private String optionName;
+
 }

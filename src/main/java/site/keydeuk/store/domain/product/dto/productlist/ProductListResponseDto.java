@@ -24,12 +24,15 @@ public class ProductListResponseDto {
 
     private String thumbnail;
 
-    public ProductListResponseDto(Product product){
+    private boolean isLiked;
+
+    public ProductListResponseDto(Product product,boolean isLiked){
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
         this.reviewscount = 999;
         this.views = product.getViews();
+        this.isLiked = isLiked;
 
         List<ProductImg> productImgs = product.getProductImgs();
         if (!productImgs.isEmpty()){
