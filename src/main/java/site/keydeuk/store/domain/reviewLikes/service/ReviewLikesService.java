@@ -33,18 +33,20 @@ public class ReviewLikesService {
         return reviewLikesRepository.save(reviewLikes);
     }
 
+    @Transactional
+    public void deleteLike(Long userId, Long reviewId) {
+        ReviewLikes reviewLike = reviewLikesRepository.findByUserIdAndReviewId(userId, reviewId)
+                .orElseThrow(() -> new CustomException(LIKES_NOT_FOUND));
+        reviewLikesRepository.delete(reviewLike);
+    }
+
     private Review getReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
-        return review;
     }
 
     private User getUser(Long userId) {
-        User user = userRepository.findById(userId)
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        return user;
-    }
-
-    public void deleteLike(Long userId, Long reviewId) {
     }
 }
