@@ -58,4 +58,15 @@ public class ReviewController {
                 .toList();
         return CommonResponse.ok(response);
     }
+
+    @GetMapping()
+    @Operation(summary = "제품 리뷰 조회", description = "특정 제품의 모든 리뷰를 조회합니다.")
+    public CommonResponse<List<ReviewResponse>> getProductReviews(
+            @RequestParam("productId") Integer productId) {
+        List<Review> reviews = reviewService.getProductReviews(productId);
+        List<ReviewResponse> response = reviews.stream()
+                .map(ReviewResponse::from)
+                .toList();
+        return CommonResponse.ok(response);
+    }
 }

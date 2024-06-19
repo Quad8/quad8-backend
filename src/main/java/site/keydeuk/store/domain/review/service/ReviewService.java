@@ -77,6 +77,12 @@ public class ReviewService {
         return reviewRepository.findByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Review> getProductReviews(Integer productId) {
+        getProduct(productId);
+        return reviewRepository.findByProductId(productId);
+    }
+
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)

@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsReviewByUserIdAndProductId (Long userId, Integer productId);
-
     List<Review> findByUserId(Long userId);
+    List<Review> findByProductId(Integer productId);
 }
