@@ -37,7 +37,7 @@ public class UserService {
             User savedUser = userRepository.save(user);
             return savedUser.getId();
         }
-        String imgUrl = imageService.uploadImage(imgFile);
+        String imgUrl = imageService.uploadUserImage(imgFile);
         User updateUser = user.updateImgUrl(imgUrl);
         User savedUser = userRepository.save(updateUser);
         return savedUser.getId();
@@ -56,7 +56,7 @@ public class UserService {
             user.updateProfile(updateProfileRequest, updateProfileRequest.imgUrl());
             return;
         }
-        String imgUrl = imageService.uploadImage(imgFile);
+        String imgUrl = imageService.uploadUserImage(imgFile);
         user.updateProfile(updateProfileRequest, imgUrl);
     }
 
