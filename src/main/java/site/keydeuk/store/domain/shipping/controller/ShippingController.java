@@ -29,7 +29,7 @@ public class ShippingController {
     @Operation(summary = "배송지 저장", description = "새로운 배송지 정보를 저장합니다.")
     public CommonResponse<ShippingAddressResponse> saveShippingAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated SaveShippingAddressRequest saveShippingAddressRequest
+            @RequestBody SaveShippingAddressRequest saveShippingAddressRequest
     ) {
         ShippingAddressResponse response = shippingService.saveShippingAddress(principalDetails, saveShippingAddressRequest);
         return CommonResponse.ok(response);
