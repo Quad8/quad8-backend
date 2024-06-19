@@ -59,12 +59,12 @@ public class OrderService {
     }
 
     private OrderItemResponse toOrderItemResponse(OrderItem orderItem) {
-        Product product = productRepository.findById(orderItem.getProductId())
+        Product product = productRepository.findById(orderItem.getProduct().getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
         //TODO: 스위치 옵션 id로 스위치 옵션 명 가져오기
-        Long switchOptionId = orderItem.getSwitchOptionId();
-        String switchOPtion = "옵션";
-        return OrderItemResponse.from(orderItem, product, switchOPtion);
+//        Long switchOptionId = orderItem.getProduct().getProduct;
+        String switchOption = "옵션";
+        return OrderItemResponse.from(orderItem, product, switchOption);
     }
 }
