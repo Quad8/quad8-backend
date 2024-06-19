@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -41,5 +40,33 @@ public class Review extends BaseTimeEntity {
 
     public void addReviewImgs(Collection<ReviewImg> reviewImgs) {
         this.reviewImages.addAll(reviewImgs);
+    }
+
+    @Builder
+    public Review(String content, Double score, Long viewCount, Integer option1, Integer option2, Integer option3, User user, Product product) {
+        this.content = content;
+        this.score = score;
+        this.viewCount = viewCount;
+        this.option1 = option1;
+        this.option2 = option2;
+        this.option3 = option3;
+        this.user = user;
+        this.product = product;
+    }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", score=" + score +
+                ", viewCount=" + viewCount +
+                ", option1=" + option1 +
+                ", option2=" + option2 +
+                ", option3=" + option3 +
+                ", reviewImages=" + reviewImages +
+                ", user=" + user +
+                ", product=" + product +
+                '}';
     }
 }

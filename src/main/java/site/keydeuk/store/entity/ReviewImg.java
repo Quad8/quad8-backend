@@ -15,9 +15,12 @@ public class ReviewImg {
     private Long id;
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String imgUrl;
+    private Long reviewId;
 
-    public ReviewImg(String imageUrl) {
-        this.imageUrl = imageUrl;
+
+    public ReviewImg(String imgUrl, Long reviewId) {
+        this.imgUrl = imgUrl;
+        this.reviewId = reviewId;
     }
 }

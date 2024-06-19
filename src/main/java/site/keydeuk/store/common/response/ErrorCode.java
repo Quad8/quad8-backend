@@ -46,10 +46,14 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "유저 정보가 존재하지 않습니다"),
     INVALID_PASSWORD(BAD_REQUEST, "비밀번호를 확인해 주세요."),
     ALREADY_DELETE_USER(BAD_REQUEST, "이미 삭제된 사용자입니다."),
+    PERMISSION_DENIED(FORBIDDEN, "이 작업을 수행할 권한이 없습니다."),
 
     //Likes
     ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다."),
-    LIKED_PRODUCTS_NOT_FOUND(BAD_REQUEST, "찜한 상품이 존재하지 않습니다.")
+    LIKED_PRODUCTS_NOT_FOUND(BAD_REQUEST, "찜한 상품이 존재하지 않습니다."),
+
+    //Review
+    REVIEW_NOT_FOUND(BAD_REQUEST, "리뷰 정보를 찾을 수 없습니다.")
 
     ;
 

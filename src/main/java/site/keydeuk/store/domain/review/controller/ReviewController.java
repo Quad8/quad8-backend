@@ -34,4 +34,14 @@ public class ReviewController {
         return CommonResponse.ok(reviewId);
     }
 
+    @DeleteMapping("/{reviewId}")
+    @Operation(summary = "리뷰 삭제", description = "리뷰를 삭제합니다.")
+    public CommonResponse<Void> deleteReview(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long reviewId
+    ) {
+        Long userId = principalDetails.getUserId();
+        reviewService.deleteReview(userId, reviewId);
+        return CommonResponse.ok();
+    }
 }
