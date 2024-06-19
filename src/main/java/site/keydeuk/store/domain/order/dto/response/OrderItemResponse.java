@@ -10,15 +10,15 @@ public record OrderItemResponse(
         String productImgUrl,
         String productName,
         String switchOption,
-        Integer count
+        Integer viewCount
 ) {
     public static OrderItemResponse from(OrderItem orderItem, Product product, String switchOption) {
         return OrderItemResponse.builder()
-                .productId(orderItem.getProductId())
+                .productId(orderItem.getProduct().getId())
                 .productImgUrl(product.getProductImgs().get(0).getImgUrl())
                 .productName(product.getName())
                 .switchOption(switchOption)
-                .count(orderItem.getCount())
+                .viewCount(orderItem.getProduct().getViews())
                 .build();
     }
 }
