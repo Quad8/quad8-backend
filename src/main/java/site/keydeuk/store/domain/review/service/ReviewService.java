@@ -9,13 +9,15 @@ import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
-import site.keydeuk.store.domain.order.repository.OrderRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
 import site.keydeuk.store.domain.review.repository.ReviewImgRepository;
 import site.keydeuk.store.domain.review.repository.ReviewRepository;
 import site.keydeuk.store.domain.user.repository.UserRepository;
-import site.keydeuk.store.entity.*;
+import site.keydeuk.store.entity.Product;
+import site.keydeuk.store.entity.Review;
+import site.keydeuk.store.entity.ReviewImg;
+import site.keydeuk.store.entity.User;
 
 import java.util.List;
 
@@ -33,15 +35,14 @@ public class ReviewService {
     @Transactional
     public Long createReview(Long userId, Integer productId, CreateReviewRequest createReviewRequest, List<MultipartFile> reviewImgs) {
         getOrderItem(userId, productId);
+        Product product = getProduct(productId);
+        User user = getUser(userId);
 
-        Product product = productRepository.findById(productId).orElseThrow(
-                () -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND)
-        );
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
+        if (isReviewExistsByUserAndProduct(userId, productId)) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_REVIEW);
+        }
+
         Review review = createReviewRequest.toEntity(createReviewRequest, user, product);
-        log.info("{}", review);
 
         if (reviewImgs == null || reviewImgs.isEmpty()) {
             Review savedReview = reviewRepository.save(review);
@@ -71,8 +72,24 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    private User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+    }
+
+    private Product getProduct(Integer productId) {
+        return productRepository.findById(productId).orElseThrow(
+                () -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND)
+        );
+    }
+
     private void getOrderItem(Long userId, Integer productId) {
         orderItemsRepository.findByOrder_UserIdAndProductId(userId, productId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    public boolean isReviewExistsByUserAndProduct(Long userId, Integer productId) {
+        return reviewRepository.existsReviewByUserIdAndProductId(userId, productId);
     }
 }

@@ -53,6 +53,7 @@ public enum ErrorCode {
     LIKED_PRODUCTS_NOT_FOUND(BAD_REQUEST, "찜한 상품이 존재하지 않습니다."),
 
     //Review
+    ALREADY_EXIST_REVIEW(BAD_REQUEST, "이미 해당 제품에 대한 리뷰를 작성하였습니다."),
     REVIEW_NOT_FOUND(BAD_REQUEST, "리뷰 정보를 찾을 수 없습니다.")
 
     ;
