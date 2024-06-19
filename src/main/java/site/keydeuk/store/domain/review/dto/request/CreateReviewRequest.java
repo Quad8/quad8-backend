@@ -33,6 +33,7 @@ public record CreateReviewRequest(
                         .option1(request.option1)
                         .option2(request.option2)
                         .option3(request.option3)
+                        .viewCount(0L)
                         .user(user)
                         .product(product)
                         .build();
