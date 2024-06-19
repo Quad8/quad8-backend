@@ -27,8 +27,8 @@ public class Community extends BaseTimeEntity {
 
     private String content;
 
-    private Long viewCount;
+    private int viewCount;
 
-    public void setViewCount(Long viewCount){this.viewCount = viewCount;}
+    public void setViewCount(int viewCount){this.viewCount = viewCount;}
 
 }
