@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -51,7 +53,7 @@ public class ImageService {
         return objectUrl;
     }
 
-    public String uploadImage(MultipartFile multipartFile) {
+    public String uploadUserImage(MultipartFile multipartFile) {
         String objectKey = "keydeuk/user/profile" + UUID.randomUUID() + ".png";
         String objectUrl = null;
 
@@ -69,5 +71,31 @@ public class ImageService {
         }
         return objectUrl;
     }
+    public List<String> uploadReviewImages(List<MultipartFile> multipartFiles) {
+        String objectKey = "keydeuk/product/review" + UUID.randomUUID() + ".png";
 
+        List<String> imageUrls = new ArrayList<>();
+        for (MultipartFile multipartFile : multipartFiles) {
+            String imageUrl = uploadImage(objectKey, multipartFile);
+            imageUrls.add(imageUrl);
+        }
+        return imageUrls;
+    }
+    private String uploadImage(String objectkey, MultipartFile multipartFile) {
+        String objectUrl = null;
+
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+
+            amazonS3Client.putObject(bucketName, objectkey, multipartFile.getInputStream(), metadata);
+            objectUrl = amazonS3Client.getUrl(bucketName, objectkey).toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Error uploading image: {}", e.getMessage());
+            throw new RuntimeException("Error uploading image", e);
+        }
+        return objectUrl;
+    }
 }

@@ -61,7 +61,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/v1/product/**",
             "/api/v1/users/**",
-            "/api/v1/oauth2/signUp"
+            "/api/v1/oauth2/signUp",
+            "/api/v1/reviews"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{

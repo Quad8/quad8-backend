@@ -21,8 +21,6 @@ public class Order extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Long totalPrice;
-    @OneToOne
-    private Payment payment;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 }
