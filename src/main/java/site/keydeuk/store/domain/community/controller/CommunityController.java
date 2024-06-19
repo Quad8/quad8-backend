@@ -40,8 +40,18 @@ public class CommunityController {
         if (files.size() >4){
             return CommonResponse.error("파일은 최대 4장까지 가능합니다.");
         }
-
         return CommonResponse.ok("글 저장되었습니다.",communityService.createPost(principalDetails.getUserId(),postDto,files));
+    }
+
+    @Operation(summary = "커뮤니티 글 삭제하기", description = "작성된 글을 삭제합니다.")
+    @DeleteMapping("/delete/{id}")
+    public CommonResponse<?> deletePost(@AuthenticationPrincipal PrincipalDetails principalDetails,@PathVariable("id")Long id){
+        // user가 쓴 게시글 맞는지 확인
+        if (communityService.findPostByuserIdAndCommunityId(principalDetails.getUserId(), id) == null) return CommonResponse.error("작성한 게시글이 아닙니다.");
+
+        communityService.deletePost(id);
+
+        return CommonResponse.ok("게시글이 삭제되었습니다.");
     }
 
 }

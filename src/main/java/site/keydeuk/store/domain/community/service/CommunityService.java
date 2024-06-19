@@ -1,5 +1,6 @@
 package site.keydeuk.store.domain.community.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,16 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityImgRepository communityImgRepository;
     private final UserRepository userRepository;
-
     private final ImageService imageService;
+    private final CommunityCommentService communityCommentService;
+    private final CommunityImgService communityImgService;
+    private final CommunityLikesService communityLikesService;
 
+    public Community findPostByuserIdAndCommunityId(Long userId, Long CommunityId){
+        return communityRepository.findByIdAndUser_Id(CommunityId,userId);
+    }
+
+    @Transactional
     public Long createPost(Long userId, PostDto postDto, List<MultipartFile> files){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -52,4 +60,12 @@ public class CommunityService {
         return community.getId();
     }
 
+    @Transactional
+    public void deletePost(Long communityId){
+        communityImgService.deleteAllImgByCommunityId(communityId);
+        communityLikesService.deleteAllLikesByCommunityId(communityId);
+        communityCommentService.deleteAllCommentByCommunityId(communityId);
+        communityRepository.deleteById(communityId);
+
+    }
 }
