@@ -44,4 +44,7 @@ public class ReviewLikesService {
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return user;
     }
+
+    public void deleteLike(Long userId, Long reviewId) {
+    }
 }

@@ -41,7 +41,7 @@ public class CommunityService {
         communityRepository.save(community);
 
         for (MultipartFile file: files){
-            String imgUrl = imageService.uploadImage(file);
+            String imgUrl = imageService.uploadCommunityImage(file);
             log.info("imgURl: {}",imgUrl);
             CommunityImg communityImg = CommunityImg.builder()
                     .community(community)
