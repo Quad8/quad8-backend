@@ -55,11 +55,15 @@ public class ProductController {
         //all : 전체
         // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         // 인기순 추후 구현
+        Long userId = null;
+        if (principalDetails!= null){
+            userId = principalDetails.getUserId();
+        }
 
         //paging 처리
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
-        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable,principalDetails.getUserId()));
+        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable,userId));
 
     }
 
@@ -70,7 +74,10 @@ public class ProductController {
         // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         // 인기순 추후 구현
         String word = dto.getKeyword();
-        Long userId = principalDetails.getUserId();
+        Long userId = null;
+        if (principalDetails!= null){
+            userId = principalDetails.getUserId();
+        }
 
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
@@ -98,13 +105,23 @@ public class ProductController {
         if (!param.equals("저소음") && !param.equals("청축") && !param.equals("가성비")){
            return CommonResponse.fail("잘못된 요청입니다.");
         }
-        return CommonResponse.ok(productService.getProductListByswitch(param,principalDetails.getUserId()));
+        Long userId = null;
+        if (principalDetails!= null){
+            userId = principalDetails.getUserId();
+        }
+
+        return CommonResponse.ok(productService.getProductListByswitch(param,userId));
     }
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
     @GetMapping("/get/keyduek-best")
     public CommonResponse<?> getKeydeukBest(@AuthenticationPrincipal PrincipalDetails principalDetails){
         /** 구매나 리뷰 완료되면 로직 재구성 */
-        return CommonResponse.ok(productService.getBestProductList(principalDetails.getUserId()));
+        Long userId = null;
+        if (principalDetails!= null){
+            userId = principalDetails.getUserId();
+        }
+
+        return CommonResponse.ok(productService.getBestProductList(userId));
     }
 
 }
