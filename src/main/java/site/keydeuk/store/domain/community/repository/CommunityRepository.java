@@ -6,4 +6,7 @@ import site.keydeuk.store.entity.Community;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community,Long> {
+
+    Community findByIdAndUser_Id(Long id, Long userId);
+
 }

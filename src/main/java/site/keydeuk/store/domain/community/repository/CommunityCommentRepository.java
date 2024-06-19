@@ -6,4 +6,7 @@ import site.keydeuk.store.entity.CommunityComment;
 
 @Repository
 public interface CommunityCommentRepository extends JpaRepository<CommunityComment,Long> {
+
+    void deleteByCommunity_Id(Long id);
+
 }

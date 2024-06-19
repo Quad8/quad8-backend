@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 import site.keydeuk.store.entity.CommunityLikes;
 @Repository
 public interface CommunityLikesRepository extends JpaRepository<CommunityLikes,Long> {
+
+    void deleteByCommunity_Id(Long id);
 }
