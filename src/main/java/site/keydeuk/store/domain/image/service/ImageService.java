@@ -40,7 +40,8 @@ public class ImageService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("error: {}", e.getMessage());
+            log.error("Error uploading image: {}", e.getMessage());
+            throw new RuntimeException("Error uploading image", e);
         }
 
         if (objectUrl.isEmpty()) {
