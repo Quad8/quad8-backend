@@ -81,7 +81,13 @@ public class ImageService {
         }
         return imageUrls;
     }
-    private String uploadImage(String objectkey, MultipartFile multipartFile) {
+
+    public String uploadCommunityImage(MultipartFile multipartFile) {
+        String objectKey = "keydeuk/product/community" + UUID.randomUUID() + ".png";
+        return uploadImage(objectKey, multipartFile);
+    }
+
+    private String uploadImage(String objectKey, MultipartFile multipartFile) {
         String objectUrl = null;
 
         try {
@@ -89,8 +95,8 @@ public class ImageService {
             metadata.setContentLength(multipartFile.getSize());
             metadata.setContentType(multipartFile.getContentType());
 
-            amazonS3Client.putObject(bucketName, objectkey, multipartFile.getInputStream(), metadata);
-            objectUrl = amazonS3Client.getUrl(bucketName, objectkey).toString();
+            amazonS3Client.putObject(bucketName, objectKey, multipartFile.getInputStream(), metadata);
+            objectUrl = amazonS3Client.getUrl(bucketName, objectKey).toString();
         } catch (IOException e) {
             e.printStackTrace();
             log.error("Error uploading image: {}", e.getMessage());

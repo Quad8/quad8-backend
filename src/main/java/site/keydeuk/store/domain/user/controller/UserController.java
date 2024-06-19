@@ -18,8 +18,6 @@ import site.keydeuk.store.domain.user.dto.response.UserResponse;
 import site.keydeuk.store.domain.user.service.UserService;
 import site.keydeuk.store.entity.User;
 
-import java.io.File;
-
 @Slf4j
 @Tag(name = "User", description = "User 관련 API 입니다.")
 @RestController
