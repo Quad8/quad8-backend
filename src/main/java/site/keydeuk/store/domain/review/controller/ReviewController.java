@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
+import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
 import site.keydeuk.store.domain.review.service.ReviewService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
+import site.keydeuk.store.entity.Review;
 
 import java.util.List;
 
@@ -43,5 +45,17 @@ public class ReviewController {
         Long userId = principalDetails.getUserId();
         reviewService.deleteReview(userId, reviewId);
         return CommonResponse.ok();
+    }
+
+    @GetMapping("/user")
+    @Operation(summary = "사용자 리뷰 조회", description = "사용자가 작성한 모든 리뷰를 조회합니다.")
+    public CommonResponse<List<ReviewResponse>> getUserReviews(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUserId();
+        List<Review> userReviews = reviewService.getUserReviews(userId);
+        List<ReviewResponse> response = userReviews.stream()
+                .map(ReviewResponse::from)
+                .toList();
+        return CommonResponse.ok(response);
     }
 }

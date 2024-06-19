@@ -72,6 +72,11 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    @Transactional(readOnly = true)
+    public List<Review> getUserReviews(Long userId) {
+        return reviewRepository.findByUserId(userId);
+    }
+
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
