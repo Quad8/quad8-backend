@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
-import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.likes.dto.response.LikedProductsResponse;
 import site.keydeuk.store.domain.likes.repository.LikesRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
@@ -14,7 +13,6 @@ import site.keydeuk.store.entity.Product;
 import site.keydeuk.store.entity.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
 
