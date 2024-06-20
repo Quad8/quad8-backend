@@ -1,8 +1,9 @@
 package site.keydeuk.store.domain.community.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Getter;
 import lombok.Setter;
-import site.keydeuk.store.domain.cartitem.dto.CartCustomResponseDto;
+import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
 import site.keydeuk.store.domain.customoption.dto.custom.CustomDetailDto;
 import site.keydeuk.store.entity.Community;
 import site.keydeuk.store.entity.CustomObject;
@@ -10,7 +11,7 @@ import site.keydeuk.store.entity.CustomOption;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Getter
 @Setter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PostResponseDto {
@@ -35,7 +36,7 @@ public class PostResponseDto {
 
     private boolean isLiked;
 
-    private List<Integer> comments; // 재구현 필요
+    private List<CommentResponseDto> comments; // 재구현 필요
 
     private LocalDateTime createdAt;
 

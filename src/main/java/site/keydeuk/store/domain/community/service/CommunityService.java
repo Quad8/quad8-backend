@@ -64,7 +64,7 @@ public class CommunityService {
             if (userId != null){
                 isLiked = true; // 재구현 필요
             }
-            return new CommunityListResponseDto(community);
+            return new CommunityListResponseDto(community, communityCommentService.getCommentCountByPost(community.getId()));
         });
     }
 
@@ -81,7 +81,13 @@ public class CommunityService {
         }
         Page<Community> communityList = communityRepository.findByUserId(userId,pageable);
 
-        return communityList.map(CommunityListResponseDto::new);
+        return communityList.map(community -> {
+            boolean isLiked = false;
+            if (userId != null){
+                isLiked = true; // 재구현 필요
+            }
+            return new CommunityListResponseDto(community, communityCommentService.getCommentCountByPost(community.getId()));
+        });
     }
 
     /** 게시글 상세 조회 */
