@@ -14,9 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.community.dto.communitylist.CommunityListRequestDto;
+import site.keydeuk.store.domain.community.dto.list.CommunityListRequestDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
+import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.service.CommunityService;
+import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
@@ -50,11 +52,28 @@ public class CommunityController {
         return CommonResponse.ok(communityService.getPostList(requestDto.getSort(),pageable,userId));
     }
 
+    @Operation(summary = "게시글 상세 조회", description = "게시글 Id로 상세 정보를 조회합니다.")
+    @Parameter(name = "id", description = "게시글 ID", example = "11")
+    @GetMapping("/get/{id}")
+    public CommonResponse<?> getPostDetailById(@PathVariable("id") Long id,@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        PostResponseDto dto = communityService.getPostById(id);
+
+        if (principalDetails != null){
+            Long userId = principalDetails.getUserId();
+            boolean isLiked = true;
+            dto.setLiked(isLiked);
+        }
+        return CommonResponse.ok(dto);
+    }
+
     @Operation(summary = "커뮤니티 글 작성하기", description = "커스텀 키보드 구매 내역 확인 후 글 작성이 가능합니다. ")
     @PostMapping("/create")
     public CommonResponse<?> createPost(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                         @Validated @RequestPart("postDto")PostDto postDto,
                                         @RequestPart(value = "files")@Parameter(description = "이미지 파일")List<MultipartFile> files){
+        if (communityService.existPostBycustomId(postDto.getProductId())) return CommonResponse.error("해당 구매내역에 게시글이 존재합니다.");
+
         if (files.size() >4){
             return CommonResponse.error("파일은 최대 4장까지 가능합니다.");
         }

@@ -26,6 +26,8 @@ public class Community extends BaseTimeEntity {
     @JoinColumn(name = "userId")
     private User user;
 
+    private Integer customOptionId;
+
     private String title;
 
     private String content;

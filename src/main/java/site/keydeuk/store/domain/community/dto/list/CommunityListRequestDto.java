@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.community.dto.communitylist;
+package site.keydeuk.store.domain.community.dto.list;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

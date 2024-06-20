@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.community.dto.communitylist;
+package site.keydeuk.store.domain.community.dto.list;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Setter;
@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.entity.Community;
 import site.keydeuk.store.entity.CommunityImg;
-import site.keydeuk.store.entity.ProductImg;
-import site.keydeuk.store.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
