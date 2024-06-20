@@ -39,5 +39,7 @@ public class Community extends BaseTimeEntity {
     private List<CommunityImg> communityImg;
 
     public void setViewCount(int viewCount){this.viewCount = viewCount;}
+    public void setTitle(String title){this.title = title;}
+    public void setContent(String content){this.content = content;}
 
 }

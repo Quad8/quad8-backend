@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.community.dto.UpdatePostDto;
 import site.keydeuk.store.domain.community.dto.list.CommunityListRequestDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
@@ -91,6 +92,19 @@ public class CommunityController {
             return CommonResponse.error("파일은 최대 4장까지 가능합니다.");
         }
         return CommonResponse.ok("글 저장되었습니다.",communityService.createPost(principalDetails.getUserId(),postDto,files));
+    }
+
+    @Operation(summary = "커뮤니티 글 수정하기", description = "작성한 글을 수정합니다.")
+    @PutMapping("/update/{id}")
+    public CommonResponse<?> updatePost(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                        @PathVariable("id")Long id,
+                                        @Validated @RequestPart("postDto") UpdatePostDto dto,
+                                        @RequestPart(value = "files",required = false)@Parameter(description = "이미지 파일") List<MultipartFile> files){
+        if (principalDetails == null) return CommonResponse.error("로그인 후 접근 가능합니다.");
+
+        if (communityService.findPostByuserIdAndCommunityId(principalDetails.getUserId(), id) == null) return CommonResponse.error("작성한 게시글이 아닙니다.");
+
+        return CommonResponse.ok("게시글이 수정되었습니다.",communityService.updatePost(id,dto,files));
     }
 
     @Operation(summary = "커뮤니티 글 삭제하기", description = "작성된 글을 삭제합니다.")
