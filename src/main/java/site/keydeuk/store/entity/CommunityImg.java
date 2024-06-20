@@ -1,5 +1,6 @@
 package site.keydeuk.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class CommunityImg {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "communityId", nullable = false)
+    @JsonBackReference
     private Community community;
 
     private String imgUrl;

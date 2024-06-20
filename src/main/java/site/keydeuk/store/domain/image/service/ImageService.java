@@ -28,7 +28,7 @@ public class ImageService {
 
     public String uploadBase64ToImage(byte[] byteImage) {
 
-        String objectKey = "keydeuk/product/custom" + UUID.randomUUID() + ".png";
+        String objectKey = "keydeuk/product/custom/" + UUID.randomUUID() + ".png";
         String objectUrl = null;
 
         try (InputStream inputStream = new ByteArrayInputStream(byteImage)) {
@@ -54,7 +54,7 @@ public class ImageService {
     }
 
     public String uploadUserImage(MultipartFile multipartFile) {
-        String objectKey = "keydeuk/user/profile" + UUID.randomUUID() + ".png";
+        String objectKey = "keydeuk/user/profile/" + UUID.randomUUID() + ".png";
         String objectUrl = null;
 
         try {
@@ -72,7 +72,7 @@ public class ImageService {
         return objectUrl;
     }
     public List<String> uploadReviewImages(List<MultipartFile> multipartFiles) {
-        String objectKey = "keydeuk/product/review" + UUID.randomUUID() + ".png";
+        String objectKey = "keydeuk/product/review/" + UUID.randomUUID() + ".png";
 
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
@@ -83,7 +83,7 @@ public class ImageService {
     }
 
     public String uploadCommunityImage(MultipartFile multipartFile) {
-        String objectKey = "keydeuk/product/community" + UUID.randomUUID() + ".png";
+        String objectKey = "keydeuk/product/community/" + UUID.randomUUID() + ".png";
         return uploadImage(objectKey, multipartFile);
     }
 

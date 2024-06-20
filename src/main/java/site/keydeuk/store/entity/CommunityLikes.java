@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "community_img")
+@Table(name = "community_likes")
 public class CommunityLikes {
 
     @Id
