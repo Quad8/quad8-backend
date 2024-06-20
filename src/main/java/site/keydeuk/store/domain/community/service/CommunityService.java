@@ -16,6 +16,7 @@ import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.repository.CommunityImgRepository;
 import site.keydeuk.store.domain.community.repository.CommunityRepository;
+import site.keydeuk.store.domain.communitycomment.service.CommunityCommentService;
 import site.keydeuk.store.domain.communitylikes.service.CommunityLikesService;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
