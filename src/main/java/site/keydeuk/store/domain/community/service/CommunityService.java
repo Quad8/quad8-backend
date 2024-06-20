@@ -27,8 +27,8 @@ import site.keydeuk.store.entity.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static site.keydeuk.store.common.response.ErrorCode.PRODUCT_NOT_FOUND;
-import static site.keydeuk.store.common.response.ErrorCode.USER_NOT_FOUND;
+import static site.keydeuk.store.common.response.ErrorCode.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -47,46 +47,57 @@ public class CommunityService {
     /** 커뮤니티 전체 게시글 조회 */
     @Transactional(readOnly = true)
     public Page<CommunityListResponseDto> getPostList(String sort, Pageable pageable, Long userId){
-        Page<Community> communities;
+        Page<Community> communities = null;
         switch (sort){
-            // case "popular": 인기순
+            case "popular":
+                 communities = communityRepository.findAllOrderByLikes(pageable);
+                 break;
             case "views":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("viewCount").descending());
+                communities = communityRepository.findAllOrderByViewCount(pageable);
                 break;
-            case "createdAt_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+            case "new":
+                communities = communityRepository.findAllOrderByCreatedAt(pageable);
                 break;
+            default:
+                log.error("Invalid sort parameter: {}",sort);
+                throw new CustomException(COMMON_INVALID_PARAMETER);
         }
-        communities = communityRepository.findAll(pageable);
 
-        return  communities.map(community -> {
-            boolean isLiked = false;
+        return communities.map(community -> {
+            CommunityListResponseDto dto = new CommunityListResponseDto(community,communityCommentService.getCommentCountByPost(community.getId()));
+            dto.setLikeCount(communityLikesService.countByCommunityId(community.getId()));
             if (userId != null){
-                isLiked = true; // 재구현 필요
+                dto.setLiked(communityLikesService.existsByUserIdAndCommunityId(userId,community.getId()));
             }
-            return new CommunityListResponseDto(community, communityCommentService.getCommentCountByPost(community.getId()));
+            return dto;
         });
     }
 
     /** user가 작성한 게시글 조회*/
     public Page<CommunityListResponseDto> getPostsByUserId(String sort, Pageable pageable, Long userId){
+        Page<Community> communities;
         switch (sort){
-            // case "popular": 인기순
-            case "views":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("viewCount").descending());
+            case "popular":
+                communities = communityRepository.findByUserIdOrderByLikes(userId,pageable);
                 break;
-            case "createdAt_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+            case "views":
+                communities = communityRepository.findByUserIdOrderByViewCount(userId,pageable);
+                break;
+            case "new":
+                communities = communityRepository.findByUserIdOrderByCreatedAt(userId,pageable);
+                break;
+            default:
+                communities = communityRepository.findByUserId(userId,pageable);
                 break;
         }
-        Page<Community> communityList = communityRepository.findByUserId(userId,pageable);
 
-        return communityList.map(community -> {
-            boolean isLiked = false;
+        return  communities.map(community -> {
+            CommunityListResponseDto dto = new CommunityListResponseDto(community,communityCommentService.getCommentCountByPost(community.getId()));
+            dto.setLikeCount(communityLikesService.countByCommunityId(community.getId()));
             if (userId != null){
-                isLiked = true; // 재구현 필요
+                dto.setLiked(communityLikesService.existsByUserIdAndCommunityId(userId,community.getId()));
             }
-            return new CommunityListResponseDto(community, communityCommentService.getCommentCountByPost(community.getId()));
+            return dto;
         });
     }
 

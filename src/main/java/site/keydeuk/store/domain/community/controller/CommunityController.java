@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.service.CommunityService;
 import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
 import site.keydeuk.store.domain.communitycomment.service.CommunityCommentService;
+import site.keydeuk.store.domain.communitylikes.service.CommunityLikesService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
@@ -34,22 +36,24 @@ public class CommunityController {
 
     private final CommunityService communityService;
     private final CommunityCommentService commentService;
+    private final CommunityLikesService communityLikesService;
 
     @Operation(summary = "(미구현!!!!)커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
-    @GetMapping("/get/purchase-history")
+    @GetMapping("/purchase-history")
     public CommonResponse<?> getPurchaseHistory(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         return CommonResponse.ok();
     }
 
     @Operation(summary = "커뮤니티 전체 조회", description = "커뮤니티 전체 글 목록을 조회합니다.")
-    @GetMapping("/get/all")
-    public CommonResponse<?> getAllPostList(@AuthenticationPrincipal PrincipalDetails principalDetails, @ParameterObject @Valid CommunityListRequestDto requestDto){
+    @Parameter(name = "sort", description = "new : 최신순, views : 조회순, popular : 인기순", example = "new")
+    @GetMapping("/all")
+    public CommonResponse<?> getAllPostList(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                            @ParameterObject @Valid CommunityListRequestDto requestDto){
         Long userId = null;
         if (principalDetails!= null){
             userId = principalDetails.getUserId();
         }
-
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
 
         return CommonResponse.ok(communityService.getPostList(requestDto.getSort(),pageable,userId));
@@ -57,24 +61,25 @@ public class CommunityController {
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 Id로 상세 정보를 조회합니다.")
     @Parameter(name = "id", description = "게시글 ID", example = "11")
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public CommonResponse<?> getPostDetailById(@PathVariable("id") Long id,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         PostResponseDto dto = communityService.getPostById(id);
         List<CommentResponseDto> comments = commentService.getCommentListByPost(dto.getId());
         dto.setComments(comments);
         dto.setCommentCount(comments.size());
+        dto.setLikeCount(communityLikesService.countByCommunityId(id));
 
         if (principalDetails != null){
             Long userId = principalDetails.getUserId();
-            boolean isLiked = true;
+            boolean isLiked = communityLikesService.existsByUserIdAndCommunityId(userId,id);
             dto.setLiked(isLiked);
         }
         return CommonResponse.ok(dto);
     }
 
     @Operation(summary = "커뮤니티에 작성한 내 글 조회", description = "마이페이지에서 커뮤니티에 작성한 글 조회")
-    @GetMapping("/get/user")
+    @GetMapping("/user")
     public CommonResponse<?> getPostsByUserId(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                               @ParameterObject @Valid CommunityListRequestDto requestDto){
 

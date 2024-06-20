@@ -14,7 +14,7 @@ import lombok.Setter;
 public class CommunityListRequestDto {
 
     @NotNull
-    @Schema(description = "정렬(인기순 : popular, 조회순 : views, 최신순 : createdAt_desc)", example = "views_desc")
+    @Schema(description = "정렬(인기순 : popular, 조회순 : views, 최신순 : new)", example = "views")
     private String sort;
 
     @Schema(description = "현재 페이지, default 0", example = "0")

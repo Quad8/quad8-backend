@@ -109,7 +109,6 @@ public class ProductController {
         if (principalDetails!= null){
             userId = principalDetails.getUserId();
         }
-
         return CommonResponse.ok(productService.getProductListByswitch(param,userId));
     }
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
