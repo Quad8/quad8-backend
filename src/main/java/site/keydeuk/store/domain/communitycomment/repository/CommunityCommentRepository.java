@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.community.repository;
+package site.keydeuk.store.domain.communitycomment.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
