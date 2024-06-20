@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
 import site.keydeuk.store.domain.order.service.OrderService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
@@ -26,6 +27,16 @@ public class OrderController {
         Long userId = principalDetails.getUserId();
         List<OrderResponse> orders = orderService.getAllOrders(userId);
         return CommonResponse.ok(orders);
+    }
+
+    @Operation(summary = "주문 상세 조회", description = "사용자의 주문 내역을 상세 조회합니다.")
+    @GetMapping("/{orderId}")
+    public CommonResponse<OrderDetailResponse> getOrder(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long orderId) {
+        Long userId = principalDetails.getUserId();
+        OrderDetailResponse order = orderService.getOrder(userId, orderId);
+        return CommonResponse.ok(order);
     }
 
     @Operation(summary = "주문 삭제", description = "주문을 삭제합니다.")
