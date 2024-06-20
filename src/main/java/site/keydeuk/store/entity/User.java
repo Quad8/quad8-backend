@@ -39,7 +39,7 @@ public class User extends BaseTimeEntity {
 
     private String providerId;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
 
     @Override

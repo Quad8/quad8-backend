@@ -1,11 +1,16 @@
 package site.keydeuk.store.domain.community.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.community.dto.communitylist.CommunityListResponseDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.repository.CommunityImgRepository;
 import site.keydeuk.store.domain.community.repository.CommunityRepository;
@@ -31,10 +36,36 @@ public class CommunityService {
     private final CommunityImgService communityImgService;
     private final CommunityLikesService communityLikesService;
 
+    @Transactional(readOnly = true)
+    public Page<CommunityListResponseDto> getPostList(String sort, Pageable pageable, Long userId){
+        Page<Community> communities;
+        switch (sort){
+            // case "popular": 인기순
+            case "views":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("viewCount").descending());
+                break;
+            case "createdAt_desc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+                break;
+        }
+        communities = communityRepository.findAll(pageable);
+
+        return  communities.map(community -> {
+            boolean isLiked = false;
+            if (userId != null){
+                isLiked = true; // 재구현 필요
+            }
+            return new CommunityListResponseDto(community);
+        });
+    }
+    public Page<Community> getAllCommunities(Pageable pageable) {
+        return communityRepository.findAll(pageable);
+    }
     public Community findPostByuserIdAndCommunityId(Long userId, Long CommunityId){
         return communityRepository.findByIdAndUser_Id(CommunityId,userId);
     }
 
+    /**커뮤니티 글 작성하기*/
     @Transactional
     public Long createPost(Long userId, PostDto postDto, List<MultipartFile> files){
         User user = userRepository.findById(userId)
@@ -60,6 +91,7 @@ public class CommunityService {
         return community.getId();
     }
 
+    /** 커뮤니티 글 삭제하기*/
     @Transactional
     public void deletePost(Long communityId){
         communityImgService.deleteAllImgByCommunityId(communityId);

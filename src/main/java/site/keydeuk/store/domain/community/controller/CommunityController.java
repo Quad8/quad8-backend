@@ -3,13 +3,18 @@ package site.keydeuk.store.domain.community.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.community.dto.communitylist.CommunityListRequestDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.service.CommunityService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
@@ -30,6 +35,19 @@ public class CommunityController {
     public CommonResponse<?> getPurchaseHistory(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         return CommonResponse.ok();
+    }
+
+    @Operation(summary = "커뮤니티 전체 조회", description = "커뮤니티 전체 글 목록을 조회합니다.")
+    @GetMapping("/get/all")
+    public CommonResponse<?> getAllPostList(@AuthenticationPrincipal PrincipalDetails principalDetails, @ParameterObject @Valid CommunityListRequestDto requestDto){
+        Long userId = null;
+        if (principalDetails!= null){
+            userId = principalDetails.getUserId();
+        }
+
+        Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
+
+        return CommonResponse.ok(communityService.getPostList(requestDto.getSort(),pageable,userId));
     }
 
     @Operation(summary = "커뮤니티 글 작성하기", description = "커스텀 키보드 구매 내역 확인 후 글 작성이 가능합니다. ")
