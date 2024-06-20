@@ -60,7 +60,7 @@ public class UserController {
         return CommonResponse.ok(UserResponse.from(user));
     }
 
-    @PutMapping(name = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "내 정보 수정", description = "사용자 프로필 정보를 수정합니다.")
     public CommonResponse<Void> updateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
