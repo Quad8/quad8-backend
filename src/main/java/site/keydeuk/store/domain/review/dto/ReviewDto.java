@@ -14,16 +14,14 @@ public record ReviewDto(
         Integer option1,
         Integer option2,
         Integer option3,
-        List<String> reviewImageUrls,
+        List<ReviewImgDto> reviewImgs,
         Long likeCount,
         Boolean likedByUser,
         Long userId,
         Integer productId
 ) {
     public static ReviewDto of(Review review, Long likeCount, Boolean likedByUser) {
-        List<String> imageUrls = review.getReviewImages().stream()
-                .map(ReviewImg::getImgUrl)
-                .toList();
+        List<ReviewImgDto> reviewImgs = getReviewImgDtos(review);
 
         return ReviewDto.builder()
                 .id(review.getId())
@@ -32,7 +30,7 @@ public record ReviewDto(
                 .option1(review.getOption1())
                 .option2(review.getOption2())
                 .option3(review.getOption3())
-                .reviewImageUrls(imageUrls)
+                .reviewImgs(reviewImgs)
                 .likeCount(likeCount)
                 .likedByUser(likedByUser)
                 .userId(review.getUser().getId())
@@ -41,9 +39,7 @@ public record ReviewDto(
     }
 
     public static ReviewDto from(Review review) {
-        List<String> imageUrls = review.getReviewImages().stream()
-                .map(ReviewImg::getImgUrl)
-                .toList();
+        List<ReviewImgDto> reviewImgs = getReviewImgDtos(review);
 
         return ReviewDto.builder()
                 .id(review.getId())
@@ -52,9 +48,15 @@ public record ReviewDto(
                 .option1(review.getOption1())
                 .option2(review.getOption2())
                 .option3(review.getOption3())
-                .reviewImageUrls(imageUrls)
+                .reviewImgs(reviewImgs)
                 .userId(review.getUser().getId())
                 .productId(review.getProduct().getId())
                 .build();
+    }
+
+    private static List<ReviewImgDto> getReviewImgDtos(Review review) {
+        return review.getReviewImages().stream()
+                .map(ReviewImgDto::from)
+                .toList();
     }
 }

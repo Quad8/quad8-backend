@@ -41,6 +41,14 @@ public class Review extends BaseTimeEntity {
         this.reviewImages.addAll(reviewImgs);
     }
 
+    public void update(String content, Integer score, Integer option1, Integer option2, Integer option3) {
+        this.content = content;
+        this.score = score;
+        this.option1 = option1;
+        this.option2 = option2;
+        this.option3 = option3;
+    }
+
     @Builder
     public Review(String content, Integer score, Integer option1, Integer option2, Integer option3, User user, Product product) {
         this.content = content;
