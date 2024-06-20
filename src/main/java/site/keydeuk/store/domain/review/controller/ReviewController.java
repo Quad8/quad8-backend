@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.review.dto.ReviewDto;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
+import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
 import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
 import site.keydeuk.store.domain.review.service.ReviewService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
@@ -68,5 +69,18 @@ public class ReviewController {
         Long userId = principalDetails != null ? principalDetails.getUserId() : null;
         ReviewResponse response = reviewService.getProductReviews(productId, userId);
         return CommonResponse.ok(response);
+    }
+
+    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "리뷰 수정", description = "리뷰를 수정합니다.")
+    public CommonResponse<Long> updateReview(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long reviewId,
+            @RequestPart("createReviewRequest") @Validated UpdateReviewRequest updateReviewRequest,
+            @RequestPart(value = "reviewImgs", required = false) List<MultipartFile> reviewImgs
+    ) {
+        Long userId = principalDetails.getUserId();
+        Long updatedReviewId = reviewService.updateReview(userId, reviewId, updateReviewRequest, reviewImgs);
+        return CommonResponse.ok(updatedReviewId);
     }
 }
