@@ -13,9 +13,9 @@ public record CreateReviewRequest(
         @NotEmpty(message = "리뷰 내용은 필수 입력 항목입니다.")
         String content,
 
-        @Schema(description = "리뷰 점수", example = "4.5")
+        @Schema(description = "리뷰 점수", example = "4")
         @NotNull(message = "리뷰 점수는 필수 입력 항목입니다.")
-        Double score,
+        Integer score,
 
         @Schema(description = "옵션1", example = "1")
         Integer option1,

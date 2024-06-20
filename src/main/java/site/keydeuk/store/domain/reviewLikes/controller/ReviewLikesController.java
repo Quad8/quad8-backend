@@ -14,7 +14,7 @@ import site.keydeuk.store.entity.ReviewLikes;
 @Tag(name = "ReviewLikes", description = "리뷰 좋아요 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/review/likes")
+@RequestMapping("/api/v1/reviews/likes")
 public class ReviewLikesController {
     private final ReviewLikesService reviewLikesService;
 
