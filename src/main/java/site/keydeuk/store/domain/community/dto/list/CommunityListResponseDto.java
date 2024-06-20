@@ -21,9 +21,9 @@ public class CommunityListResponseDto {
 
     private String title;
 
-    private int likeCount;
+    private Long likeCount;
 
-    private int commentCount;
+    private Long commentCount;
 
     private String nickName;
 
@@ -35,11 +35,11 @@ public class CommunityListResponseDto {
 
     private LocalDateTime updateAt;
 
-    public CommunityListResponseDto(Community community){
+    public CommunityListResponseDto(Community community, Long commentCount){
         this.id = community.getId();
         this.title = community.getTitle();
-        this.likeCount = 999;
-        this.commentCount = 999;
+        this.likeCount = 999L;
+        this.commentCount = commentCount;
         this.nickName = community.getUser().getNickname();
         this.userImage = community.getUser().getImgUrl();
 

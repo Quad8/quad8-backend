@@ -5,12 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.community.repository.CommunityRepository;
+import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
 import site.keydeuk.store.domain.communitycomment.dto.create.CommentDto;
 import site.keydeuk.store.domain.communitycomment.repository.CommunityCommentRepository;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.Community;
 import site.keydeuk.store.entity.CommunityComment;
 import site.keydeuk.store.entity.User;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
 
@@ -52,8 +56,16 @@ public class CommunityCommentService {
     }
 
     /** 게시글에 작성된 댓글 조회 */
-    public void getCommentListByPost(){
+    public List<CommentResponseDto> getCommentListByPost(Long communityId){
+        List<CommunityComment> comments = commentRepository.findByCommunity_Id(communityId);
 
+        return comments.stream().map(CommentResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /** 게시글의 작성된 댓글 수 */
+    public Long getCommentCountByPost(Long communityId){
+        return commentRepository.countByCommunity_Id(communityId);
     }
 
     @Transactional

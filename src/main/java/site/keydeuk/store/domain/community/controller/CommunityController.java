@@ -19,6 +19,8 @@ import site.keydeuk.store.domain.community.dto.list.CommunityListRequestDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.service.CommunityService;
+import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
+import site.keydeuk.store.domain.communitycomment.service.CommunityCommentService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.List;
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final CommunityCommentService commentService;
 
     @Operation(summary = "(미구현!!!!)커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/get/purchase-history")
@@ -58,6 +61,9 @@ public class CommunityController {
     public CommonResponse<?> getPostDetailById(@PathVariable("id") Long id,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         PostResponseDto dto = communityService.getPostById(id);
+        List<CommentResponseDto> comments = commentService.getCommentListByPost(dto.getId());
+        dto.setComments(comments);
+        dto.setCommentCount(comments.size());
 
         if (principalDetails != null){
             Long userId = principalDetails.getUserId();
