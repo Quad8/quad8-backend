@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.community.dto.UpdatePostDto;
 import site.keydeuk.store.domain.community.dto.list.CommunityListResponseDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
@@ -111,12 +112,37 @@ public class CommunityService {
 
         for (MultipartFile file: files){
             String imgUrl = imageService.uploadCommunityImage(file);
-            log.info("imgURl: {}",imgUrl);
             CommunityImg communityImg = CommunityImg.builder()
                     .community(community)
                     .imgUrl(imgUrl)
                     .build();
         communityImgRepository.save(communityImg);
+        }
+        return community.getId();
+    }
+
+    /** 커뮤니티 글 수정하기 */
+    @Transactional
+    public Long updatePost(Long communityId, UpdatePostDto dto,List<MultipartFile> files){
+        Community community = communityRepository.findById(communityId).orElseThrow(()->new CustomException(PRODUCT_NOT_FOUND));
+
+        if (dto.getTitle() != null) community.setTitle(dto.getTitle());
+        if ((dto.getContent() != null)) community.setContent(dto.getContent());
+        if (dto.getDeletedFileList() != null){
+            for (String url : dto.getDeletedFileList()){
+                communityImgRepository.deleteByImgUrl(url);
+            }
+        }
+        communityRepository.save(community);
+        if (files != null){
+            for (MultipartFile file: files){
+                String imgUrl = imageService.uploadCommunityImage(file);
+                CommunityImg communityImg = CommunityImg.builder()
+                        .community(community)
+                        .imgUrl(imgUrl)
+                        .build();
+                communityImgRepository.save(communityImg);
+            }
         }
         return community.getId();
     }
