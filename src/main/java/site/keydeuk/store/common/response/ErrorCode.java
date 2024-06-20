@@ -54,7 +54,10 @@ public enum ErrorCode {
 
     //Review
     ALREADY_EXIST_REVIEW(BAD_REQUEST, "이미 해당 제품에 대한 리뷰를 작성하였습니다."),
-    REVIEW_NOT_FOUND(BAD_REQUEST, "리뷰 정보를 찾을 수 없습니다.")
+    REVIEW_NOT_FOUND(BAD_REQUEST, "리뷰 정보를 찾을 수 없습니다."),
+
+    //Community
+    POST_NOT_FOUND(NOT_FOUND, "게시글을 찾을 수 없습니다")
 
     ;
 

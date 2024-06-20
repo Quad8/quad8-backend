@@ -14,12 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.community.dto.UpdatePostDto;
+import site.keydeuk.store.domain.community.dto.update.UpdatePostDto;
 import site.keydeuk.store.domain.community.dto.list.CommunityListRequestDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.service.CommunityService;
-import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
