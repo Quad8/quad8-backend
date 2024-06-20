@@ -66,6 +66,22 @@ public class CommunityService {
         });
     }
 
+    /** user가 작성한 게시글 조회*/
+    public Page<CommunityListResponseDto> getPostsByUserId(String sort, Pageable pageable, Long userId){
+        switch (sort){
+            // case "popular": 인기순
+            case "views":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("viewCount").descending());
+                break;
+            case "createdAt_desc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+                break;
+        }
+        Page<Community> communityList = communityRepository.findByUserId(userId,pageable);
+
+        return communityList.map(CommunityListResponseDto::new);
+    }
+
     /** 게시글 상세 조회 */
     public PostResponseDto getPostById(Long id){
 

@@ -67,6 +67,19 @@ public class CommunityController {
         return CommonResponse.ok(dto);
     }
 
+    @Operation(summary = "커뮤니티에 작성한 내 글 조회", description = "마이페이지에서 커뮤니티에 작성한 글 조회")
+    @GetMapping("/get/user")
+    public CommonResponse<?> getPostsByUserId(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                              @ParameterObject @Valid CommunityListRequestDto requestDto){
+
+        if (principalDetails == null){
+            return CommonResponse.error("로그인 후 접근 가능합니다.");
+        }
+        Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
+
+        return CommonResponse.ok(communityService.getPostsByUserId(requestDto.getSort(),pageable, principalDetails.getUserId()));
+    }
+
     @Operation(summary = "커뮤니티 글 작성하기", description = "커스텀 키보드 구매 내역 확인 후 글 작성이 가능합니다. ")
     @PostMapping("/create")
     public CommonResponse<?> createPost(@AuthenticationPrincipal PrincipalDetails principalDetails,
