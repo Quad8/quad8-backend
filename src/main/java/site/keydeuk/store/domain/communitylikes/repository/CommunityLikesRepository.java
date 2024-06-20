@@ -8,5 +8,6 @@ public interface CommunityLikesRepository extends JpaRepository<CommunityLikes,L
 
     CommunityLikes findByUserIdAndCommunityId(Long userId, Long communityId);
     boolean existsByUserIdAndCommunityId(Long userId, Long communityId);
+    Long countByCommunity_Id(Long communityId);
     void deleteByCommunity_Id(Long id);
 }

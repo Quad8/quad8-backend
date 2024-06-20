@@ -51,4 +51,13 @@ public class CommunityLikesService {
         likesRepository.deleteByCommunity_Id(communityId);
     }
 
+    @Transactional(readOnly = true)
+    public boolean existsByUserIdAndCommunityId(Long userId,Long communityId){
+        return likesRepository.existsByUserIdAndCommunityId(userId,communityId);
+    }
+
+    @Transactional(readOnly = true)
+    public Long countByCommunityId(Long communityId){
+        return likesRepository.countByCommunity_Id(communityId);
+    }
 }

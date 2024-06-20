@@ -38,7 +38,7 @@ public class CommunityListResponseDto {
     public CommunityListResponseDto(Community community, Long commentCount){
         this.id = community.getId();
         this.title = community.getTitle();
-        this.likeCount = 999L;
+        this.likeCount = 0L;
         this.commentCount = commentCount;
         this.nickName = community.getUser().getNickname();
         this.userImage = community.getUser().getImgUrl();

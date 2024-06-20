@@ -22,7 +22,7 @@ public class PostResponseDto {
 
     private String content;
 
-    private int likeCount;
+    private Long likeCount;
 
     private int commentCount;
 
@@ -46,7 +46,7 @@ public class PostResponseDto {
         this.id = community.getId();
         this.title = community.getTitle();
         this.content = community.getContent();
-        this.likeCount = 0;
+        this.likeCount = 0L;
         this.commentCount = 0;
         this.nickName = community.getUser().getNickname();
         this.userImage = community.getUser().getImgUrl();
