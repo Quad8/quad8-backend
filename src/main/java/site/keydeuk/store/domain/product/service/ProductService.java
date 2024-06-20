@@ -48,22 +48,20 @@ public class ProductService {
         // 정렬 방식에 따라 페이지 정렬 설정
         switch (sort) {
             case "createdAt_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+                products = productRepository.findAllByOrderByCreatedAtDesc(pageable);
                 break;
             case "views_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
+                products = productRepository.findAllByOrderByViewsDesc(pageable);
                 break;
             case "price_asc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").ascending());
+                products = productRepository.findAllByOrderByPriceAsc(pageable);
                 break;
             case "price_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").descending());
+                products = productRepository.findAllByOrderByPriceDesc(pageable);
                 break;
-            /** 인기순 -> default로 구현 필요*/
+            default:
+                products = productRepository.findAllOrderByOrder(pageable); //defalut :  주문 많은 순
         }
-
-        products = productRepository.findAll(pageable);
-
         return products.map(product -> {
             boolean isLiked = false;
             if (userId != null) {
@@ -134,7 +132,8 @@ public class ProductService {
     /** 키득BEST 구매순 20위까지 조회*/
     public List<ProductListResponseDto> getBestProductList(Long userId){
 
-        return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20,userId);
+        //return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20,userId);
+        return getRandomProductListForPick(productRepository.findOrderByOrderedMostByCategory(1),20,userId);
     }
 
     private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size, Long userId){

@@ -49,12 +49,10 @@ public class ProductController {
         return CommonResponse.ok(dto);
     }
 
-    @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.(인기순 미구현)")
+    @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.")
     @GetMapping("/get/all-list")
     public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
-        //all : 전체
-        // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
-        // 인기순 추후 구현
+        // 필터 : 인기순(구매순? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         Long userId = null;
         if (principalDetails!= null){
             userId = principalDetails.getUserId();

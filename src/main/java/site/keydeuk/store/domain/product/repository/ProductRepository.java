@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
+import site.keydeuk.store.entity.Community;
 import site.keydeuk.store.entity.Product;
 
 import java.util.List;
@@ -14,6 +16,15 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+    Page<Product> findAllByOrderByViewsDesc(Pageable pageable);
+    Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<Product> findAllByOrderByPriceAsc(Pageable pageable);
+    Page<Product> findAllByOrderByPriceDesc(Pageable pageable);
+    @Query("select p from Product p LEFT join OrderItem oi on p.id = oi.product.id group by p.id order by count (oi.id) DESC ")
+    Page<Product> findAllOrderByOrder(Pageable pageable);
+    @Query("select p from  Product p LEFT join OrderItem oi on p.id = oi.product.id where p.productCategory.id = :categoryId group by p.id order by count (oi.id) DESC ")
+    List<Product> findOrderByOrderedMostByCategory(Integer categoryId);
 
     List<Product> findByProductCategoryId(Integer categoryId);
 
