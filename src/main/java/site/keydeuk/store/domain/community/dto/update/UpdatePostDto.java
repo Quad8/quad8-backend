@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.community.dto;
+package site.keydeuk.store.domain.community.dto.update;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

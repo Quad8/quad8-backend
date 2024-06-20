@@ -1,6 +1,5 @@
 package site.keydeuk.store.domain.community.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,12 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.exception.CustomException;
-import site.keydeuk.store.domain.community.dto.UpdatePostDto;
+import site.keydeuk.store.domain.community.dto.update.UpdatePostDto;
 import site.keydeuk.store.domain.community.dto.list.CommunityListResponseDto;
 import site.keydeuk.store.domain.community.dto.create.PostDto;
 import site.keydeuk.store.domain.community.dto.post.PostResponseDto;
 import site.keydeuk.store.domain.community.repository.CommunityImgRepository;
 import site.keydeuk.store.domain.community.repository.CommunityRepository;
+import site.keydeuk.store.domain.communitylikes.service.CommunityLikesService;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.image.service.ImageService;
@@ -91,6 +91,11 @@ public class CommunityService {
                 .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         CustomOption custom = customRepository.findById(community.getCustomOptionId())
                 .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+
+        // 조회수 증가
+        community.setViewCount(community.getViewCount()+1);
+        communityRepository.save(community);
+
         return new PostResponseDto(community,custom,object);
     }
 
