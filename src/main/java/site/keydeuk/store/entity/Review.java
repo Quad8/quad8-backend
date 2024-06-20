@@ -21,7 +21,7 @@ public class Review extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private Double score;
+    private Integer score;
     private Integer option1;
     private Integer option2;
     private Integer option3;
@@ -42,7 +42,7 @@ public class Review extends BaseTimeEntity {
     }
 
     @Builder
-    public Review(String content, Double score, Integer option1, Integer option2, Integer option3, User user, Product product) {
+    public Review(String content, Integer score, Integer option1, Integer option2, Integer option3, User user, Product product) {
         this.content = content;
         this.score = score;
         this.option1 = option1;

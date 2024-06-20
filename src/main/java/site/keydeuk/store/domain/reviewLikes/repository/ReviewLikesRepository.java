@@ -11,4 +11,8 @@ public interface ReviewLikesRepository extends JpaRepository<ReviewLikes, Long> 
     boolean existsByUserIdAndReviewId(Long userId, Long reviewId);
 
     Optional<ReviewLikes> findByUserIdAndReviewId(Long userId, Long reviewId);
+
+    Long countByReviewId(Long reviewId);
+
+    boolean existsByReviewIdAndUserId(Long id, Long userId);
 }
