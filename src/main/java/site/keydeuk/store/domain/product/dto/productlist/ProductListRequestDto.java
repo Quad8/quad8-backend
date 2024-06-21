@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductListRequestDto {
-    @NotNull
-    @Schema(description = " keyboard, keycap, switch, etc", example = "keyboard")
-    private String keyword;
 
     @NotNull
     @Schema(description = "정렬(최신순 : createdAt_desc, 조회순 : views_desc, 가격 낮은순 : price_asc, 가격 높은순 : price_desc), 인기순 미구현", example = "views_desc")
@@ -29,10 +28,10 @@ public class ProductListRequestDto {
     private int size;
 
     @Schema(description = "제조사", example = "몬스타기어")
-    private String company;
+    private List<String> companies;
 
-    @Schema(description = "(구현 XXXX)스위치", example = "적축")
-    private String switchType;
+    @Schema(description = "스위치", example = "적축")
+    private List<String> switchTypes;
 
     @Schema(description = "최소 가격", example = "1000")
     private Integer minPrice;
@@ -40,17 +39,10 @@ public class ProductListRequestDto {
     @Schema(description = "최대 가격", example = "199000")
     private Integer maxPrice;
 
-    public ProductListRequestDto(String keyword, String sort){
-        this.keyword = keyword;
+    public ProductListRequestDto( String sort){
         this.sort = sort;
         this.page = 0;
         this.size = 10;
-    }
-
-
-    @AssertTrue(message = "Invalid product type")
-    private boolean isValidType() {
-        return keyword != null && ( keyword.equals("keyboard") || keyword.equals("keycap") || keyword.equals("switch") || keyword.equals("etc"));
     }
 
 }

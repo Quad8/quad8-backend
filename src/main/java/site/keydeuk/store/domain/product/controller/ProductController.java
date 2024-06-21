@@ -23,6 +23,8 @@ import site.keydeuk.store.domain.product.service.ProductService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.service.UserService;
 
+import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
+
 
 @Slf4j
 @Tag(name = "Product", description = "Product 관련 API 입니다.")
@@ -36,7 +38,7 @@ public class ProductController {
 
     @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다. (미구현 : 리뷰 )")
     @Parameter(name = "id", description = "상품 ID", example = "11")
-    @GetMapping("/get-detail-info/{id}")
+    @GetMapping("/{id}")
     public CommonResponse<?> getProductDetailById(@PathVariable("id") Integer id,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         ProductDetailResponseDto dto = productService.getProductDetailById(id);
@@ -50,7 +52,7 @@ public class ProductController {
     }
 
     @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.")
-    @GetMapping("/get/all-list")
+    @GetMapping("/all")
     public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         // 필터 : 인기순(구매순? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         Long userId = null;
@@ -65,34 +67,29 @@ public class ProductController {
 
     }
 
-    @Operation(summary = "(스위치 검색 미구현!!)카테고리별 상품 목록 조회", description = "카테고리별(키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.(인기순 미구현)")
-    @GetMapping("/get/category-list")
-    public CommonResponse<?> getProductList(@ParameterObject @Valid ProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
-        //all : 전체, 1 keyboard, 2 keycap, 3 switch, 4-8 etc
-        // 필터 : 인기순(리뷰 많은? 구매 건? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
-        // 인기순 추후 구현
-        String word = dto.getKeyword();
+    @Operation(summary = "카테고리별 상품 목록 조회", description = "카테고리별(키보드, 키캡, 스위치, 기타용품) 상품 목록과 총 개수를 조회합니다.")
+    @GetMapping("/category/{category}")
+    @Parameter(name = "category", description = " keyboard, keycap, switch, etc", example = "keyboard")
+    public CommonResponse<?> getProductList(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                            @PathVariable("category") String category,
+                                            @ParameterObject @Valid ProductListRequestDto dto ){
+        if (!(category.equals("keyboard") || category.equals("keycap") || category.equals("switch") || category.equals("etc"))){
+            throw new CustomException(COMMON_INVALID_PARAMETER);
+        }
+        // 필터 : 인기순(구매 건 ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
+
         Long userId = null;
         if (principalDetails!= null){
             userId = principalDetails.getUserId();
         }
 
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+        int minPrice = dto.getMinPrice() != null ? dto.getMinPrice() : 0;
+        int maxPrice = dto.getMaxPrice() != null ? dto.getMaxPrice() : Integer.MAX_VALUE;
 
-        if (word.equals("keyboard")) {
-            return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    1, 1, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
-        }else if (word.equals("keycap")) {
-            return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    2, 2, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
-        }else if (word.equals("switch")) {
-            return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    3, 3, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
-        }else if (word.equals("etc")) {
-            return CommonResponse.ok(productService.getProductListByCategoryAndFilters(
-                    4, 8, dto.getCompany(), dto.getMinPrice(), dto.getMaxPrice(), dto.getSort(), pageable,userId));
-        }
-        return CommonResponse.fail("Invalid keyword");
+
+        return CommonResponse.ok(productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,pageable));
+
     }
 
     @Operation(summary = "메인페이지 키득 PICK 상품 목록", description = "메인페이지 키득 PICK 상품 목록을 조회합니다.")

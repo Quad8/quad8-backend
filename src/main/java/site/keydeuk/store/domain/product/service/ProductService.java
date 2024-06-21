@@ -8,12 +8,14 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
 import site.keydeuk.store.domain.likes.service.LikesService;
 import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
+import site.keydeuk.store.domain.product.specification.ProductSpecification;
 import site.keydeuk.store.entity.Product;
 
 import java.util.*;
@@ -73,40 +75,22 @@ public class ProductService {
 
 
     /**카테고리 별 상품 조회*/
-    public Page<ProductListResponseDto> getProductListByCategory(Integer categoryId,String sort,Pageable pageable, Long userId){
+    public Page<Product> getProductListByCategory(String category, List<String> companies, List<String> switchOptions, int minPrice, int maxPrice, Pageable pageable){
+        Specification<Product> spec = Specification.where(ProductSpecification.categoryEquals(category));
 
-        Page<Product> products;
-
-        switch (sort) {
-            case "createdAt_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
-                break;
-            case "views_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
-                break;
-            case "price_asc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").ascending());
-                break;
-            case "price_desc":
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").descending());
-                break;
-            /** 인기순 -> default로 구현 필요*/
+        if (companies != null && !companies.isEmpty()) {
+            spec = spec.and(ProductSpecification.companyIn(companies));
         }
 
-        if (categoryId<4){
-            products = productRepository.findByProductCategoryId(categoryId,pageable);
-        }else {
-            products = productRepository.findProductsByCategoryIdBetween(4,8,pageable);
+        if (switchOptions != null && !switchOptions.isEmpty()) {
+            spec = spec.and(ProductSpecification.switchOptionsIn(switchOptions));
         }
 
-        // 리뷰수 -- 미구현
-        return products.map(product -> {
-            boolean isLiked = false;
-            if (userId != null) {
-                isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
-            }
-            return new ProductListResponseDto(product,isLiked);
-        });
+        if (minPrice >= 0 && maxPrice >= 0) {
+            spec = spec.and(ProductSpecification.priceBetween(minPrice, maxPrice));
+        }
+
+        return productRepository.findAll(spec,pageable);
     }
 
 
@@ -167,95 +151,6 @@ public class ProductService {
     }
 
 
-    public Page<ProductListResponseDto> getProductListByCategoryAndFilters(
-            Integer startCategoryId, Integer endCategoryId,
-            String company, Integer minPrice, Integer maxPrice,
-            String sort, Pageable pageable,Long userId) {
-
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Product> cq = cb.createQuery(Product.class);
-        Root<Product> root = cq.from(Product.class);
-
-        // 조건을 담을 리스트
-        List<Predicate> predicates = new ArrayList<>();
-
-        // 카테고리 범위 조건
-        predicates.add(cb.between(root.get("productCategory").get("id"), startCategoryId, endCategoryId));
-
-        // 제조사 조건
-        if (company != null && !company.isEmpty()) {
-            predicates.add(cb.equal(root.get("company"), company));
-        }
-
-        // 가격 범위 조건
-        if (minPrice != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("price"), minPrice));
-        }
-        if (maxPrice != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("price"), maxPrice));
-        }
-
-        // 조건들을 AND로 결합
-        cq.where(predicates.toArray(new Predicate[0]));
-
-        // 정렬 조건 추가
-        switch (sort) {
-            case "createdAt_desc":
-                cq.orderBy(cb.desc(root.get("createdAt")));
-                break;
-            case "views_desc":
-                cq.orderBy(cb.desc(root.get("views")));
-                break;
-            case "price_asc":
-                cq.orderBy(cb.asc(root.get("price")));
-                break;
-            case "price_desc":
-                cq.orderBy(cb.desc(root.get("price")));
-                break;
-            // 기본 정렬 설정 필요
-        }
-
-        // 쿼리 실행 및 페이징 처리
-        List<Product> resultList = entityManager.createQuery(cq)
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
-
-        long total = getTotalCount(startCategoryId, endCategoryId, company, minPrice, maxPrice);
-
-        List<ProductListResponseDto> dtos = resultList.stream().map(product -> {
-           boolean isLiked = false;
-           if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,product.getId());
-           return new ProductListResponseDto(product,isLiked);
-        }).collect(Collectors.toList());
-
-        return new PageImpl<>(dtos, pageable, total);
-    }
-
-    private long getTotalCount(Integer startCategoryId, Integer endCategoryId, String company, Integer minPrice, Integer maxPrice) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<Product> countRoot = countQuery.from(Product.class);
-
-        List<Predicate> countPredicates = new ArrayList<>();
-        countPredicates.add(cb.between(countRoot.get("productCategory").get("id"), startCategoryId, endCategoryId));
-
-        if (company != null && !company.isEmpty()) {
-            countPredicates.add(cb.equal(countRoot.get("company"), company));
-        }
-
-        if (minPrice != null) {
-            countPredicates.add(cb.greaterThanOrEqualTo(countRoot.get("price"), minPrice));
-        }
-
-        if (maxPrice != null) {
-            countPredicates.add(cb.lessThanOrEqualTo(countRoot.get("price"), maxPrice));
-        }
-
-        countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
-
-        return entityManager.createQuery(countQuery).getSingleResult();
-    }
 
 
 }
