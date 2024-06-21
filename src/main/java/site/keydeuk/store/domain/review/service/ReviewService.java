@@ -26,6 +26,7 @@ import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
@@ -84,9 +85,12 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewDto> getUserReviews(Long userId) {
-        List<Review> reviews = reviewRepository.findByUserId(userId);
-        return getReviewDtos(userId, reviews);
+    public List<ReviewDto> getUserReviews(Long userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Review> byUserId = reviewRepository.findByUserId(userId);
+        log.info("{}", byUserId);
+        Page<Review> reviews = reviewRepository.findByUserIdAndCreatedAtBetween(userId, startDate, endDate, pageable);
+        log.info("{}", reviews.getContent());
+        return getReviewDtos(userId, reviews.getContent());
     }
 
     @Transactional(readOnly = true)
@@ -215,7 +219,7 @@ public class ReviewService {
 
     private void validateOrderItem(Long userId, Integer productId, Long orderId) {
         List<OrderItem> orderItems = orderItemsRepository.findByOrder_UserIdAndProductId(userId, productId);
-        log.info("{}",orderItems);
+        log.info("{}", orderItems);
         boolean orderExists = orderItems.stream()
                 .anyMatch(orderItem -> orderItem.getOrder().getId().equals(orderId));
 

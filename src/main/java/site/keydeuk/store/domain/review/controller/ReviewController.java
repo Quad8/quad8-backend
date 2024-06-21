@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
+
     @Operation(summary = "리뷰 작성", description = "리뷰를 작성합니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<Long> createReview(
@@ -60,9 +59,12 @@ public class ReviewController {
     @GetMapping("/user")
     @Operation(summary = "사용자 리뷰 조회", description = "사용자가 작성한 모든 리뷰를 조회합니다.")
     public CommonResponse<List<ReviewDto>> getUserReviews(
-            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @ParameterObject ReviewListRequest request
+    ) {
         Long userId = principalDetails.getUserId();
-        List<ReviewDto> response = reviewService.getUserReviews(userId);
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        List<ReviewDto> response = reviewService.getUserReviews(userId,pageable, request.getStartDate(), request.getEndDate());
         return CommonResponse.ok(response);
     }
 
@@ -72,7 +74,7 @@ public class ReviewController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestParam("productId") Integer productId,
             @ParameterObject ReviewListRequest request
-            ) {
+    ) {
         Long userId = principalDetails != null ? principalDetails.getUserId() : null;
         log.info("{}", request.toString());
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
