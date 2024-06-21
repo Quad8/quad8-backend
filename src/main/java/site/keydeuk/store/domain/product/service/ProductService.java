@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
 import site.keydeuk.store.domain.likes.service.LikesService;
@@ -162,9 +163,21 @@ public class ProductService {
 
     /** 키득BEST 구매순 20위까지 조회*/
     public List<ProductListResponseDto> getBestProductList(Long userId){
+        List<ProductListResponseDto> dtos = new ArrayList<>();
+        List<Product> products = productRepository.findOrderByOrderedMostByCategory(1);
+        int count = 0;
+        for (Product product : products){
+            if (count == 20) break;
 
-        //return getRandomProductListForPick(productRepository.findByProductCategoryId(1),20,userId);
-        return getRandomProductListForPick(productRepository.findOrderByOrderedMostByCategory(1),20,userId);
+            boolean isLiked = false;
+            if (userId != null) {
+                isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
+            }
+            ProductListResponseDto dto = new ProductListResponseDto(product,isLiked);
+            dtos.add(dto);
+            count++;
+        }
+        return dtos;
     }
 
     private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size, Long userId){
