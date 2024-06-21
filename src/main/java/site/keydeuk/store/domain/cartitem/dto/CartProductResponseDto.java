@@ -27,10 +27,17 @@ public class CartProductResponseDto {
 
     private String optionName;
 
+    private String category;
+
     private String classification; //shop or custom
 
     public static CartProductResponseDto fromEntity(CartItem item, Product product){
-
+        String category;
+        if (product.getProductCategory().getId() > 3) {
+            category = "etc";
+        } else {
+            category = product.getProductCategory().getName();
+        }
         return CartProductResponseDto.builder()
                 .id(item.getId())
                 .prductId(product.getId())
@@ -40,12 +47,18 @@ public class CartProductResponseDto {
                 .productTitle(product.getName())
                 .optionId(item.getOptionId())
                 .optionName(null)
+                .category(category)
                 .classification("SHOP")
                 .build();
     }
 
     public static CartProductResponseDto fromEntity(CartItem item, Product product, String optionName){
-
+        String category;
+        if (product.getProductCategory().getId() > 3) {
+            category = "etc";
+        } else {
+            category = product.getProductCategory().getName();
+        }
         return CartProductResponseDto.builder()
                 .id(item.getId())
                 .prductId(product.getId())
@@ -55,6 +68,7 @@ public class CartProductResponseDto {
                 .productTitle(product.getName())
                 .optionId(item.getOptionId())
                 .optionName(optionName)
+                .category(category)
                 .classification("SHOP")
                 .build();
     }
