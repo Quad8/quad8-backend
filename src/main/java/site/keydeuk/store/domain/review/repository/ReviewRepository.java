@@ -1,7 +1,10 @@
 package site.keydeuk.store.domain.review.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import site.keydeuk.store.entity.Review;
 
@@ -11,7 +14,9 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsReviewByUserIdAndProductIdAndOrderId (Long userId, Integer productId, Long orderId);
     List<Review> findByUserId(Long userId);
-    List<Review> findByProductId(Integer productId);
+    Page<Review> findByProductId(Integer productId, Pageable pageable);
+    @Query("SELECT r FROM Review r LEFT JOIN ReviewLikes rl ON r.id=rl.review.id WHERE r.product.id = :productId GROUP BY r.id ORDER BY COUNT(rl.id) DESC")
+    Page<Review> findByProductIdOrderByLikes(@Param("productId") Integer productId, Pageable pageable);
 
     Long countByProductId(Integer productId);
 

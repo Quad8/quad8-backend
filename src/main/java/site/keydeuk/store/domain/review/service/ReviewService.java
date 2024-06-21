@@ -2,6 +2,10 @@ package site.keydeuk.store.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +25,12 @@ import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
 
 @Service
 @Slf4j
@@ -77,15 +84,13 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> getUserReviews(Long userId) {
-        return reviewRepository.findByUserId(userId);
+    public List<ReviewDto> getUserReviews(Long userId) {
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+        return getReviewDtos(userId, reviews);
     }
 
-    @Transactional(readOnly = true)
-    public ReviewResponse getProductReviews(Integer productId, Long userId) {
-        getProduct(productId);
-        List<Review> reviews = reviewRepository.findByProductId(productId);
-        List<ReviewDto> reviewDtoList = reviews.stream()
+    private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews) {
+        return reviews.stream()
                 .map(review -> {
                     ReviewUserResponse writer = ReviewUserResponse.from(review.getUser());
                     Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
@@ -93,6 +98,26 @@ public class ReviewService {
                     return ReviewDto.of(review, writer, likeCount, likedByUser);
                 })
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponse getProductReviews(Integer productId, Long userId, Pageable pageable, String sort) {
+        getProduct(productId);
+        Page<Review> reviews;
+        switch (sort) {
+            case "createdAt" -> {
+                Pageable newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, sort);
+                reviews= reviewRepository.findByProductId(productId, newPageable);
+            }
+            case "likes" -> {
+                reviews=reviewRepository.findByProductIdOrderByLikes(productId, pageable);
+            }
+            default -> {
+                log.error("Invalid sort parameter: {}", sort);
+                throw new CustomException(COMMON_INVALID_PARAMETER);
+            }
+        };
+        List<ReviewDto> reviewDtoList = getReviewDtos(userId, reviews.getContent());
 
         Double averageScore = reviewRepository.findAverageScoreByProductId(productId);
         Long reviewCounts = reviewRepository.countByProductId(productId);
