@@ -2,9 +2,12 @@ package site.keydeuk.store.domain.product.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import site.keydeuk.store.entity.Product;
 
@@ -30,6 +33,47 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("select p from Product p where p.price <= 100000 and p.productCategory.id = :categoryId")
     List<Product> findByProductCategoryIdAndPriceLessThanEqual(int categoryId);
+
+    @Query("SELECT p, COUNT(oi.id) AS orderCount " +
+            "FROM Product p " +
+            "LEFT JOIN OrderItem oi ON p.id = oi.product.id " +
+            "LEFT JOIN p.productCategory pc " +
+            "LEFT JOIN p.switchOptions so " +
+            "WHERE pc.name = :category " +
+            "AND (:companies IS NULL OR p.company IN :companies) " +
+            "AND (:switchOptions IS NULL OR so.optionName IN :switchOptions) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+            "GROUP BY p.id " +
+            "ORDER BY orderCount DESC")
+    List<Product> findProductsOrderedByOrderCountAndFiltered(
+            @Param("category") String category,
+            @Param("companies") List<String> companies,
+            @Param("switchOptions") List<String> switchOptions,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice
+    );
+
+    @Query("SELECT p, COUNT(oi.id) AS orderCount " +
+            "FROM Product p " +
+            "LEFT JOIN OrderItem oi ON p.id = oi.product.id " +
+            "LEFT JOIN p.productCategory pc " +
+            "LEFT JOIN p.switchOptions so " +
+            "WHERE pc.id in (4,5,6,7,8)" +
+            "AND (:companies IS NULL OR p.company IN :companies) " +
+            "AND (:switchOptions IS NULL OR so.optionName IN :switchOptions) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+            "GROUP BY p.id " +
+            "ORDER BY orderCount DESC")
+    List<Product> findProductsByETCOrderedByOrderCountAndFiltered(
+            @Param("companies") List<String> companies,
+            @Param("switchOptions") List<String> switchOptions,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice
+    );
+
+
 
 
 }

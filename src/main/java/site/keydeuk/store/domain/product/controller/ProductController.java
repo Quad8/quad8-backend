@@ -54,7 +54,7 @@ public class ProductController {
     @Operation(summary = "상품 전체 목록 조회", description = "전체 상품 목록과 총 개수를 조회합니다.")
     @GetMapping("/all")
     public CommonResponse<?> getAllProductList(@ParameterObject @Valid AllProductListRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails){
-        // 필터 : 인기순(구매순? ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
+        // 필터 : 인기순(구매순 ), 조회순, 최신순, 가격 낮은 순, 가격 높은 순
         Long userId = null;
         if (principalDetails!= null){
             userId = principalDetails.getUserId();
@@ -87,14 +87,18 @@ public class ProductController {
         int minPrice = dto.getMinPrice() != null ? dto.getMinPrice() : 0;
         int maxPrice = dto.getMaxPrice() != null ? dto.getMaxPrice() : Integer.MAX_VALUE;
 
+        if (dto.getSort().equals("popular")){
+            return CommonResponse.ok(productService.getProductListByCategoryOrderByPopular(category,dto.getCompanies(),
+                    dto.getSwitchTypes(), minPrice, maxPrice,pageable,userId));
+        }
 
-        return CommonResponse.ok(productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,pageable));
+        return CommonResponse.ok(productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,dto.getSort(),pageable,userId));
 
     }
 
     @Operation(summary = "메인페이지 키득 PICK 상품 목록", description = "메인페이지 키득 PICK 상품 목록을 조회합니다.")
     @Parameter(name = "param", description = "직장인을 위한 -> 저소음, 가성비 -> 가성비, 타건감 -> 청축", example = "저소음")
-    @GetMapping("/get/keydeuk-pick")
+    @GetMapping("/keydeuk-pick")
     public CommonResponse<?> getKeydeukPick(@RequestParam String param,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         if (!param.equals("저소음") && !param.equals("청축") && !param.equals("가성비")){
@@ -107,7 +111,7 @@ public class ProductController {
         return CommonResponse.ok(productService.getProductListByswitch(param,userId));
     }
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
-    @GetMapping("/get/keyduek-best")
+    @GetMapping("/keyduek-best")
     public CommonResponse<?> getKeydeukBest(@AuthenticationPrincipal PrincipalDetails principalDetails){
         /** 구매나 리뷰 완료되면 로직 재구성 */
         Long userId = null;

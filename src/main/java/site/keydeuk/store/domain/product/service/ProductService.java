@@ -75,7 +75,8 @@ public class ProductService {
 
 
     /**카테고리 별 상품 조회*/
-    public Page<Product> getProductListByCategory(String category, List<String> companies, List<String> switchOptions, int minPrice, int maxPrice, Pageable pageable){
+    public Page<ProductListResponseDto> getProductListByCategory(String category, List<String> companies, List<String> switchOptions,
+                                                  int minPrice, int maxPrice,String sort,Pageable pageable, Long userId){
         Specification<Product> spec = Specification.where(ProductSpecification.categoryEquals(category));
 
         if (companies != null && !companies.isEmpty()) {
@@ -90,8 +91,54 @@ public class ProductService {
             spec = spec.and(ProductSpecification.priceBetween(minPrice, maxPrice));
         }
 
-        return productRepository.findAll(spec,pageable);
+        switch (sort) {
+            case "createdAt_desc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+                break;
+            case "views_desc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("views").descending());
+                break;
+            case "price_asc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").ascending());
+                break;
+            case "price_desc":
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").descending());
+                break;
+            default:
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+                break;
+        }
+        Page<Product> products = productRepository.findAll(spec,pageable);
+
+        return products.map(product -> {
+            boolean isLiked = false;
+            if (userId != null) {
+                isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
+            }
+            return new ProductListResponseDto(product,isLiked);
+        });
     }
+
+    /**카테고리 별 인기 상품 조회*/
+    public Page<ProductListResponseDto> getProductListByCategoryOrderByPopular(String category, List<String> companies, List<String> switchOptions
+            , int minPrice, int maxPrice,Pageable pageable,Long userId){
+        List<Product> products;
+        if (category.equals("etc")){
+            products = productRepository.findProductsByETCOrderedByOrderCountAndFiltered(companies,switchOptions,minPrice,maxPrice);
+            log.info("size: {}",products.size());
+        }else {
+            products = productRepository.findProductsOrderedByOrderCountAndFiltered(category,companies,switchOptions,minPrice,maxPrice);
+        }
+
+        List<ProductListResponseDto> dtos = products.stream().map(product -> {
+            boolean isLiked = false;
+            if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,product.getId());
+            return new ProductListResponseDto(product,isLiked);
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(dtos,pageable,dtos.size());
+    }
+
 
 
     /** 옵션 상품 목록 */
