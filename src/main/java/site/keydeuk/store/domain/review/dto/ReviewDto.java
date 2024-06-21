@@ -13,6 +13,7 @@ public record ReviewDto(
         Long id,
         Long orderId,
         String switchOption,
+        Integer productCategoryId,
         ReviewUserResponse writer,
         String content,
         Integer score,
@@ -32,6 +33,7 @@ public record ReviewDto(
                 .id(review.getId())
                 .orderId(review.getOrderId())
                 .switchOption(switchOption)
+                .productCategoryId(review.getProduct().getCategoryId())
                 .writer(writer)
                 .content(review.getContent())
                 .score(review.getScore())
