@@ -9,4 +9,8 @@ public interface CommunityImgRepository extends JpaRepository<CommunityImg,Long>
     void deleteByCommunity_Id(Long id);
 
     void deleteByImgUrl(String url);
+
+    CommunityImg findByIdAndCommunity_Id(Long id, Long communityId);
+
+    Long countByCommunity_Id(Long communityId);
 }

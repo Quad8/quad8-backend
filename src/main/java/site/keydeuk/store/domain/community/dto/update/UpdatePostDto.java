@@ -16,6 +16,6 @@ public class UpdatePostDto {
     private String  content;
 
     @Schema(description = "삭제될 이미지 index list", example = "9")
-    private List<String> deletedFileList;
+    private List<Long> deletedFileList;
 
 }
