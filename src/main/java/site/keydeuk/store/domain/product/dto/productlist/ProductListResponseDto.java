@@ -26,6 +26,8 @@ public class ProductListResponseDto {
 
     private boolean isLiked;
 
+    private String category;
+
     public ProductListResponseDto(Product product,boolean isLiked){
         this.id = product.getId();
         this.name = product.getName();
@@ -33,7 +35,11 @@ public class ProductListResponseDto {
         this.reviewscount = 999;
         this.views = product.getViews();
         this.isLiked = isLiked;
-
+        if (product.getProductCategory().getId() >3){
+            this.category = "etc";
+        }else {
+            this.category = product.getProductCategory().getName();
+        }
         List<ProductImg> productImgs = product.getProductImgs();
         if (!productImgs.isEmpty()){
             this.thumbnail = product.getProductImgs().get(0).getImgUrl();
