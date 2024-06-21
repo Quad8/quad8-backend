@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     //Product
     PRODUCT_NOT_FOUND(NOT_FOUND, "상품 정보를 찾을 수 없습니다"),
+    OPTION_NOT_FOUND(NOT_FOUND,"옵션 정보를 찾을 수 없습니다"),
 
     //Payment,
     PRODUCT_NOT_ON_SALE(NOT_FOUND, "현재 판매중이지 않은 상품입니다."),

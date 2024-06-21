@@ -14,6 +14,7 @@ import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
+import site.keydeuk.store.domain.productswitchoption.repository.ProductSwitchOptionRepository;
 import site.keydeuk.store.domain.review.dto.ReviewDto;
 import site.keydeuk.store.domain.review.dto.ReviewImgDto;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
@@ -25,12 +26,10 @@ import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
+import static site.keydeuk.store.common.response.ErrorCode.OPTION_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -42,6 +41,7 @@ public class ReviewService {
     private final OrderItemsRepository orderItemsRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ProductSwitchOptionRepository productSwitchOptionRepository;
 
     @Transactional
     public Long createReview(Long userId, Integer productId, CreateReviewRequest createReviewRequest, List<MultipartFile> reviewImgs) {
@@ -89,17 +89,6 @@ public class ReviewService {
         return getReviewDtos(userId, reviews);
     }
 
-    private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews) {
-        return reviews.stream()
-                .map(review -> {
-                    ReviewUserResponse writer = ReviewUserResponse.from(review.getUser());
-                    Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
-                    Boolean likedByUser = userId != null && reviewLikesRepository.existsByReviewIdAndUserId(review.getId(), userId);
-                    return ReviewDto.of(review, writer, likeCount, likedByUser);
-                })
-                .toList();
-    }
-
     @Transactional(readOnly = true)
     public ReviewResponse getProductReviews(Integer productId, Long userId, Pageable pageable, String sort) {
         getProduct(productId);
@@ -107,22 +96,47 @@ public class ReviewService {
         switch (sort) {
             case "createdAt" -> {
                 Pageable newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, sort);
-                reviews= reviewRepository.findByProductId(productId, newPageable);
+                reviews = reviewRepository.findByProductId(productId, newPageable);
             }
             case "likes" -> {
-                reviews=reviewRepository.findByProductIdOrderByLikes(productId, pageable);
+                reviews = reviewRepository.findByProductIdOrderByLikes(productId, pageable);
             }
             default -> {
                 log.error("Invalid sort parameter: {}", sort);
                 throw new CustomException(COMMON_INVALID_PARAMETER);
             }
-        };
+        }
+        ;
         List<ReviewDto> reviewDtoList = getReviewDtos(userId, reviews.getContent());
 
         Double averageScore = reviewRepository.findAverageScoreByProductId(productId);
         Long reviewCounts = reviewRepository.countByProductId(productId);
         Map<String, Map<Integer, Double>> reviewStatistics = getReviewStatistics(productId);
         return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics);
+    }
+
+    private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews) {
+        return reviews.stream()
+                .map(review -> {
+                    String switchOptionName = getSwitchOptionName(review);
+                    ReviewUserResponse writer = ReviewUserResponse.from(review.getUser());
+                    Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
+                    Boolean likedByUser = userId != null && reviewLikesRepository.existsByReviewIdAndUserId(review.getId(), userId);
+                    return ReviewDto.of(review, switchOptionName, writer, likeCount, likedByUser);
+                })
+                .toList();
+    }
+
+    private String getSwitchOptionName(Review review) {
+        OrderItem orderItem = getOrderItem(review.getUser().getId(), review.getProduct().getId(), review.getOrderId());
+        Long switchOptionId = orderItem.getSwitchOptionId();
+        if (switchOptionId != null) {
+            ProductSwitchOption productSwitchOption = productSwitchOptionRepository.findById(switchOptionId).orElseThrow(
+                    () -> new CustomException(OPTION_NOT_FOUND)
+            );
+            return productSwitchOption.getOptionName();
+        }
+        return "";
     }
 
     public Map<String, Map<Integer, Double>> getReviewStatistics(Integer productId) {
@@ -201,12 +215,18 @@ public class ReviewService {
 
     private void validateOrderItem(Long userId, Integer productId, Long orderId) {
         List<OrderItem> orderItems = orderItemsRepository.findByOrder_UserIdAndProductId(userId, productId);
+        log.info("{}",orderItems);
         boolean orderExists = orderItems.stream()
                 .anyMatch(orderItem -> orderItem.getOrder().getId().equals(orderId));
 
         if (!orderExists) {
             throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
         }
+    }
+
+    private OrderItem getOrderItem(Long userId, Integer productId, Long orderId) {
+        validateOrderItem(userId, productId, orderId);
+        return orderItemsRepository.findByOrderIdAndProductId(orderId, productId);
     }
 
     private boolean isReviewExistsByUserAndProduct(Long userId, Integer productId, Long orderId) {

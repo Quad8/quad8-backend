@@ -12,6 +12,7 @@ import java.util.List;
 public record ReviewDto(
         Long id,
         Long orderId,
+        String switchOption,
         ReviewUserResponse writer,
         String content,
         Integer score,
@@ -24,12 +25,13 @@ public record ReviewDto(
         Integer productId,
         LocalDateTime updatedAt
 ) {
-    public static ReviewDto of(Review review, ReviewUserResponse writer, Long likeCount, Boolean likedByUser) {
+    public static ReviewDto of(Review review,String switchOption, ReviewUserResponse writer, Long likeCount, Boolean likedByUser) {
         List<ReviewImgDto> reviewImgs = getReviewImgDtos(review);
 
         return ReviewDto.builder()
                 .id(review.getId())
                 .orderId(review.getOrderId())
+                .switchOption(switchOption)
                 .writer(writer)
                 .content(review.getContent())
                 .score(review.getScore())

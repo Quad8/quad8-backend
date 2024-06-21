@@ -14,7 +14,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer count;
-    private Integer switchOptionId;
+    private Long switchOptionId;
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
