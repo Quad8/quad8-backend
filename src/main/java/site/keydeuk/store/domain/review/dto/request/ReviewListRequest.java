@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewListRequest {
     @NotNull
-    @Schema(description = "정렬(인기순 : likes, 최신순 : createdAt)", example = "createdAt")
+    @Schema(description = "정렬(인기순 : likes, 최신순 : createdAt, 평점높은순: scoreHigh, 평점낮은순: scoreLow)", example = "createdAt")
     private String sort;
 
     @Schema(description = "현재 페이지, default 0", example = "0")

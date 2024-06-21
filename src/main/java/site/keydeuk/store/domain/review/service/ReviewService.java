@@ -105,6 +105,14 @@ public class ReviewService {
             case "likes" -> {
                 reviews = reviewRepository.findByProductIdOrderByLikes(productId, pageable);
             }
+            case "scoreHigh" -> {
+                Pageable newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "score");
+                reviews = reviewRepository.findByProductId(productId, newPageable);
+            }
+            case "scoreLow" -> {
+                Pageable newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.ASC, "score");
+                reviews = reviewRepository.findByProductId(productId, newPageable);
+            }
             default -> {
                 log.error("Invalid sort parameter: {}", sort);
                 throw new CustomException(COMMON_INVALID_PARAMETER);
