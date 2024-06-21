@@ -60,9 +60,12 @@ public enum ErrorCode {
     //Community
     POST_NOT_FOUND(NOT_FOUND, "게시글을 찾을 수 없습니다"),
     COMMENT_NOT_FOUND(NOT_FOUND, "댓글을 찾을 수 없습니다"),
+    IMAGE_POST_NOT_MATCH(BAD_REQUEST,"해당 게시글의 이미지가 아닙니다."),
+    IMAGE_MAX_COUNT(BAD_REQUEST,"게시글 이미지는 최대 4개까지 가능합니다."),
 
     //Shipping
     SHIPPING_NOT_FOUND(NOT_FOUND, "배송지 정보를 찾을 수 없습니다")
+
     ;
 
     private final HttpStatus httpStatus;

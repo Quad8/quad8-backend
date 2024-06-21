@@ -147,11 +147,18 @@ public class CommunityService {
     public Long updatePost(Long communityId, UpdatePostDto dto,List<MultipartFile> files){
         Community community = communityRepository.findById(communityId).orElseThrow(()->new CustomException(PRODUCT_NOT_FOUND));
 
+        if (!isImageCountLessThanOrEqualToFour(communityId, dto.getDeletedFileList(),files)) {
+            throw new CustomException(IMAGE_MAX_COUNT);
+        }
+
         if (dto.getTitle() != null) community.setTitle(dto.getTitle());
         if ((dto.getContent() != null)) community.setContent(dto.getContent());
         if (dto.getDeletedFileList() != null){
-            for (String url : dto.getDeletedFileList()){
-                communityImgRepository.deleteByImgUrl(url);
+            for (Long id : dto.getDeletedFileList()){
+                if (communityImgRepository.findByIdAndCommunity_Id(id, communityId) == null) {
+                    throw new CustomException(IMAGE_POST_NOT_MATCH);
+                }
+                communityImgRepository.deleteById(id);
             }
         }
         communityRepository.save(community);
@@ -192,5 +199,20 @@ public class CommunityService {
         return communityRepository.findById(id).orElseThrow(
                 ()-> new NoSuchElementException("Community Post not found with id: " + id)
         );
+    }
+
+    private boolean isImageCountLessThanOrEqualToFour (Long communityId, List<Long> deletedList, List<MultipartFile> files){
+
+        int deletedCount =0;
+        int addCount=0;
+        if (deletedList != null ) deletedCount = deletedList.size();
+        if (files != null ) addCount = files.size();
+
+        Long currentCount = communityImgRepository.countByCommunity_Id(communityId);
+        Long afterCount = (currentCount-deletedCount)+addCount;
+
+        log.info("deletedCount: {}, addCount: {}, afterCount:{}",deletedCount, addCount, afterCount);
+        if (afterCount>4) return false;
+        return true;
     }
 }
