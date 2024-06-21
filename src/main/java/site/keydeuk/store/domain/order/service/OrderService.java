@@ -6,17 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.ErrorCode;
+import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderItemResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
 import site.keydeuk.store.domain.order.repository.OrderRepository;
+import site.keydeuk.store.domain.payment.repository.PaymentRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
-import site.keydeuk.store.entity.Order;
-import site.keydeuk.store.entity.OrderItem;
-import site.keydeuk.store.entity.Product;
+import site.keydeuk.store.domain.shipping.dto.ShippingAddressDto;
+import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
+import site.keydeuk.store.entity.*;
 
 import java.util.List;
 
-import static site.keydeuk.store.common.response.ErrorCode.ORDER_NOT_FOUND;
+import static site.keydeuk.store.common.response.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -24,13 +26,45 @@ import static site.keydeuk.store.common.response.ErrorCode.ORDER_NOT_FOUND;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-
+    private final PaymentRepository paymentRepository;
+    private final ShippingRepository shippingRepository;
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream()
                 .map(this::toOrderResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public OrderDetailResponse getOrder(Long userId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+
+        if (!order.getUserId().equals(userId)) {
+            throw new CustomException(USER_ORDER_NOT_MATCH);
+        }
+
+        ShippingAddress shippingAddress = shippingRepository.findById(order.getShippingAddressId())
+                .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
+        ShippingAddressDto shippingAddressDto = ShippingAddressDto.from(shippingAddress);
+
+
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
+
+        List<OrderItemResponse> orderItemResponses = order.getOrderItems().stream()
+                .map(this::toOrderItemResponse)
+                .toList();
+
+        return OrderDetailResponse.builder()
+                .orderId(order.getId())
+                .orderItems(orderItemResponses)
+                .shippingAddress(shippingAddressDto)
+                .totalAmount(payment.getTotalAmount())
+                .purchaseDate(payment.getApprovedAt())
+                .confirmationDate(order.getUpdatedAt())
+                .build();
     }
 
     @Transactional

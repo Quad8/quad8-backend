@@ -49,6 +49,7 @@ public enum ErrorCode {
     PERMISSION_DENIED(FORBIDDEN, "이 작업을 수행할 권한이 없습니다."),
 
     //Likes
+    LIKES_NOT_FOUND(BAD_REQUEST,"찜이 존재하지 않습니다"),
     ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다."),
     LIKED_PRODUCTS_NOT_FOUND(BAD_REQUEST, "찜한 상품이 존재하지 않습니다."),
 
@@ -58,8 +59,10 @@ public enum ErrorCode {
 
     //Community
     POST_NOT_FOUND(NOT_FOUND, "게시글을 찾을 수 없습니다"),
-    COMMENT_NOT_FOUND(NOT_FOUND, "댓글을 찾을 수 없습니다")
+    COMMENT_NOT_FOUND(NOT_FOUND, "댓글을 찾을 수 없습니다"),
 
+    //Shipping
+    SHIPPING_NOT_FOUND(NOT_FOUND, "배송지 정보를 찾을 수 없습니다")
     ;
 
     private final HttpStatus httpStatus;

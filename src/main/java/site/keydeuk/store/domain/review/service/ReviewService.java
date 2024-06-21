@@ -10,16 +10,22 @@ import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
+import site.keydeuk.store.domain.review.dto.ReviewDto;
+import site.keydeuk.store.domain.review.dto.ReviewImgDto;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
-import site.keydeuk.store.domain.review.repository.ReviewImgRepository;
+import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
+import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
 import site.keydeuk.store.domain.review.repository.ReviewRepository;
+import site.keydeuk.store.domain.reviewLikes.repository.ReviewLikesRepository;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.Product;
 import site.keydeuk.store.entity.Review;
 import site.keydeuk.store.entity.ReviewImg;
 import site.keydeuk.store.entity.User;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -27,7 +33,7 @@ import java.util.List;
 public class ReviewService {
     private final ImageService imageService;
     private final ReviewRepository reviewRepository;
-    private final ReviewImgRepository reviewImgRepository;
+    private final ReviewLikesRepository reviewLikesRepository;
     private final OrderItemsRepository orderItemsRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -78,9 +84,81 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> getProductReviews(Integer productId) {
+    public ReviewResponse getProductReviews(Integer productId, Long userId) {
         getProduct(productId);
-        return reviewRepository.findByProductId(productId);
+        List<Review> reviews = reviewRepository.findByProductId(productId);
+        List<ReviewDto> reviewDtoList = reviews.stream()
+                .map(review -> {
+                    Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
+                    Boolean likedByUser = userId != null && reviewLikesRepository.existsByReviewIdAndUserId(review.getId(), userId);
+                    return ReviewDto.of(review, likeCount, likedByUser);
+                })
+                .toList();
+
+        Double averageScore = reviewRepository.findAverageScoreByProductId(productId);
+        Long reviewCounts = reviewRepository.countByProductId(productId);
+        Map<String, Map<Integer, Double>> reviewStatistics = getReviewStatistics(productId);
+        return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics);
+    }
+    public Map<String, Map<Integer, Double>> getReviewStatistics(Integer productId) {
+        Map<String, Map<Integer, Double>> statistics = new HashMap<>();
+        statistics.put("scoreRatios", getRatios(reviewRepository.findScoreCountsByProductId(productId),5));
+        statistics.put("option1Ratios", getRatios(reviewRepository.findOption1CountsByProductId(productId),3));
+        statistics.put("option2Ratios", getRatios(reviewRepository.findOption2CountsByProductId(productId),3));
+        statistics.put("option3Ratios", getRatios(reviewRepository.findOption3CountsByProductId(productId),3));
+        return statistics;
+    }
+
+    @Transactional
+    public Long updateReview(Long userId, Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> reviewImgs) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new CustomException(ErrorCode.REVIEW_NOT_FOUND)
+        );
+
+        if (!review.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
+        }
+
+        review.update(updateReviewRequest.content(), updateReviewRequest.score(), updateReviewRequest.option1(), updateReviewRequest.option2(), updateReviewRequest.option3());
+
+        List<Long> existingImgIds = updateReviewRequest.existingReviewImgs().stream()
+                .map(ReviewImgDto::id)
+                .toList();
+
+        review.getReviewImages().removeIf(img -> !existingImgIds.contains(img.getId()));
+
+        if (reviewImgs != null && !reviewImgs.isEmpty()) {
+            List<String> newImageUrls = imageService.uploadReviewImages(reviewImgs);
+            List<ReviewImg> newReviewImgs = newImageUrls.stream()
+                    .map(url -> new ReviewImg(url, review.getId()))
+                    .toList();
+            review.addReviewImgs(newReviewImgs);
+        }
+
+        Review updatedReview = reviewRepository.save(review);
+        return updatedReview.getId();
+    }
+    private Map<Integer, Double> getRatios(List<Object[]> counts, int maxValue) {
+        Map<Integer, Long> countMap = new HashMap<>();
+        long totalCount = 0;
+        int size = 0;
+        for (Object[] count : counts) {
+            Integer key = (Integer) count[0];
+            Long value = (Long) count[1];
+            countMap.put(key, value);
+            totalCount += value;
+            size++;
+            log.info("{}", size);
+        }
+
+        Map<Integer, Double> ratios = new HashMap<>();
+        for (int i = 1; i <= maxValue; i++) {
+            Long count = countMap.getOrDefault(i, 0L);
+            double ratio = (totalCount == 0) ? 0.0 : (double) count / totalCount * 100;
+            ratios.put(i, ratio);
+        }
+
+        return ratios;
     }
 
     private User getUser(Long userId) {
@@ -100,7 +178,7 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
     }
 
-    public boolean isReviewExistsByUserAndProduct(Long userId, Integer productId) {
+    private boolean isReviewExistsByUserAndProduct(Long userId, Integer productId) {
         return reviewRepository.existsReviewByUserIdAndProductId(userId, productId);
     }
 }
