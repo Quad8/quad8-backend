@@ -9,6 +9,9 @@ import site.keydeuk.store.entity.Review;
 import site.keydeuk.store.entity.User;
 
 public record CreateReviewRequest(
+        @Schema(description = "주문 번호", example = "4")
+        @NotNull(message = "주문 번호는 필수 입력 항목입니다.")
+        Long orderId,
         @Schema(description = "리뷰 내용", example = "Great product!")
         @NotEmpty(message = "리뷰 내용은 필수 입력 항목입니다.")
         String content,

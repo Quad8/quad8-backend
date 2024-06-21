@@ -25,6 +25,7 @@ public class Review extends BaseTimeEntity {
     private Integer option1;
     private Integer option2;
     private Integer option3;
+    private Long orderId;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reviewId")
     private List<ReviewImg> reviewImages = new ArrayList<>();

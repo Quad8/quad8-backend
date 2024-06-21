@@ -1,14 +1,18 @@
 package site.keydeuk.store.domain.review.dto;
 
 import lombok.Builder;
+import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.entity.Review;
 import site.keydeuk.store.entity.ReviewImg;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
 public record ReviewDto(
         Long id,
+        Long orderId,
+        ReviewUserResponse writer,
         String content,
         Integer score,
         Integer option1,
@@ -17,14 +21,16 @@ public record ReviewDto(
         List<ReviewImgDto> reviewImgs,
         Long likeCount,
         Boolean likedByUser,
-        Long userId,
-        Integer productId
+        Integer productId,
+        LocalDateTime updatedAt
 ) {
-    public static ReviewDto of(Review review, Long likeCount, Boolean likedByUser) {
+    public static ReviewDto of(Review review, ReviewUserResponse writer, Long likeCount, Boolean likedByUser) {
         List<ReviewImgDto> reviewImgs = getReviewImgDtos(review);
 
         return ReviewDto.builder()
                 .id(review.getId())
+                .orderId(review.getOrderId())
+                .writer(writer)
                 .content(review.getContent())
                 .score(review.getScore())
                 .option1(review.getOption1())
@@ -33,8 +39,8 @@ public record ReviewDto(
                 .reviewImgs(reviewImgs)
                 .likeCount(likeCount)
                 .likedByUser(likedByUser)
-                .userId(review.getUser().getId())
                 .productId(review.getProduct().getId())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
 
@@ -49,7 +55,6 @@ public record ReviewDto(
                 .option2(review.getOption2())
                 .option3(review.getOption3())
                 .reviewImgs(reviewImgs)
-                .userId(review.getUser().getId())
                 .productId(review.getProduct().getId())
                 .build();
     }

@@ -17,11 +17,9 @@ import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
 import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
 import site.keydeuk.store.domain.review.repository.ReviewRepository;
 import site.keydeuk.store.domain.reviewLikes.repository.ReviewLikesRepository;
+import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.domain.user.repository.UserRepository;
-import site.keydeuk.store.entity.Product;
-import site.keydeuk.store.entity.Review;
-import site.keydeuk.store.entity.ReviewImg;
-import site.keydeuk.store.entity.User;
+import site.keydeuk.store.entity.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,11 +38,11 @@ public class ReviewService {
 
     @Transactional
     public Long createReview(Long userId, Integer productId, CreateReviewRequest createReviewRequest, List<MultipartFile> reviewImgs) {
-        getOrderItem(userId, productId);
+        validateOrderItem(userId, productId, createReviewRequest.orderId());
         Product product = getProduct(productId);
         User user = getUser(userId);
 
-        if (isReviewExistsByUserAndProduct(userId, productId)) {
+        if (isReviewExistsByUserAndProduct(userId, productId, createReviewRequest.orderId())) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_REVIEW);
         }
 
@@ -89,9 +87,10 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findByProductId(productId);
         List<ReviewDto> reviewDtoList = reviews.stream()
                 .map(review -> {
+                    ReviewUserResponse writer = ReviewUserResponse.from(review.getUser());
                     Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
                     Boolean likedByUser = userId != null && reviewLikesRepository.existsByReviewIdAndUserId(review.getId(), userId);
-                    return ReviewDto.of(review, likeCount, likedByUser);
+                    return ReviewDto.of(review, writer, likeCount, likedByUser);
                 })
                 .toList();
 
@@ -100,12 +99,13 @@ public class ReviewService {
         Map<String, Map<Integer, Double>> reviewStatistics = getReviewStatistics(productId);
         return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics);
     }
+
     public Map<String, Map<Integer, Double>> getReviewStatistics(Integer productId) {
         Map<String, Map<Integer, Double>> statistics = new HashMap<>();
-        statistics.put("scoreRatios", getRatios(reviewRepository.findScoreCountsByProductId(productId),5));
-        statistics.put("option1Ratios", getRatios(reviewRepository.findOption1CountsByProductId(productId),3));
-        statistics.put("option2Ratios", getRatios(reviewRepository.findOption2CountsByProductId(productId),3));
-        statistics.put("option3Ratios", getRatios(reviewRepository.findOption3CountsByProductId(productId),3));
+        statistics.put("scoreRatios", getRatios(reviewRepository.findScoreCountsByProductId(productId), 5));
+        statistics.put("option1Ratios", getRatios(reviewRepository.findOption1CountsByProductId(productId), 3));
+        statistics.put("option2Ratios", getRatios(reviewRepository.findOption2CountsByProductId(productId), 3));
+        statistics.put("option3Ratios", getRatios(reviewRepository.findOption3CountsByProductId(productId), 3));
         return statistics;
     }
 
@@ -138,6 +138,7 @@ public class ReviewService {
         Review updatedReview = reviewRepository.save(review);
         return updatedReview.getId();
     }
+
     private Map<Integer, Double> getRatios(List<Object[]> counts, int maxValue) {
         Map<Integer, Long> countMap = new HashMap<>();
         long totalCount = 0;
@@ -173,12 +174,17 @@ public class ReviewService {
         );
     }
 
-    private void getOrderItem(Long userId, Integer productId) {
-        orderItemsRepository.findByOrder_UserIdAndProductId(userId, productId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
+    private void validateOrderItem(Long userId, Integer productId, Long orderId) {
+        List<OrderItem> orderItems = orderItemsRepository.findByOrder_UserIdAndProductId(userId, productId);
+        boolean orderExists = orderItems.stream()
+                .anyMatch(orderItem -> orderItem.getOrder().getId().equals(orderId));
+
+        if (!orderExists) {
+            throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
+        }
     }
 
-    private boolean isReviewExistsByUserAndProduct(Long userId, Integer productId) {
-        return reviewRepository.existsReviewByUserIdAndProductId(userId, productId);
+    private boolean isReviewExistsByUserAndProduct(Long userId, Integer productId, Long orderId) {
+        return reviewRepository.existsReviewByUserIdAndProductIdAndOrderId(userId, productId, orderId);
     }
 }
