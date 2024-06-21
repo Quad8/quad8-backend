@@ -152,15 +152,6 @@ public class ProductService {
         return productlist;
     }
 
-    /** 키득pick 스위치로 검색  */
-    public List<ProductListResponseDto> getProductListByswitch(String param, Long userId){
-        if (param.equals("가성비")){
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1),4,userId);
-        }else {
-            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param),4,userId);
-        }
-    }
-
     /** 키득BEST 구매순 20위까지 조회*/
     public List<ProductListResponseDto> getBestProductList(Long userId){
         List<ProductListResponseDto> dtos = new ArrayList<>();
@@ -180,19 +171,33 @@ public class ProductService {
         return dtos;
     }
 
-    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size, Long userId){
+    /** 키득pick 스위치로 검색  */
+    public List<ProductListResponseDto> getProductListByswitch(String param, Long userId){
+        if (param.equals("가성비")){
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndPriceLessThanEqual(1),4,userId);
+        }else {
+            return getRandomProductListForPick(productRepository.findByProductCategoryIdAndSwitchOptions_OptionName(1,param),4,userId);
+        }
+    }
 
+    private List<ProductListResponseDto> getRandomProductListForPick(List<Product> products,int size, Long userId){
         List<ProductListResponseDto> dtos = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i <size ; i++) {
+        Set<Integer> usedIndices = new HashSet<>();
+
+        while (dtos.size() != 4){
             int randomIndex = random.nextInt(products.size());
-            boolean isLiked = false;
-            if (userId != null) {
-                isLiked = likesService.existsByUserIdAndProductId(userId, products.get(randomIndex).getId());
+            if (!usedIndices.contains(randomIndex)){
+                usedIndices.add(randomIndex);
+                boolean isLiked = false;
+                if (userId != null) {
+                    isLiked = likesService.existsByUserIdAndProductId(userId, products.get(randomIndex).getId());
+                }
+                ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex),isLiked);
+                dtos.add(dto);
             }
-            ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex),isLiked);
-            dtos.add(dto);
         }
+        log.info("size: {}",dtos.size());
         return dtos;
     }
 
