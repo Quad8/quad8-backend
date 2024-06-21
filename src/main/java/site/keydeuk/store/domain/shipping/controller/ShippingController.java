@@ -13,7 +13,6 @@ import site.keydeuk.store.domain.shipping.dto.request.SaveShippingAddressRequest
 import site.keydeuk.store.domain.shipping.dto.request.UpdateShippingAddressRequest;
 import site.keydeuk.store.domain.shipping.dto.response.ShippingAddressResponse;
 import site.keydeuk.store.domain.shipping.service.ShippingService;
-import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
 
 import java.util.List;
 
