@@ -194,6 +194,6 @@ public class OrderService {
             );
             switchOption = productSwitchOption.getOptionName();
         }
-        return OrderItemResponse.from(product, switchOption);
+        return OrderItemResponse.from(product, switchOption, orderItem.getCount());
     }
 }

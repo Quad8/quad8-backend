@@ -10,15 +10,17 @@ public record OrderItemResponse(
         String productImgUrl,
         String productName,
         String switchOption,
+        Integer quantity,
         Integer viewCount,
         Integer price
 ) {
-    public static OrderItemResponse from(Product product, String switchOption) {
+    public static OrderItemResponse from(Product product, String switchOption, int quantity) {
         return OrderItemResponse.builder()
                 .productId(product.getId())
                 .productImgUrl(product.getProductImgs().get(0).getImgUrl())
                 .productName(product.getName())
                 .switchOption(switchOption)
+                .quantity(quantity)
                 .viewCount(product.getViews())
                 .price(product.getPrice())
                 .build();
@@ -30,6 +32,7 @@ public record OrderItemResponse(
                 .productImgUrl(productImgUrl)
                 .productName(productName)
                 .switchOption(switchOption)
+                .quantity(orderItem.getCount())
                 .viewCount(viewCount)
                 .price(orderItem.getPrice())
                 .build();
