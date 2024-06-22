@@ -23,7 +23,9 @@ import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
 import site.keydeuk.store.entity.*;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
@@ -40,6 +42,7 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
 
+    @Transactional
     public OrderCreateResponse createOrder(Long userId, List<OrderCreateRequest> requests) {
         Long shippingAddressId = shippingRepository.findByUserIdAndIsDefault(userId, true)
                 .orElse(ShippingAddress.NULL)
@@ -49,11 +52,11 @@ public class OrderService {
                 .userId(userId)
                 .paymentOrderId(UUID.randomUUID().toString())
                 .shippingAddressId(shippingAddressId)
+                .orderItems(new ArrayList<>())
                 .status(OrderStatus.READY)
                 .build();
 
         Order savedOrder = orderRepository.save(order);
-
         List<OrderItem> orderItems = requests.stream()
                 .map(
                         request -> OrderItem.builder()
@@ -65,6 +68,7 @@ public class OrderService {
                                 .build()
                 )
                 .toList();
+        log.info("{}", orderItems);
         savedOrder.addOrderItems(orderItems);
         orderItemsRepository.saveAll(orderItems);
 
@@ -81,9 +85,9 @@ public class OrderService {
 
         return OrderCreateResponse.builder()
                 .orderId(savedOrder.getId())
-                .paymentOrderId(order.getPaymentOrderId())
+                .paymentOrderId(savedOrder.getPaymentOrderId())
                 .orderItemResponses(orderItemResponses)
-                .totalPrice(order.getTotalPrice())
+                .totalPrice(savedOrder.getTotalPrice())
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
                 .build();
     }
