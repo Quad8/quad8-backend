@@ -18,6 +18,7 @@ public class Order extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
+    private String paymentOrderId;
     private Long shippingAddressId;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;

@@ -23,6 +23,7 @@ import site.keydeuk.store.entity.*;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
 import java.util.List;
+import java.util.UUID;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
 
@@ -44,6 +45,7 @@ public class OrderService {
 
         Order order = Order.builder()
                 .userId(userId)
+                .paymentOrderId(UUID.randomUUID().toString())
                 .shippingAddressId(shippingAddressId)
                 .status(OrderStatus.READY)
                 .build();
@@ -89,6 +91,7 @@ public class OrderService {
 
         return OrderCreateResponse.builder()
                 .orderId(savedOrder.getId())
+                .paymentOrderId(order.getPaymentOrderId())
                 .orderItemResponses(orderItemResponses)
                 .totalPrice(order.getTotalPrice())
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))

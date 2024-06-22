@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 public record OrderCreateResponse(
         Long orderId,
+        String paymentOrderId,
         List<OrderItemResponse> orderItemResponses,
         ShippingAddressResponse shippingAddressResponse,
         Long totalPrice
