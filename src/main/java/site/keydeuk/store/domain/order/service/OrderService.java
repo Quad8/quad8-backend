@@ -43,7 +43,7 @@ public class OrderService {
     private final ShippingRepository shippingRepository;
 
     @Transactional
-    public OrderCreateResponse createOrder(Long userId, List<OrderCreateRequest> requests) {
+    public Long createOrder(Long userId, List<OrderCreateRequest> requests) {
         Long shippingAddressId = shippingRepository.findByUserIdAndIsDefault(userId, true)
                 .orElse(ShippingAddress.NULL)
                 .getId();
@@ -68,30 +68,34 @@ public class OrderService {
                                 .build()
                 )
                 .toList();
-        log.info("{}", orderItems);
         savedOrder.addOrderItems(orderItems);
         orderItemsRepository.saveAll(orderItems);
 
+        return savedOrder.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public OrderCreateResponse getOrderResponse(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        List<OrderItem> orderItems = order.getOrderItems();
         List<OrderItemResponse> orderItemResponses = orderItems.stream()
                 .map(this::toOrderItemResponse)
                 .toList();
-
+        Long shippingAddressId = order.getShippingAddressId();
         ShippingAddress shippingAddress = ShippingAddress.NULL;
         if (shippingAddressId != null) {
-            shippingAddress = shippingRepository.findById(shippingAddressId).orElseThrow(
-                    () -> new CustomException(SHIPPING_NOT_FOUND)
-            );
+            shippingAddress = shippingRepository.findById(shippingAddressId)
+                    .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
         }
-
         return OrderCreateResponse.builder()
-                .orderId(savedOrder.getId())
-                .paymentOrderId(savedOrder.getPaymentOrderId())
+                .orderId(order.getId())
+                .paymentOrderId(order.getPaymentOrderId())
                 .orderItemResponses(orderItemResponses)
-                .totalPrice(savedOrder.getTotalPrice())
+                .totalPrice(order.getTotalPrice())
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
                 .build();
     }
-
     private Integer getPrice(Integer productId) {
         if (productId > 100000) {
             CustomOption customOption = customRepository.findById(productId)
