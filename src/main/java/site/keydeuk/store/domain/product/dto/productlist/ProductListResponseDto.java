@@ -18,7 +18,7 @@ public class ProductListResponseDto {
 
     private int price;
 
-    private int reviewscount;
+    private Long reviewscount;
 
     private int views;
 
@@ -28,11 +28,11 @@ public class ProductListResponseDto {
 
     private String category;
 
-    public ProductListResponseDto(Product product,boolean isLiked){
+    public ProductListResponseDto(Product product,boolean isLiked,Long reviewCount){
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
-        this.reviewscount = 999;
+        this.reviewscount = reviewCount;
         this.views = product.getViews();
         this.isLiked = isLiked;
         if (product.getProductCategory().getId() >3){

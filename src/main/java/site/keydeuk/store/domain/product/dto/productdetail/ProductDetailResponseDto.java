@@ -19,7 +19,7 @@ public class ProductDetailResponseDto {
 
     private Integer price;
 
-    private int reviewscount;
+    private Long reviewscount;
 
     private int views;
 
@@ -35,13 +35,13 @@ public class ProductDetailResponseDto {
 
     private boolean isLiked;
 
-    public ProductDetailResponseDto(Product product){
+    public ProductDetailResponseDto(Product product,Long reviewCount, Double scope){
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
-        this.reviewscount = 999;
+        this.reviewscount = reviewCount;
         this.views = product.getViews()+1;
-        this.scope = 4.5;
+        this.scope = scope;
         this.detailsImg = product.getDetailUrl();
         this.thubmnailList = product.getProductImgs();
         if(!product.getSwitchOptions().isEmpty()){
