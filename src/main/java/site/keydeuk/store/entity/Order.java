@@ -11,17 +11,25 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Order extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
+    private String paymentOrderId;
     private Long shippingAddressId;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Long totalPrice;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
+
+    public void addOrderItems(List<OrderItem> orderItems) {
+        this.orderItems.addAll(orderItems);
+        this.totalPrice = this.orderItems.stream()
+                .map(OrderItem::calculatePrice)
+                .reduce(0L, Math::addExact);
+    }
 }

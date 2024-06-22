@@ -21,4 +21,8 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
+
+    public Long calculatePrice() {
+        return (long) count * product.getPrice();
+    }
 }
