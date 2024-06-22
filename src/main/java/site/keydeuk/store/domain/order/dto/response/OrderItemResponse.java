@@ -31,6 +31,7 @@ public record OrderItemResponse(
                 .productName(productName)
                 .switchOption(switchOption)
                 .viewCount(viewCount)
+                .price(orderItem.getPrice())
                 .build();
     }
 

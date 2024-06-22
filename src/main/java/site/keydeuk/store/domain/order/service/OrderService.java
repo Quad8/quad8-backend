@@ -156,6 +156,7 @@ public class OrderService {
         if (productId > 100000) {
             CustomOption customOption = customRepository.findById(productId)
                     .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+            log.info("{}",customOption.getPrice());
             return customOption.getPrice();
         }
         Product product = productRepository.findById(productId)
