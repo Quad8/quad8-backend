@@ -17,6 +17,7 @@ import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponse
 import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
 import site.keydeuk.store.domain.product.specification.ProductSpecification;
+import site.keydeuk.store.domain.review.service.ReviewService;
 import site.keydeuk.store.entity.Product;
 
 import java.util.*;
@@ -29,7 +30,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final LikesService likesService;
-    private final EntityManager entityManager;
+    private final ReviewService reviewService;
 
     /** 상품 상세 조회 */
     public ProductDetailResponseDto getProductDetailById(Integer productId){
@@ -70,7 +71,8 @@ public class ProductService {
             if (userId != null) {
                 isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
             }
-            return new ProductListResponseDto(product,isLiked);
+            Long reviewCount =reviewService.countByProductId(product.getId());
+            return new ProductListResponseDto(product,isLiked,reviewCount);
         });
     }
 
@@ -116,7 +118,8 @@ public class ProductService {
             if (userId != null) {
                 isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
             }
-            return new ProductListResponseDto(product,isLiked);
+            Long reviewCount =reviewService.countByProductId(product.getId());
+            return new ProductListResponseDto(product,isLiked,reviewCount);
         });
     }
 
@@ -134,7 +137,8 @@ public class ProductService {
         List<ProductListResponseDto> dtos = products.stream().map(product -> {
             boolean isLiked = false;
             if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,product.getId());
-            return new ProductListResponseDto(product,isLiked);
+            Long reviewCount =reviewService.countByProductId(product.getId());
+            return new ProductListResponseDto(product,isLiked,reviewCount);
         }).collect(Collectors.toList());
 
         return new PageImpl<>(dtos,pageable,dtos.size());
@@ -164,7 +168,8 @@ public class ProductService {
             if (userId != null) {
                 isLiked = likesService.existsByUserIdAndProductId(userId, product.getId());
             }
-            ProductListResponseDto dto = new ProductListResponseDto(product,isLiked);
+            Long reviewCount =reviewService.countByProductId(product.getId());
+            ProductListResponseDto dto = new ProductListResponseDto(product,isLiked,reviewCount);
             dtos.add(dto);
             count++;
         }
@@ -193,7 +198,8 @@ public class ProductService {
                 if (userId != null) {
                     isLiked = likesService.existsByUserIdAndProductId(userId, products.get(randomIndex).getId());
                 }
-                ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex),isLiked);
+                Long reviewCount =reviewService.countByProductId(products.get(randomIndex).getId());
+                ProductListResponseDto dto = new ProductListResponseDto(products.get(randomIndex),isLiked,reviewCount);
                 dtos.add(dto);
             }
         }

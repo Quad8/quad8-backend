@@ -190,6 +190,13 @@ public class ReviewService {
         return updatedReview.getId();
     }
 
+    public Double getAverageScoreByProductId(Integer id){
+        return reviewRepository.findAverageScoreByProductId(id);
+    }
+
+    public Long countByProductId(Integer id){
+        return reviewRepository.countByProductId(id);
+    }
     private Map<Integer, Double> getRatios(List<Object[]> counts, int maxValue) {
         Map<Integer, Long> countMap = new HashMap<>();
         long totalCount = 0;
