@@ -57,4 +57,23 @@ public class CartCustomResponseDto {
                 .classification("CUSTOM")
                 .build();
     }
+
+    public static CartCustomResponseDto fromEntity(Long id, CustomOption custom){
+        return CartCustomResponseDto.builder()
+                .id(id)
+                .productId(custom.getId())
+                .type(custom.getLayout())
+                .texture(custom.getAppearanceTexture())
+                .boardColor(custom.getAppearanceColor())
+                .baseKeyColor(custom.getBaseKeyColor())
+                .switchType(custom.getKeyboardSwitch())
+                .hasPointKeyCap(custom.isHasPointKey())
+                .pointKeyType(custom.getPointKeyType())
+                .pointSetColor(custom.getPointSetColor())
+                .imgUrl(custom.getImgUrl())
+                .price(custom.getPrice())
+                .individualColor(null)
+                .classification("CUSTOM")
+                .build();
+    }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
+import static site.keydeuk.store.common.response.ErrorCode.COMMON_SYSTEM_ERROR;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -134,7 +135,7 @@ public class CartService {
 
     /** user 장바구니 조회*/
     public CartByUserResponseDto getCartByUserId(Long userId){
-
+        log.info("userid: {}",userId);
         CartItemListDto dto = CartItemListDto.fromEntity(cartRepository.findByUserId(userId));
 
         List<CartProductResponseDto> cartProducts = new ArrayList<>();
@@ -142,12 +143,16 @@ public class CartService {
 
         for (CartItem item : dto.getCartItems()){
             CartItem cartItem = cartItemRepository.findById(item.getId()).orElseThrow(EntityNotFoundException::new);
-
             if (cartItem instanceof CartItemWithCustom) {
                 CartItemWithCustom customItem = (CartItemWithCustom) cartItem;
                 CustomObject object = customObjectRepository.findById(customItem.getCustomOption().getId())
-                        .orElseThrow(EntityNotFoundException::new);
-                CartCustomResponseDto cartCustomDto = CartCustomResponseDto.fromEntity(customItem.getId(),customItem.getCustomOption(),object);
+                        .orElse(null);
+                CartCustomResponseDto cartCustomDto;
+                if (object == null){
+                    cartCustomDto = CartCustomResponseDto.fromEntity(customItem.getId(),customItem.getCustomOption());
+                }else {
+                    cartCustomDto = CartCustomResponseDto.fromEntity(customItem.getId(),customItem.getCustomOption(),object);
+                }
                 cartCustoms.add(cartCustomDto);
 
             } else if (cartItem instanceof CartItemWithProduct) {
