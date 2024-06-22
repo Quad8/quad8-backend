@@ -22,6 +22,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
+    @Operation(summary = "주문 생성", description = "주문을 생성합니다.")
     @PostMapping
     public CommonResponse<OrderCreateResponse> createOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
