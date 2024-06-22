@@ -40,8 +40,9 @@ public class ProductService {
         // 조회수 증가
         product.setViews(product.getViews()+1);
         productRepository.save(product);
-
-        return new ProductDetailResponseDto(product);
+        Long reviewCount = reviewService.countByProductId(productId);
+        Double scope = reviewService.getAverageScoreByProductId(productId);
+        return new ProductDetailResponseDto(product,reviewCount,scope);
     }
 
 
