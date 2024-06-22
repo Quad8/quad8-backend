@@ -27,7 +27,7 @@ public class CustomController {
     private final ProductService productService;
     private final CartService cartService;
 
-    @Operation(summary = "커스텀 키보드 주문",description = "스웨거XXXXX, 조합한 커스텀 키보드를 장바구니에 저장합니다.")
+    @Operation(summary = "커스텀 키보드 주문",description = "조합한 커스텀 키보드를 장바구니에 저장합니다.")
     @PostMapping("/create")
     public CommonResponse<?> createCustomKeyboard(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody @Valid CustomKeyboardRequestDto requestDto){
 
