@@ -2,6 +2,7 @@ package site.keydeuk.store.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class OrderController {
     @PostMapping
     public CommonResponse<Long> createOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody List<OrderCreateRequest> requests
+            @RequestBody @Valid List<OrderCreateRequest> requests
     ){
         Long userId = principalDetails.getUserId();
         Long orderId = orderService.createOrder(userId, requests);
