@@ -1,12 +1,15 @@
 package site.keydeuk.store.domain.payment.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
-
-@RequiredArgsConstructor
+@Getter
+@AllArgsConstructor
 public class PaymentConfirmResponse {
     private String mId;
     private String lastTransactionKey;
@@ -15,8 +18,8 @@ public class PaymentConfirmResponse {
     private String orderName;
     private String taxExemptionAmount;
     private PaymentStatus status;
-    private LocalDateTime requestedAt;
-    private LocalDateTime approvedAt;
+    private ZonedDateTime requestedAt;
+    private ZonedDateTime approvedAt;
     private boolean useEscrow;
     private boolean cultureExpense;
     private Card card;

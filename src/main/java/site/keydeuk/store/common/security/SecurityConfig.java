@@ -130,7 +130,8 @@ public class SecurityConfig {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:3000" //프론트 주소
-                , "http://localhost:3001"
+                ,"http://localhost:3001"
+                ,"http://localhost:8080"
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),

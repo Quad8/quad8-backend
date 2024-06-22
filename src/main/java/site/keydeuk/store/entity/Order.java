@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Order extends BaseTimeEntity {
     @Id
