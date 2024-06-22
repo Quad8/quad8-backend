@@ -74,20 +74,24 @@ public class OrderService {
         return savedOrder.getId();
     }
 
+    // 결제 페이지 띄울때의 응답
     @Transactional(readOnly = true)
     public OrderCreateResponse getOrderResponse(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+
         List<OrderItem> orderItems = order.getOrderItems();
         List<OrderItemResponse> orderItemResponses = orderItems.stream()
                 .map(this::toOrderItemResponse)
                 .toList();
+
         Long shippingAddressId = order.getShippingAddressId();
         ShippingAddress shippingAddress = ShippingAddress.NULL;
-        if (shippingAddressId != null) {
+        if (shippingAddressId != null && shippingAddressId !=0) {
             shippingAddress = shippingRepository.findById(shippingAddressId)
                     .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
         }
+
         return OrderCreateResponse.builder()
                 .orderId(order.getId())
                 .paymentOrderId(order.getPaymentOrderId())
@@ -96,16 +100,7 @@ public class OrderService {
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
                 .build();
     }
-    private Integer getPrice(Integer productId) {
-        if (productId > 100000) {
-            CustomOption customOption = customRepository.findById(productId)
-                    .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
-            return customOption.getPrice();
-        }
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
-        return product.getPrice();
-    }
+
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
@@ -113,6 +108,8 @@ public class OrderService {
                 .map(this::toOrderResponse)
                 .toList();
     }
+
+    // 결제 완료 된 주문 건
 
     @Transactional(readOnly = true)
     public OrderDetailResponse getOrder(Long userId, Long orderId) {
@@ -144,7 +141,6 @@ public class OrderService {
                 .confirmationDate(order.getUpdatedAt())
                 .build();
     }
-
     @Transactional
     public void deleteOrders(Long userId, List<Long> orderIds) {
         List<Order> orders = orderRepository.findAllById(orderIds).stream()
@@ -155,6 +151,17 @@ public class OrderService {
             throw new CustomException(ORDER_NOT_FOUND);
         }
         orderRepository.deleteAll(orders);
+    }
+
+    private Integer getPrice(Integer productId) {
+        if (productId > 100000) {
+            CustomOption customOption = customRepository.findById(productId)
+                    .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+            return customOption.getPrice();
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+        return product.getPrice();
     }
 
     private OrderResponse toOrderResponse(Order order) {
