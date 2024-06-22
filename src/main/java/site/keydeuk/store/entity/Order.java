@@ -5,6 +5,7 @@ import lombok.*;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,14 +23,14 @@ public class Order extends BaseTimeEntity {
     private Long shippingAddressId;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private Long totalPrice;
-    @OneToMany(mappedBy = "order")
-    private List<OrderItem> orderItems;
+    private Integer totalPrice = 0;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public void addOrderItems(List<OrderItem> orderItems) {
         this.orderItems.addAll(orderItems);
         this.totalPrice = this.orderItems.stream()
                 .map(OrderItem::calculatePrice)
-                .reduce(0L, Math::addExact);
+                .reduce(0, Math::addExact);
     }
 }

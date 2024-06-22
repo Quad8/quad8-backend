@@ -35,7 +35,6 @@ public class PaymentService {
         if (!order.getTotalPrice().equals(request.amount())) {
             throw new CustomException(INVALID_PAYMENT_AMOUNT_ERROR);
         }
-        log.info("서비스: {}", request);
         PaymentConfirmRequest confirmRequest = PaymentConfirmRequest.from(request);
         PaymentConfirmResponse confirmResponse = paymentClient.confirm(confirmRequest);
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.ErrorCode;
+import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
 import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
@@ -22,7 +23,9 @@ import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
 import site.keydeuk.store.entity.*;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
@@ -35,9 +38,11 @@ public class OrderService {
     private final OrderItemsRepository orderItemsRepository;
     private final ProductRepository productRepository;
     private final ProductSwitchOptionRepository productSwitchOptionRepository;
+    private final CustomRepository customRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
 
+    @Transactional
     public OrderCreateResponse createOrder(Long userId, List<OrderCreateRequest> requests) {
         Long shippingAddressId = shippingRepository.findByUserIdAndIsDefault(userId, true)
                 .orElse(ShippingAddress.NULL)
@@ -47,39 +52,28 @@ public class OrderService {
                 .userId(userId)
                 .paymentOrderId(UUID.randomUUID().toString())
                 .shippingAddressId(shippingAddressId)
+                .orderItems(new ArrayList<>())
                 .status(OrderStatus.READY)
                 .build();
 
         Order savedOrder = orderRepository.save(order);
-
         List<OrderItem> orderItems = requests.stream()
                 .map(
                         request -> OrderItem.builder()
                                 .order(savedOrder)
                                 .count(request.quantity())
-                                .product(
-                                        productRepository.findById(request.productId())
-                                                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND)))
+                                .productId(request.productId())
+                                .price(getPrice(request.productId()))
                                 .switchOptionId(request.switchOptionId())
                                 .build()
                 )
                 .toList();
+        log.info("{}", orderItems);
         savedOrder.addOrderItems(orderItems);
         orderItemsRepository.saveAll(orderItems);
 
-        List<OrderItemResponse> orderItemResponses = orderItems.stream().map(
-                        orderItem -> {
-                            Long switchOptionId = orderItem.getSwitchOptionId();
-                            String switchOption = "";
-                            if (switchOptionId != null) {
-                                ProductSwitchOption productSwitchOption = productSwitchOptionRepository.findById(switchOptionId).orElseThrow(
-                                        () -> new CustomException(OPTION_NOT_FOUND)
-                                );
-                                switchOption = productSwitchOption.getOptionName();
-                            }
-                            return OrderItemResponse.from(orderItem, switchOption);
-                        }
-                )
+        List<OrderItemResponse> orderItemResponses = orderItems.stream()
+                .map(this::toOrderItemResponse)
                 .toList();
 
         ShippingAddress shippingAddress = ShippingAddress.NULL;
@@ -91,13 +85,23 @@ public class OrderService {
 
         return OrderCreateResponse.builder()
                 .orderId(savedOrder.getId())
-                .paymentOrderId(order.getPaymentOrderId())
+                .paymentOrderId(savedOrder.getPaymentOrderId())
                 .orderItemResponses(orderItemResponses)
-                .totalPrice(order.getTotalPrice())
+                .totalPrice(savedOrder.getTotalPrice())
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
                 .build();
     }
 
+    private Integer getPrice(Integer productId) {
+        if (productId > 100000) {
+            CustomOption customOption = customRepository.findById(productId)
+                    .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+            return customOption.getPrice();
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+        return product.getPrice();
+    }
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
@@ -163,12 +167,22 @@ public class OrderService {
     }
 
     private OrderItemResponse toOrderItemResponse(OrderItem orderItem) {
-        Product product = productRepository.findById(orderItem.getProduct().getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-
-        //TODO: 스위치 옵션 id로 스위치 옵션 명 가져오기
-//        Long switchOptionId = orderItem.getProduct().getProduct;
-        String switchOption = "옵션";
-        return OrderItemResponse.from(orderItem, product, switchOption);
+        if (orderItem.getProductId() > 100000) {
+            CustomOption customOption = customRepository.findById(orderItem.getProductId())
+                    .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
+            String switchOption = customOption.toString();
+            return OrderItemResponse.from(orderItem, customOption.getImgUrl(), "커스텀 키보드", switchOption, 0);
+        }
+        Integer productId = orderItem.getProductId();
+        Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+        Long switchOptionId = orderItem.getSwitchOptionId();
+        String switchOption = "";
+        if (switchOptionId != null) {
+            ProductSwitchOption productSwitchOption = productSwitchOptionRepository.findById(switchOptionId).orElseThrow(
+                    () -> new CustomException(OPTION_NOT_FOUND)
+            );
+            switchOption = productSwitchOption.getOptionName();
+        }
+        return OrderItemResponse.from(product, switchOption);
     }
 }

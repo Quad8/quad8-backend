@@ -17,7 +17,7 @@ public class ProductDetailResponseDto {
 
     private String name;
 
-    private int price;
+    private Integer price;
 
     private int reviewscount;
 
