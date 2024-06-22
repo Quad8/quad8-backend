@@ -24,12 +24,20 @@ public class OrderController {
 
     @Operation(summary = "주문 생성", description = "주문을 생성합니다.")
     @PostMapping
-    public CommonResponse<OrderCreateResponse> createOrder(
+    public CommonResponse<Long> createOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody List<OrderCreateRequest> requests
     ){
         Long userId = principalDetails.getUserId();
-        OrderCreateResponse response = orderService.createOrder(userId, requests);
+        Long orderId = orderService.createOrder(userId, requests);
+        return CommonResponse.ok(orderId);
+    }
+
+    @Operation(summary = "결제 정보 조회", description = "결제 정보를 조회합니다.")
+    @GetMapping("/{orderId}/payment")
+    public CommonResponse<OrderCreateResponse> getOrderResponse(
+            @PathVariable Long orderId) {
+        OrderCreateResponse response = orderService.getOrderResponse(orderId);
         return CommonResponse.ok(response);
     }
 
