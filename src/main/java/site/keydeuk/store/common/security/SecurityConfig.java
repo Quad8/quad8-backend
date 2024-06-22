@@ -62,7 +62,8 @@ public class SecurityConfig {
             "/api/v1/users/**",
             "/api/v1/oauth2/signUp",
             "/api/v1/reviews",
-            "/api/v1/community/**"
+            "/api/v1/community/**",
+            "/api/v1/custom/get/random-option-products"
     };
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
