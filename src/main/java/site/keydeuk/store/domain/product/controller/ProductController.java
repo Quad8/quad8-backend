@@ -111,7 +111,7 @@ public class ProductController {
         return CommonResponse.ok(productService.getProductListByswitch(param,userId));
     }
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
-    @GetMapping("/keyduek-best")
+    @GetMapping("/keydeuk-best")
     public CommonResponse<?> getKeydeukBest(@AuthenticationPrincipal PrincipalDetails principalDetails){
         /** 구매나 리뷰 완료되면 로직 재구성 */
         Long userId = null;

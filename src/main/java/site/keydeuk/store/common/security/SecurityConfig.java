@@ -51,7 +51,6 @@ public class SecurityConfig {
             "/",
             "/logout",
             "/",
-            "/api/v1/custom/**",
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
@@ -130,8 +129,9 @@ public class SecurityConfig {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:3000" //프론트 주소
-                ,"http://localhost:3001"
-                ,"http://localhost:8080"
+                , "http://localhost:3001",
+                "https://keydeuk.com/",
+                "http://13.125.98.110:3000"
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
