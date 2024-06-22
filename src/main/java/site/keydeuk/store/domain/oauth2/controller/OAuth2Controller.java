@@ -29,7 +29,7 @@ public class OAuth2Controller {
         redirectAttributes.addAttribute("providerId", providerId);
         redirectAttributes.addAttribute("nickname", nickname);
         redirectAttributes.addAttribute("imgUrl", imgUrl);
-        return "redirect:http://localhost:3000/sign-up"; // 프론트 회원가입 주소로 리다이렉트
+        return "redirect:https://keydeuk.com/sign-up"; // 프론트 회원가입 주소로 리다이렉트
     }
 
 }
