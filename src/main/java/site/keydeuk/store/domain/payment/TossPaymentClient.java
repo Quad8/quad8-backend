@@ -19,7 +19,8 @@ public class TossPaymentClient implements PaymentClient {
     public TossPaymentClient(RestClient restClient,
                              @Value("${toss.secret-key}") String secretKey) {
         this.restClient = restClient;
-        this.secretKey = new String(Base64.encodeBase64(secretKey.getBytes()));
+        String key = secretKey + ":";
+        this.secretKey = new String(Base64.encodeBase64(key.getBytes()));
     }
 
     @Override
