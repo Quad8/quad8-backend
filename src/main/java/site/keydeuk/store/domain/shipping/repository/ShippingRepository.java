@@ -12,6 +12,10 @@ public interface ShippingRepository extends JpaRepository<ShippingAddress, Long>
     @Modifying
     @Query("UPDATE ShippingAddress sa SET sa.isDefault = false WHERE sa.user.id = :userId AND sa.isDefault = true")
     void updateDefaultAddressToFalse(Long userId);
+    @Query("SELECT sa FROM ShippingAddress sa WHERE sa.user.id = :userId AND sa.isDefault = true")
+    Optional<ShippingAddress> findDefaultAddressByUserId(Long userId);
+
+    Optional<ShippingAddress> findTopByUserIdOrderByIdDesc(Long userId);
 
     List<ShippingAddress> findAllByUserId(Long userId);
 

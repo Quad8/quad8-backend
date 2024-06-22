@@ -12,6 +12,7 @@ import site.keydeuk.store.entity.ShippingAddress;
 import site.keydeuk.store.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,8 @@ public class ShippingService {
         }
         ShippingAddress shippingAddress = shippingAddressRequest.toEntity(user, shippingAddressRequest);
         ShippingAddress savedShippingAddress = shippingRepository.save(shippingAddress);
+        setDefaultAddressIfNoneExists(principalDetails.getUserId());
+
         return ShippingAddressResponse.from(savedShippingAddress);
     }
 
@@ -50,6 +53,7 @@ public class ShippingService {
 
         shippingAddress.update(request.name(), request.zoneCode(), request.address(), request.detailAddress(), request.phone(), request.isDefault());
         shippingRepository.save(shippingAddress);
+        setDefaultAddressIfNoneExists(userId);
 
         return ShippingAddressResponse.from(shippingAddress);
     }
@@ -59,5 +63,18 @@ public class ShippingService {
         ShippingAddress shippingAddress = shippingRepository.findByIdAndUserId(addressId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 배송지 ID 또는 사용자 ID입니다."));
         shippingRepository.delete(shippingAddress);
+        setDefaultAddressIfNoneExists(userId);
     }
+
+    private void setDefaultAddressIfNoneExists(Long userId) {
+        Optional<ShippingAddress> defaultAddress = shippingRepository.findDefaultAddressByUserId(userId);
+        if (defaultAddress.isEmpty()) {
+            Optional<ShippingAddress> highestIdAddress = shippingRepository.findTopByUserIdOrderByIdDesc(userId);
+            highestIdAddress.ifPresent(address -> {
+                address.update(address.getName(), address.getZoneCode(), address.getAddress(), address.getDetailAddress(), address.getPhone(), true);
+                shippingRepository.save(address);
+            });
+        }
+    }
+
 }
