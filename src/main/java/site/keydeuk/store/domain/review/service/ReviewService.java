@@ -191,7 +191,9 @@ public class ReviewService {
     }
 
     public Double getAverageScoreByProductId(Integer id){
-        return reviewRepository.findAverageScoreByProductId(id);
+        Double scope = (double) 0;
+        if (reviewRepository.findAverageScoreByProductId(id) != null) scope = reviewRepository.findAverageScoreByProductId(id);
+        return scope;
     }
 
     public Long countByProductId(Integer id){
