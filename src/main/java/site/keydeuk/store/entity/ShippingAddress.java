@@ -14,13 +14,13 @@ public class ShippingAddress extends BaseTimeEntity {
     public static final ShippingAddress NULL = new ShippingAddress();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String zoneCode;
-    private String address;
-    private String detailAddress;
-    private String phone;
-    private Boolean isDefault;
+    private Long id = 0L;
+    private String name = "";
+    private String zoneCode = "";
+    private String address = "";
+    private String detailAddress = "";
+    private String phone = "";
+    private Boolean isDefault = false;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
