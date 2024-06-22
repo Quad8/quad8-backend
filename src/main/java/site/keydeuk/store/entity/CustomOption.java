@@ -41,4 +41,20 @@ public class CustomOption extends BaseTimeEntity {
     private String imgUrl;
 
     private int price;
+
+    @Override
+    public String toString() {
+        return "CustomOption{" +
+                ", layout='" + layout + '\'' +
+                ", appearanceTexture='" + appearanceTexture + '\'' +
+                ", appearanceColor='" + appearanceColor + '\'' +
+                ", baseKeyColor='" + baseKeyColor + '\'' +
+                ", keyboardSwitch='" + keyboardSwitch + '\'' +
+                ", hasPointKey=" + hasPointKey +
+                ", pointKeyType='" + pointKeyType + '\'' +
+                ", pointSetColor='" + pointSetColor + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

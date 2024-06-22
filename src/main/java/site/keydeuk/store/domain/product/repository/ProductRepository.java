@@ -21,9 +21,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Product> findAllByOrderByPriceAsc(Pageable pageable);
     Page<Product> findAllByOrderByPriceDesc(Pageable pageable);
-    @Query("select p from Product p LEFT join OrderItem oi on p.id = oi.product.id group by p.id order by count (oi.id) DESC ")
+    @Query("select p from Product p LEFT join OrderItem oi on p.id = oi.productId group by p.id order by count (oi.id) DESC ")
     Page<Product> findAllOrderByOrder(Pageable pageable);
-    @Query("select p from  Product p LEFT join OrderItem oi on p.id = oi.product.id where p.productCategory.id = :categoryId group by p.id order by count (oi.id) DESC ")
+    @Query("select p from  Product p LEFT join OrderItem oi on p.id = oi.productId where p.productCategory.id = :categoryId group by p.id order by count (oi.id) DESC ")
     List<Product> findOrderByOrderedMostByCategory(Integer categoryId);
 
     List<Product> findByProductCategoryId(Integer categoryId);
@@ -36,7 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("SELECT p, COUNT(oi.id) AS orderCount " +
             "FROM Product p " +
-            "LEFT JOIN OrderItem oi ON p.id = oi.product.id " +
+            "LEFT JOIN OrderItem oi ON p.id = oi.productId " +
             "LEFT JOIN p.productCategory pc " +
             "LEFT JOIN p.switchOptions so " +
             "WHERE pc.name = :category " +
@@ -56,7 +56,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("SELECT p, COUNT(oi.id) AS orderCount " +
             "FROM Product p " +
-            "LEFT JOIN OrderItem oi ON p.id = oi.product.id " +
+            "LEFT JOIN OrderItem oi ON p.id = oi.productId " +
             "LEFT JOIN p.productCategory pc " +
             "LEFT JOIN p.switchOptions so " +
             "WHERE pc.id in (4,5,6,7,8)" +

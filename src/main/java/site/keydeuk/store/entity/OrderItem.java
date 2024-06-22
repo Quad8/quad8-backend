@@ -15,14 +15,13 @@ public class OrderItem {
     private Long id;
     private Integer count;
     private Long switchOptionId;
+    private Integer price;
+    private Integer productId;
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
 
-    public Long calculatePrice() {
-        return (long) count * product.getPrice();
+    public Integer calculatePrice() {
+        return count * price;
     }
 }

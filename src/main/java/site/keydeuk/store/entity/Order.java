@@ -22,7 +22,7 @@ public class Order extends BaseTimeEntity {
     private Long shippingAddressId;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private Long totalPrice;
+    private Integer totalPrice;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
@@ -30,6 +30,6 @@ public class Order extends BaseTimeEntity {
         this.orderItems.addAll(orderItems);
         this.totalPrice = this.orderItems.stream()
                 .map(OrderItem::calculatePrice)
-                .reduce(0L, Math::addExact);
+                .reduce(0, Math::addExact);
     }
 }

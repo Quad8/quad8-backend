@@ -12,17 +12,24 @@ public record OrderItemResponse(
         String switchOption,
         Integer viewCount
 ) {
-    public static OrderItemResponse from(OrderItem orderItem, Product product, String switchOption) {
+    public static OrderItemResponse from(Product product, String switchOption) {
         return OrderItemResponse.builder()
-                .productId(orderItem.getProduct().getId())
+                .productId(product.getId())
                 .productImgUrl(product.getProductImgs().get(0).getImgUrl())
                 .productName(product.getName())
                 .switchOption(switchOption)
-                .viewCount(orderItem.getProduct().getViews())
+                .viewCount(product.getViews())
                 .build();
     }
 
-    public static OrderItemResponse from(OrderItem orderItem, String switchOption) {
-        return from(orderItem, orderItem.getProduct(), switchOption);
+    public static OrderItemResponse from(OrderItem orderItem, String productImgUrl, String productName, String switchOption, Integer viewCount) {
+        return OrderItemResponse.builder()
+                .productId(orderItem.getProductId())
+                .productImgUrl(productImgUrl)
+                .productName(productName)
+                .switchOption(switchOption)
+                .viewCount(viewCount)
+                .build();
     }
+
 }

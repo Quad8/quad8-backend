@@ -36,7 +36,7 @@ public class Product {
     @ColumnDefault("1000")
     private int stocks;
 
-    private int price;
+    private Integer price;
 
     @ColumnDefault("0")
     private int views;
