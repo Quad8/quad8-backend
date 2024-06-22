@@ -6,15 +6,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.common.response.ErrorCode;
+import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
+import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderItemResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
+import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
 import site.keydeuk.store.domain.order.repository.OrderRepository;
 import site.keydeuk.store.domain.payment.repository.PaymentRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
+import site.keydeuk.store.domain.productswitchoption.repository.ProductSwitchOptionRepository;
 import site.keydeuk.store.domain.shipping.dto.ShippingAddressDto;
+import site.keydeuk.store.domain.shipping.dto.response.ShippingAddressResponse;
 import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
 import site.keydeuk.store.entity.*;
+import site.keydeuk.store.entity.enums.OrderStatus;
 
 import java.util.List;
 
@@ -25,9 +31,70 @@ import static site.keydeuk.store.common.response.ErrorCode.*;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderItemsRepository orderItemsRepository;
     private final ProductRepository productRepository;
+    private final ProductSwitchOptionRepository productSwitchOptionRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
+
+    public OrderCreateResponse createOrder(Long userId, List<OrderCreateRequest> requests) {
+        Long shippingAddressId = shippingRepository.findByUserIdAndIsDefault(userId, true)
+                .orElse(ShippingAddress.NULL)
+                .getId();
+
+        Order order = Order.builder()
+                .userId(userId)
+                .shippingAddressId(shippingAddressId)
+                .status(OrderStatus.READY)
+                .build();
+
+        Order savedOrder = orderRepository.save(order);
+
+        List<OrderItem> orderItems = requests.stream()
+                .map(
+                        request -> OrderItem.builder()
+                                .order(savedOrder)
+                                .count(request.quantity())
+                                .product(
+                                        productRepository.findById(request.productId())
+                                                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND)))
+                                .switchOptionId(request.switchOptionId())
+                                .build()
+                )
+                .toList();
+        savedOrder.addOrderItems(orderItems);
+        orderItemsRepository.saveAll(orderItems);
+
+        List<OrderItemResponse> orderItemResponses = orderItems.stream().map(
+                        orderItem -> {
+                            Long switchOptionId = orderItem.getSwitchOptionId();
+                            String switchOption = "";
+                            if (switchOptionId != null) {
+                                ProductSwitchOption productSwitchOption = productSwitchOptionRepository.findById(switchOptionId).orElseThrow(
+                                        () -> new CustomException(OPTION_NOT_FOUND)
+                                );
+                                switchOption = productSwitchOption.getOptionName();
+                            }
+                            return OrderItemResponse.from(orderItem, switchOption);
+                        }
+                )
+                .toList();
+
+        ShippingAddress shippingAddress = ShippingAddress.NULL;
+        if (shippingAddressId != null) {
+            shippingAddress = shippingRepository.findById(shippingAddressId).orElseThrow(
+                    () -> new CustomException(SHIPPING_NOT_FOUND)
+            );
+        }
+
+        return OrderCreateResponse.builder()
+                .orderId(savedOrder.getId())
+                .orderItemResponses(orderItemResponses)
+                .totalPrice(order.getTotalPrice())
+                .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);

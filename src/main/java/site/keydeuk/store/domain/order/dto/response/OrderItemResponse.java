@@ -21,4 +21,8 @@ public record OrderItemResponse(
                 .viewCount(orderItem.getProduct().getViews())
                 .build();
     }
+
+    public static OrderItemResponse from(OrderItem orderItem, String switchOption) {
+        return from(orderItem, orderItem.getProduct(), switchOption);
+    }
 }

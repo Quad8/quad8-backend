@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
+import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
 import site.keydeuk.store.domain.order.service.OrderService;
@@ -20,13 +22,23 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
+    @PostMapping
+    public CommonResponse<OrderCreateResponse> createOrder(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody List<OrderCreateRequest> requests
+    ){
+        Long userId = principalDetails.getUserId();
+        OrderCreateResponse response = orderService.createOrder(userId, requests);
+        return CommonResponse.ok(response);
+    }
+
     @Operation(summary = "전체 주문 조회", description = "로그인된 사용자의 전체 주문 내역을 조회합니다.")
     @GetMapping
     public CommonResponse<List<OrderResponse>> getAllOrders(
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = principalDetails.getUserId();
-        List<OrderResponse> orders = orderService.getAllOrders(userId);
-        return CommonResponse.ok(orders);
+        List<OrderResponse> responses = orderService.getAllOrders(userId);
+        return CommonResponse.ok(responses);
     }
 
     @Operation(summary = "주문 상세 조회", description = "사용자의 주문 내역을 상세 조회합니다.")

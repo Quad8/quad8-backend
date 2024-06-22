@@ -11,6 +11,7 @@ import site.keydeuk.store.common.entity.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShippingAddress extends BaseTimeEntity {
+    public static final ShippingAddress NULL = new ShippingAddress();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

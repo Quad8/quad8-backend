@@ -24,4 +24,11 @@ public class Order extends BaseTimeEntity {
     private Long totalPrice;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
+
+    public void addOrderItems(List<OrderItem> orderItems) {
+        this.orderItems.addAll(orderItems);
+        this.totalPrice = this.orderItems.stream()
+                .map(OrderItem::calculatePrice)
+                .reduce(0L, Math::addExact);
+    }
 }
