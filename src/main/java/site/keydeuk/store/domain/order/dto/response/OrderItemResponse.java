@@ -10,7 +10,8 @@ public record OrderItemResponse(
         String productImgUrl,
         String productName,
         String switchOption,
-        Integer viewCount
+        Integer viewCount,
+        Integer price
 ) {
     public static OrderItemResponse from(Product product, String switchOption) {
         return OrderItemResponse.builder()
@@ -19,6 +20,7 @@ public record OrderItemResponse(
                 .productName(product.getName())
                 .switchOption(switchOption)
                 .viewCount(product.getViews())
+                .price(product.getPrice())
                 .build();
     }
 

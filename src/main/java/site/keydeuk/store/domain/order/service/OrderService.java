@@ -110,7 +110,6 @@ public class OrderService {
     }
 
     // 결제 완료 된 주문 건
-
     @Transactional(readOnly = true)
     public OrderDetailResponse getOrder(Long userId, Long orderId) {
         Order order = orderRepository.findById(orderId)
