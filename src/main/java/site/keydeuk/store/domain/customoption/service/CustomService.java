@@ -114,5 +114,10 @@ public class CustomService {
         }
 
     }
+    public boolean existBycustomId(Integer id){
+        boolean flag = false;
+        if (customRepository.findById(id).isPresent()) flag = true;
+        return flag;
+    }
 
 }
