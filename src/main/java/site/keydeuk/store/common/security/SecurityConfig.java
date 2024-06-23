@@ -159,7 +159,9 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "/localhost:8080"
-                                ,"/43.201.71.50:8080")
+                                ,"/43.201.71.50:8080"
+                                ,"/keydeuk-be.shop"
+                                ,"/43.201.71.50")
                         .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowCredentials(true)
