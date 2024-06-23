@@ -33,4 +33,8 @@ public class Order extends BaseTimeEntity {
                 .map(OrderItem::calculatePrice)
                 .reduce(0, Math::addExact);
     }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
 }
