@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,5 +36,9 @@ public class Cart extends BaseTimeEntity {
         cart.setTotalCount(0);
         cart.setUser(user);
         return cart;
+    }
+
+    public void updateTotalCount(int count) {
+        totalCount -= count;
     }
 }

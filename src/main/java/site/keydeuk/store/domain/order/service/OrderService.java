@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
-import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
 import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
@@ -25,7 +24,6 @@ import site.keydeuk.store.entity.enums.OrderStatus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
@@ -42,6 +40,12 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
 
+    /**
+     * 주문 생성
+     * 주문하기 -> 결제 정보 페이지 로 넘어갈때 주문 정보 저장
+     * 저장된 주문 정보는 결제 승인시 사용
+     * @param requests 주문할 상품들 정보
+     */
     @Transactional
     public Long createOrder(Long userId, List<OrderCreateRequest> requests) {
         Long shippingAddressId = shippingRepository.findByUserIdAndIsDefault(userId, true)
@@ -74,11 +78,16 @@ public class OrderService {
         return savedOrder.getId();
     }
 
-    // 결제 페이지 띄울때의 응답
+    /**
+     * 결제 정보 조회
+     * 결제 페이지를 띄울때 필요한 데이터 조회
+     * @param orderId 주문 저장시 반환된 주문 아이디
+     */
     @Transactional(readOnly = true)
     public OrderCreateResponse getOrderResponse(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        validateReadyOrder(order);
 
         List<OrderItem> orderItems = order.getOrderItems();
         List<OrderItemResponse> orderItemResponses = orderItems.stream()
@@ -87,7 +96,7 @@ public class OrderService {
 
         Long shippingAddressId = order.getShippingAddressId();
         ShippingAddress shippingAddress = ShippingAddress.NULL;
-        if (shippingAddressId != null && shippingAddressId !=0) {
+        if (shippingAddressId != null && shippingAddressId != 0) {
             shippingAddress = shippingRepository.findById(shippingAddressId)
                     .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
         }
@@ -101,15 +110,23 @@ public class OrderService {
                 .build();
     }
 
+    /**
+     * 결제 완료 된 주문 전체 조회
+     * @param userId 유저 아이디
+     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUserIdAndStatusNot(userId, OrderStatus.READY);
         return orders.stream()
                 .map(this::toOrderResponse)
                 .toList();
     }
 
-    // 결제 완료 된 주문 건
+    /**
+     * 결제 완료 된 주문 상세 조회
+     * @param userId 유저 아이디
+     * @param orderId 주문 아이디
+     */
     @Transactional(readOnly = true)
     public OrderDetailResponse getOrder(Long userId, Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -122,7 +139,6 @@ public class OrderService {
         ShippingAddress shippingAddress = shippingRepository.findById(order.getShippingAddressId())
                 .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
         ShippingAddressDto shippingAddressDto = ShippingAddressDto.from(shippingAddress);
-
 
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
@@ -140,6 +156,7 @@ public class OrderService {
                 .confirmationDate(order.getUpdatedAt())
                 .build();
     }
+
     @Transactional
     public void deleteOrders(Long userId, List<Long> orderIds) {
         List<Order> orders = orderRepository.findAllById(orderIds).stream()
@@ -156,7 +173,7 @@ public class OrderService {
         if (productId > 100000) {
             CustomOption customOption = customRepository.findById(productId)
                     .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
-            log.info("{}",customOption.getPrice());
+            log.info("{}", customOption.getPrice());
             return customOption.getPrice();
         }
         Product product = productRepository.findById(productId)
@@ -195,5 +212,11 @@ public class OrderService {
             switchOption = productSwitchOption.getOptionName();
         }
         return OrderItemResponse.from(product, switchOption, orderItem.getCount());
+    }
+
+    private static void validateReadyOrder(Order order) {
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new CustomException(READY_ORDER_NOT_FOUND);
+        }
     }
 }
