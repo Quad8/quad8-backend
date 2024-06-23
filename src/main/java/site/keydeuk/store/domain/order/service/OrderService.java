@@ -79,6 +79,7 @@ public class OrderService {
     public OrderCreateResponse getOrderResponse(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        validateOrder(order);
 
         List<OrderItem> orderItems = order.getOrderItems();
         List<OrderItemResponse> orderItemResponses = orderItems.stream()
@@ -99,6 +100,12 @@ public class OrderService {
                 .totalPrice(order.getTotalPrice())
                 .shippingAddressResponse(ShippingAddressResponse.from(shippingAddress))
                 .build();
+    }
+
+    private static void validateOrder(Order order) {
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new CustomException(READY_ORDER_NOT_FOUND);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -122,7 +129,6 @@ public class OrderService {
         ShippingAddress shippingAddress = shippingRepository.findById(order.getShippingAddressId())
                 .orElseThrow(() -> new CustomException(SHIPPING_NOT_FOUND));
         ShippingAddressDto shippingAddressDto = ShippingAddressDto.from(shippingAddress);
-
 
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));

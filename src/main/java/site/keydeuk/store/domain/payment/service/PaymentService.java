@@ -14,9 +14,9 @@ import site.keydeuk.store.domain.payment.dto.request.PaymentRequest;
 import site.keydeuk.store.domain.payment.repository.PaymentRepository;
 import site.keydeuk.store.entity.Order;
 import site.keydeuk.store.entity.Payment;
+import site.keydeuk.store.entity.enums.OrderStatus;
 
-import static site.keydeuk.store.common.response.ErrorCode.INVALID_PAYMENT_AMOUNT_ERROR;
-import static site.keydeuk.store.common.response.ErrorCode.ORDER_NOT_FOUND;
+import static site.keydeuk.store.common.response.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -32,9 +32,10 @@ public class PaymentService {
         String paymentOrderId = request.paymentOrderId();
         Order order = orderRepository.findByPaymentOrderId(paymentOrderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
-        if (!order.getTotalPrice().equals(request.amount())) {
-            throw new CustomException(INVALID_PAYMENT_AMOUNT_ERROR);
-        }
+
+        validateOrder(order);
+        validateAmount(request, order);
+
         PaymentConfirmRequest confirmRequest = PaymentConfirmRequest.from(request);
         PaymentConfirmResponse confirmResponse = paymentClient.confirm(confirmRequest);
 
@@ -61,4 +62,25 @@ public class PaymentService {
                 .approvedAt(savedPayment.getApprovedAt())
                 .build();
     }
+
+    private static void validateOrder(Order order) {
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new CustomException(READY_ORDER_NOT_FOUND);
+        }
+    }
+
+    private static void validateAmount(PaymentRequest request, Order order) {
+        if (!order.getTotalPrice().equals(request.amount())) {
+            throw new CustomException(INVALID_PAYMENT_AMOUNT_ERROR);
+        }
+    }
+
+    public void paymentSuccess(Long paymentId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
+        order.updateStatus(OrderStatus.PAYMENT_COMPLETED);
+    }
+
 }
