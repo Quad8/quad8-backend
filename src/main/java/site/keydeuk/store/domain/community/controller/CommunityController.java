@@ -46,9 +46,9 @@ public class CommunityController {
             return CommonResponse.error("로그인 후 접근 가능합니다.");
         }
 
-        //1. order userid로 조회
-        //2. order중 1000000번 이상인 것만 조회
-        //3.
+        communityService.getPurchaseHistory(principalDetails.getUserId());
+
+
 
         return CommonResponse.ok();
     }

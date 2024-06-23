@@ -14,6 +14,8 @@ public class CustomPurchaseHistoryDto {
 
     private LocalDateTime createdAt;
 
+    private boolean isReviewed;
+
     private int productId;
 
     private String type; //type
