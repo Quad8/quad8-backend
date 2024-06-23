@@ -46,7 +46,7 @@ public class CommunityController {
             return CommonResponse.error("로그인 후 접근 가능합니다.");
         }
 
-        communityService.getPurchaseHistory(principalDetails.getUserId());
+//        communityService.getPurchaseHistory(principalDetails.getUserId());
 
 
 

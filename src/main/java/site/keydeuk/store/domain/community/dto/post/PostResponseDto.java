@@ -1,6 +1,7 @@
 package site.keydeuk.store.domain.community.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
@@ -34,6 +35,7 @@ public class PostResponseDto {
 
     private CustomDetailDto custom;
 
+    @JsonProperty("isLiked")
     private boolean isLiked;
 
     private List<CommentResponseDto> comments; // 재구현 필요

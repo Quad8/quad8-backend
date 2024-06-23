@@ -44,14 +44,14 @@ public class CommunityService {
     private final CommunityLikesService communityLikesService;
 
     /** 커스텀키보드 구매내역 확인하기*/
-    public List<CustomPurchaseHistoryDto> getPurchaseHistory(Long userId){
-        //1. order userid로 조회
-
-
-        //2. order중 1000000번 이상인 것만 조회
-        //3. 리뷰 작성여부 확인해서 dto에 넣기
-
-    }
+//    public List<CustomPurchaseHistoryDto> getPurchaseHistory(Long userId){
+//        //1. order userid로 조회
+//
+//
+//        //2. order중 1000000번 이상인 것만 조회
+//        //3. 리뷰 작성여부 확인해서 dto에 넣기
+//
+//    }
 
     /** 커뮤니티 전체 게시글 조회 */
     @Transactional(readOnly = true)
