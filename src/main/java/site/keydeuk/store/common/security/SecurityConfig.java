@@ -61,6 +61,7 @@ public class SecurityConfig {
             "/api/v1/product/**",
             "/api/v1/users/**",
             "/api/v1/oauth2/signUp",
+            "/oauth2/signUp",
             "/api/v1/reviews",
             "/api/v1/community/**",
             "/api/v1/custom/get/random-option-products"
@@ -204,5 +205,4 @@ public class SecurityConfig {
     private AuthenticationEntryPoint createAuthenticationEntryPoint() {
         return new SecurityAuthenticationEntryPoint(objectMapper);
     }
-
 }
