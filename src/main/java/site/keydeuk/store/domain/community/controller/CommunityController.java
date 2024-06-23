@@ -22,6 +22,7 @@ import site.keydeuk.store.domain.community.service.CommunityService;
 import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
 import site.keydeuk.store.domain.communitycomment.service.CommunityCommentService;
 import site.keydeuk.store.domain.communitylikes.service.CommunityLikesService;
+import site.keydeuk.store.domain.customoption.service.CustomService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class CommunityController {
     private final CommunityService communityService;
     private final CommunityCommentService commentService;
     private final CommunityLikesService communityLikesService;
+    private final CustomService customService;
 
     @Operation(summary = "(미구현!!!!)커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/purchase-history")
@@ -96,6 +98,7 @@ public class CommunityController {
                                         @Validated @RequestPart("postDto")PostDto postDto,
                                         @RequestPart(value = "files")@Parameter(description = "이미지 파일")List<MultipartFile> files){
         if (communityService.existPostBycustomId(postDto.getProductId())) return CommonResponse.error("해당 구매내역에 게시글이 존재합니다.");
+        if (!customService.existBycustomId(postDto.getProductId())) return CommonResponse.error("해당 커스텀키보드 ID가 존재하지 않습니다.");
 
         if (files.size() >4){
             return CommonResponse.error("파일은 최대 4장까지 가능합니다.");
