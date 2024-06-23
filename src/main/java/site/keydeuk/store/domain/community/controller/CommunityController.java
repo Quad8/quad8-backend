@@ -42,6 +42,13 @@ public class CommunityController {
     @Operation(summary = "(미구현!!!!)커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/purchase-history")
     public CommonResponse<?> getPurchaseHistory(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        if (principalDetails == null){
+            return CommonResponse.error("로그인 후 접근 가능합니다.");
+        }
+
+        //1. order userid로 조회
+        //2. order중 1000000번 이상인 것만 조회
+        //3.
 
         return CommonResponse.ok();
     }
