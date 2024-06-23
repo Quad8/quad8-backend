@@ -158,10 +158,13 @@ public class SecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "/localhost:8080"
-                                ,"/43.201.71.50:8080"
-                                ,"/keydeuk-be.shop"
-                                ,"/43.201.71.50")
+                                "http://localhost:8080"
+                                ,"http://43.201.71.50:8080"
+                                ,"http://43.201.71.50"
+                                ,"http://www.keydeuk-be.shop"
+                                ,"https://www.keydeuk-be.shop"
+
+                        )
                         .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowCredentials(true)
