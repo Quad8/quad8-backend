@@ -26,6 +26,7 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(BAD_REQUEST, "주문 정보를 찾을 수 없습니다."),
     READY_ORDER_NOT_FOUND(BAD_REQUEST, "결제 대기중인 주문이 아닙니다."),
     USER_ORDER_NOT_MATCH(BAD_REQUEST,"해당 유저의 주문 정보가 아닙니다."),
+    PAYMENT_ORDER_NOT_MATCH(BAD_REQUEST,"주문 정보와 결제 정보가 일치하지 않습니다."),
 
     // Auth
     ILLEGAL_REGISTRATION_ID(BAD_REQUEST, "올바르지 않은 소셜 로그인입니다"),
