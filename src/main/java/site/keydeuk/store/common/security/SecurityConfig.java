@@ -157,10 +157,14 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "/localhost:8080"
-                                ,"/43.201.71.50:8080")
-                        .allowedOriginPatterns("*")
+                        .allowedOriginPatterns(
+                                "http://localhost",
+                                "http://localhost:*",
+                                "http://43.201.71.50",
+                                "http://43.201.71.50:*",
+                                "http://www.keydeuk-be.shop",
+                                "https://www.keydeuk-be.shop"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowCredentials(true)
                         .maxAge(3000);
