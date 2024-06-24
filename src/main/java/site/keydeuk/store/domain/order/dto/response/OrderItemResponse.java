@@ -1,19 +1,22 @@
 package site.keydeuk.store.domain.order.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import site.keydeuk.store.entity.OrderItem;
 import site.keydeuk.store.entity.Product;
 
 @Builder
-public record OrderItemResponse(
-        Integer productId,
-        String productImgUrl,
-        String productName,
-        String switchOption,
-        Integer quantity,
-        Integer viewCount,
-        Integer price
-) {
+@Getter
+@RequiredArgsConstructor
+public class OrderItemResponse {
+    private final Integer productId;
+    private final String productImgUrl;
+    private final String productName;
+    private final String switchOption;
+    private final Integer quantity;
+    private final Integer viewCount;
+    private final Integer price;
     public static OrderItemResponse from(Product product, String switchOption, int quantity) {
         return OrderItemResponse.builder()
                 .productId(product.getId())
