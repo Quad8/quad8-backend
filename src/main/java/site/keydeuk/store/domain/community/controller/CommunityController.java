@@ -45,12 +45,7 @@ public class CommunityController {
         if (principalDetails == null){
             return CommonResponse.error("로그인 후 접근 가능합니다.");
         }
-
-//        communityService.getPurchaseHistory(principalDetails.getUserId());
-
-
-
-        return CommonResponse.ok();
+        return CommonResponse.ok(communityService.getPurchaseHistory(principalDetails.getUserId()));
     }
 
     @Operation(summary = "커뮤니티 전체 조회", description = "커뮤니티 전체 글 목록을 조회합니다.")

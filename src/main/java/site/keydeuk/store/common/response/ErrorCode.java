@@ -51,6 +51,9 @@ public enum ErrorCode {
     ALREADY_DELETE_USER(BAD_REQUEST, "이미 삭제된 사용자입니다."),
     PERMISSION_DENIED(FORBIDDEN, "이 작업을 수행할 권한이 없습니다."),
 
+    //Order
+    ORDER_HISTORY_NOT_FOUND(NOT_FOUND,"커스텀 키보드 주문 내역이 존재하지 않습니다."),
+
     //Likes
     LIKES_NOT_FOUND(BAD_REQUEST,"찜이 존재하지 않습니다"),
     ALREADY_EXIST_LIKE(BAD_REQUEST, "이미 찜한 상품입니다."),

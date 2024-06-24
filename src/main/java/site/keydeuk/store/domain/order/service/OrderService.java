@@ -181,6 +181,15 @@ public class OrderService {
         return product.getPrice();
     }
 
+    /**
+     * 구매 확정 된 주문 전체 조회
+     * @param userId 유저 아이디
+     */
+    @Transactional(readOnly = true)
+    public List<Order>  getAllOrdersStatusConfirmedByUserId(Long userId) {
+        return  orderRepository.findByUserIdAndStatus(userId, OrderStatus.CONFIRMED);
+    }
+
     private OrderResponse toOrderResponse(Order order) {
         List<OrderItemResponse> orderItemResponses = order.getOrderItems().stream()
                 .map(this::toOrderItemResponse)

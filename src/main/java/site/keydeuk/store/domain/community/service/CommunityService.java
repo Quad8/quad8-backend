@@ -20,9 +20,11 @@ import site.keydeuk.store.domain.communitylikes.service.CommunityLikesService;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.image.service.ImageService;
+import site.keydeuk.store.domain.order.service.OrderService;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -42,16 +44,46 @@ public class CommunityService {
     private final CommunityCommentService communityCommentService;
     private final CommunityImgService communityImgService;
     private final CommunityLikesService communityLikesService;
+    private final OrderService orderService;
 
     /** 커스텀키보드 구매내역 확인하기*/
-//    public List<CustomPurchaseHistoryDto> getPurchaseHistory(Long userId){
-//        //1. order userid로 조회
-//
-//
-//        //2. order중 1000000번 이상인 것만 조회
-//        //3. 리뷰 작성여부 확인해서 dto에 넣기
-//
-//    }
+    public List<CustomPurchaseHistoryDto> getPurchaseHistory(Long userId){
+        //1. order userid로 조회
+        List<Order> orders = orderService.getAllOrdersStatusConfirmedByUserId(userId);
+
+        if (orders.isEmpty()) throw new CustomException(ORDER_HISTORY_NOT_FOUND);
+        log.info("userId: {}",userId);
+        log.info("sixe :{}",orders.size());
+        List<OrderItem> orderItemList = new ArrayList<>();
+        //2. order중 1000000번 이상인 것만 조회
+        for(Order order : orders){
+            log.info("order id: {}",order.getId());
+
+            List<OrderItem> orderItems = order.getOrderItems();
+            for (OrderItem orderItem : orderItems){
+                log.info("orderItem id: {}",orderItem.getId());
+                if (orderItem.getProductId() > 1000000) orderItemList.add(orderItem);
+            }
+        }
+
+        List<CustomPurchaseHistoryDto> dtos = new ArrayList<>();
+
+        //3. 리뷰 작성여부 확인해서 dto에 넣기
+        if (orderItemList.isEmpty()) return dtos;
+        for (OrderItem orderItem : orderItemList){
+            CustomOption custom = customRepository.findById(orderItem.getProductId()).orElseThrow(()-> new CustomException(PRODUCT_NOT_FOUND));
+            boolean isReviewed = communityRepository.existsByCustomOptionId(custom.getId());
+            CustomPurchaseHistoryDto dto;
+            if (!custom.isHasPointKey()){ // 포인트키캡 선택X
+                dto = new CustomPurchaseHistoryDto(orderItem,custom,isReviewed);
+            }else {
+                CustomObject object = objectRepository.findById(custom.getId()).orElseThrow(()-> new CustomException(PRODUCT_NOT_FOUND));
+                dto = new CustomPurchaseHistoryDto(orderItem,custom,object,isReviewed);
+            }
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 
     /** 커뮤니티 전체 게시글 조회 */
     @Transactional(readOnly = true)

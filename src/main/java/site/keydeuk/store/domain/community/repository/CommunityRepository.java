@@ -31,4 +31,6 @@ public interface CommunityRepository extends JpaRepository<Community,Long> {
 
     @Query("SELECT c FROM Community c WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
     Page<Community> findByUserIdOrderByCreatedAt(Long userId, Pageable pageable);
+
+    boolean existsByCustomOptionId(Integer customId);
 }
