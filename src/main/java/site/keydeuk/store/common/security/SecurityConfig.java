@@ -159,7 +159,7 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:8080"
-                                ,"http://43.201.71.50:8080"
+                                ,"http://43.201.71.50:*"
                                 ,"http://43.201.71.50"
                                 ,"http://www.keydeuk-be.shop"
                                 ,"https://www.keydeuk-be.shop"
