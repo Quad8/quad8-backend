@@ -42,8 +42,10 @@ public class CommunityController {
     @Operation(summary = "(미구현!!!!)커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/purchase-history")
     public CommonResponse<?> getPurchaseHistory(@AuthenticationPrincipal PrincipalDetails principalDetails){
-
-        return CommonResponse.ok();
+        if (principalDetails == null){
+            return CommonResponse.error("로그인 후 접근 가능합니다.");
+        }
+        return CommonResponse.ok(communityService.getPurchaseHistory(principalDetails.getUserId()));
     }
 
     @Operation(summary = "커뮤니티 전체 조회", description = "커뮤니티 전체 글 목록을 조회합니다.")
