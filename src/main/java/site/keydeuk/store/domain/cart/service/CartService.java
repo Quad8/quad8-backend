@@ -82,7 +82,6 @@ public class CartService {
             savedOCartItem = cartItemService.findByCartIdAndProductIdAndOptionId(cart.getId(),dto.getProductId(),dto.getSwitchOptionId());
             if(savedOCartItem !=null){
                 savedOCartItem.addCount(dto.getCount());
-                cart.setTotalCount(cart.getTotalCount()+1);
                 return savedOCartItem.getId();
             }else {
                 CartItemWithProduct cartItem = CartItemWithProduct.createCartItem(cart,product,dto.getCount(),dto.getSwitchOptionId());
@@ -95,7 +94,6 @@ public class CartService {
             savedOCartItem = cartItemService.findCartItemByCartIdAndProductId(cart.getId(),dto.getProductId());
             if(savedOCartItem !=null){
                 savedOCartItem.addCount(dto.getCount());
-                cart.setTotalCount(cart.getTotalCount()+1);
                 return savedOCartItem.getId();
             }else {
                 CartItemWithProduct cartItem = CartItemWithProduct.createCartItem(cart,product,dto.getCount());
