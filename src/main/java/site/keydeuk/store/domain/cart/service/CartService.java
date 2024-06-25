@@ -1,10 +1,10 @@
 package site.keydeuk.store.domain.cart.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.cart.dto.cartlist.CartByUserResponseDto;
 import site.keydeuk.store.domain.cart.dto.cartlist.CartItemListDto;
@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
-import static site.keydeuk.store.common.response.ErrorCode.COMMON_SYSTEM_ERROR;
+import static site.keydeuk.store.common.response.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,7 +43,9 @@ public class CartService {
 
     private final CartItemService cartItemService;
 
+
     /** 상품 장바구니 담기*/
+    @Transactional
     public Long addProductToCart(CartItemReqeustDto dto, Long userId){
 
         Product product = productRepository.findById(dto.getProductId())
@@ -52,13 +53,8 @@ public class CartService {
 
         int categoryId = product.getProductCategory().getId();
 
-        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart == null){
-            cart = Cart.createCart(user);
-            cartRepository.save(cart);
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Cart cart = createCart(user.getId());
 
         if (categoryId == 1) {
             boolean flag = true;
@@ -105,6 +101,7 @@ public class CartService {
     }
 
     /** 커스텀 키보드 장바구니 담기**/
+    @Transactional
     public Long addCustomToCart(CartItemReqeustDto dto, Long userId){
         CustomOption custom = customRepository.findById(dto.getProductId())
                 .orElseThrow(EntityNotFoundException::new);
@@ -132,6 +129,7 @@ public class CartService {
     }
 
     /** user 장바구니 조회*/
+    @Transactional(readOnly = true)
     public CartByUserResponseDto getCartByUserId(Long userId){
         log.info("userid: {}",userId);
         CartItemListDto dto = CartItemListDto.fromEntity(cartRepository.findByUserId(userId));
@@ -169,6 +167,17 @@ public class CartService {
         return new CartByUserResponseDto(cart.getTotalCount(), cartCustoms,cartProducts);
     }
 
+    /** Cart 생성하기 */
+    @Transactional
+    public Cart createCart(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Cart cart = cartRepository.findByUserId(user.getId());
 
+        if (cart == null){
+            cart = Cart.createCart(user);
+            cartRepository.save(cart);
+        }
+        return cart;
+    }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.cart.service.CartService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.dto.request.JoinRequest;
 import site.keydeuk.store.domain.user.dto.request.UpdateProfileRequest;
@@ -25,6 +26,7 @@ import site.keydeuk.store.entity.User;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final CartService cartService;
 
     @Operation(summary = "회원가입", description = "회원가입을 위한 api 입니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -32,6 +34,9 @@ public class UserController {
             @Validated @RequestPart("joinRequest") JoinRequest joinRequest,
             @RequestPart(value = "imgFile", required = false) @Parameter(description = "프로필 이미지 파일") MultipartFile imgFile) {
         Long userId = userService.join(joinRequest, imgFile);
+
+        // 회원 가입 success -> cart 생성
+        cartService.createCart(userId);
         return CommonResponse.ok(userId);
     }
 
