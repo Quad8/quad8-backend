@@ -70,7 +70,10 @@ public enum ErrorCode {
     IMAGE_MAX_COUNT(BAD_REQUEST,"게시글 이미지는 최대 4개까지 가능합니다."),
 
     //Shipping
-    SHIPPING_NOT_FOUND(NOT_FOUND, "배송지 정보를 찾을 수 없습니다")
+    SHIPPING_NOT_FOUND(NOT_FOUND, "배송지 정보를 찾을 수 없습니다"),
+
+    //Pageale
+    INVALID_PAGEABLE_PAGE(BAD_REQUEST, "잘못된 페이지 접근입니다.")
 
     ;
 
