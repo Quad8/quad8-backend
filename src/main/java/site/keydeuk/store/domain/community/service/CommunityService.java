@@ -97,7 +97,7 @@ public class CommunityService {
                 communities = communityRepository.findAllOrderByViewCount(pageable);
                 break;
             case "new":
-                communities = communityRepository.findAllOrderByCreatedAt(pageable);
+                communities = communityRepository.findAllOrderByUpdatedAt(pageable);
                 break;
             default:
                 log.error("Invalid sort parameter: {}",sort);

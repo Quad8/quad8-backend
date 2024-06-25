@@ -20,8 +20,8 @@ public interface CommunityRepository extends JpaRepository<Community,Long> {
     Page<Community> findAllOrderByLikes(Pageable pageable);
     @Query("select c from Community c order by c.viewCount desc ")
     Page<Community> findAllOrderByViewCount(Pageable pageable);
-    @Query("select c from Community c order by c.createdAt desc ")
-    Page<Community> findAllOrderByCreatedAt(Pageable pageable);
+    @Query("select c from Community c order by c.updatedAt desc ")
+    Page<Community> findAllOrderByUpdatedAt(Pageable pageable);
 
     @Query("SELECT c FROM Community c LEFT JOIN CommunityLikes cl ON c.id = cl.community.id WHERE c.user.id = :userId GROUP BY c.id ORDER BY COUNT(cl.id) DESC")
     Page<Community> findByUserIdOrderByLikes(Long userId, Pageable pageable);
