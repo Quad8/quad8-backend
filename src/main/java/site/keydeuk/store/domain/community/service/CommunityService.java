@@ -97,7 +97,7 @@ public class CommunityService {
                 communities = communityRepository.findAllOrderByViewCount(pageable);
                 break;
             case "new":
-                communities = communityRepository.findAllOrderByCreatedAt(pageable);
+                communities = communityRepository.findAllOrderByUpdatedAt(pageable);
                 break;
             default:
                 log.error("Invalid sort parameter: {}",sort);
@@ -146,16 +146,20 @@ public class CommunityService {
     public PostResponseDto getPostById(Long id){
 
         Community community = getCommunityById(id);
-        CustomObject object = objectRepository.findById(community.getCustomOptionId())
-                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         CustomOption custom = customRepository.findById(community.getCustomOptionId())
                 .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
-
-        // 조회수 증가
-        community.setViewCount(community.getViewCount()+1);
-        communityRepository.save(community);
-
-        return new PostResponseDto(community,custom,object);
+        if (custom.isHasPointKey()){
+            CustomObject object = objectRepository.findById(community.getCustomOptionId())
+                    .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
+            // 조회수 증가
+            community.setViewCount(community.getViewCount()+1);
+            communityRepository.save(community);
+            return new PostResponseDto(community,custom,object);
+        }else {
+            community.setViewCount(community.getViewCount()+1);
+            communityRepository.save(community);
+            return new PostResponseDto(community,custom);
+        }
     }
 
 

@@ -52,4 +52,21 @@ public class CustomDetailDto {
                 .individualColor(object.getObjects())
                 .build();
     }
+
+    public static CustomDetailDto fromEntity(CustomOption custom){
+        return CustomDetailDto.builder()
+                .productId(custom.getId())
+                .type(custom.getLayout())
+                .texture(custom.getAppearanceTexture())
+                .boardColor(custom.getAppearanceColor())
+                .baseKeyColor(custom.getBaseKeyColor())
+                .switchType(custom.getKeyboardSwitch())
+                .hasPointKeyCap(custom.isHasPointKey())
+                .pointKeyType(custom.getPointKeyType())
+                .pointSetColor(custom.getPointSetColor())
+                .imgUrl(custom.getImgUrl())
+                .price(custom.getPrice())
+                .individualColor(null)
+                .build();
+    }
 }
