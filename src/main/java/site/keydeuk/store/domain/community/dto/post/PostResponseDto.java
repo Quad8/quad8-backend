@@ -38,7 +38,7 @@ public class PostResponseDto {
     @JsonProperty("isLiked")
     private boolean isLiked;
 
-    private List<CommentResponseDto> comments; // 재구현 필요
+    private List<CommentResponseDto> comments;
 
     private LocalDateTime createdAt;
 
@@ -54,6 +54,21 @@ public class PostResponseDto {
         this.userImage = community.getUser().getImgUrl();
         this.reviewImages = community.getCommunityImg();
         this.custom = CustomDetailDto.fromEntity(custom,object);
+        this.isLiked = false;
+        this.comments = null;
+        this.createdAt = community.getCreatedAt();
+        this.updatedAt = community.getUpdatedAt();
+    }
+    public PostResponseDto(Community community, CustomOption custom){
+        this.id = community.getId();
+        this.title = community.getTitle();
+        this.content = community.getContent();
+        this.likeCount = 0L;
+        this.commentCount = 0;
+        this.nickName = community.getUser().getNickname();
+        this.userImage = community.getUser().getImgUrl();
+        this.reviewImages = community.getCommunityImg();
+        this.custom = CustomDetailDto.fromEntity(custom);
         this.isLiked = false;
         this.comments = null;
         this.createdAt = community.getCreatedAt();
