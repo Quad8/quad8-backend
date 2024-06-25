@@ -22,8 +22,10 @@ import site.keydeuk.store.domain.product.dto.productlist.ProductListResponseDto;
 import site.keydeuk.store.domain.product.service.ProductService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 import site.keydeuk.store.domain.user.service.UserService;
+import site.keydeuk.store.entity.Product;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
+import static site.keydeuk.store.common.response.ErrorCode.INVALID_PAGEABLE_PAGE;
 
 
 @Slf4j
@@ -36,7 +38,7 @@ public class ProductController {
     private final ProductService productService;
     private final LikesService likesService;
 
-    @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다. (미구현 : 리뷰 )")
+    @Operation(summary = "상품 상세 조회", description = "상품 Id로 상세 정보를 조회합니다.")
     @Parameter(name = "id", description = "상품 ID", example = "11")
     @GetMapping("/{id}")
     public CommonResponse<?> getProductDetailById(@PathVariable("id") Integer id,@AuthenticationPrincipal PrincipalDetails principalDetails){
@@ -62,8 +64,11 @@ public class ProductController {
 
         //paging 처리
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+        Page<ProductListResponseDto> page = productService.getProductAllList(dto.getSort(), pageable,userId);
 
-        return CommonResponse.ok(productService.getProductAllList(dto.getSort(), pageable,userId));
+        if (page.getTotalPages() <= dto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
+
+        return CommonResponse.ok(page);
 
     }
 
@@ -92,7 +97,10 @@ public class ProductController {
                     dto.getSwitchTypes(), minPrice, maxPrice,pageable,userId));
         }
 
-        return CommonResponse.ok(productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,dto.getSort(),pageable,userId));
+        Page<ProductListResponseDto> page = productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,dto.getSort(),pageable,userId);
+        if (page.getTotalPages() <= dto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
+
+        return CommonResponse.ok(page);
 
     }
 
@@ -113,7 +121,6 @@ public class ProductController {
     @Operation(summary = "메인페이지 키득 BEST 상품 목록", description ="메인페이지 키득 BEST 상품 목록을 조회합니다.")
     @GetMapping("/keydeuk-best")
     public CommonResponse<?> getKeydeukBest(@AuthenticationPrincipal PrincipalDetails principalDetails){
-        /** 구매나 리뷰 완료되면 로직 재구성 */
         Long userId = null;
         if (principalDetails!= null){
             userId = principalDetails.getUserId();
