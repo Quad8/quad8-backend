@@ -2,12 +2,8 @@ package site.keydeuk.store.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.keydeuk.store.common.entity.BaseTimeEntity;
-
-import java.time.LocalDateTime;
 @Setter
 @Getter
 @Builder
@@ -41,20 +37,4 @@ public class CustomOption extends BaseTimeEntity {
     private String imgUrl;
 
     private int price;
-
-    @Override
-    public String toString() {
-        return "CustomOption{" +
-                ", layout='" + layout + '\'' +
-                ", appearanceTexture='" + appearanceTexture + '\'' +
-                ", appearanceColor='" + appearanceColor + '\'' +
-                ", baseKeyColor='" + baseKeyColor + '\'' +
-                ", keyboardSwitch='" + keyboardSwitch + '\'' +
-                ", hasPointKey=" + hasPointKey +
-                ", pointKeyType='" + pointKeyType + '\'' +
-                ", pointSetColor='" + pointSetColor + '\'' +
-                ", imgUrl='" + imgUrl + '\'' +
-                ", price=" + price +
-                '}';
-    }
 }
