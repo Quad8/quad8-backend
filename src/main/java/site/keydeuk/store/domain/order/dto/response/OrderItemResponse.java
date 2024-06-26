@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import site.keydeuk.store.entity.OrderItem;
 import site.keydeuk.store.entity.Product;
 
+import java.util.Optional;
+
 @Builder
 @Getter
 @RequiredArgsConstructor
@@ -13,11 +15,11 @@ public class OrderItemResponse {
     private final Integer productId;
     private final String productImgUrl;
     private final String productName;
-    private final String switchOption;
+    private final Object switchOption;
     private final Integer quantity;
     private final Integer viewCount;
     private final Integer price;
-    public static OrderItemResponse from(Product product, String switchOption, int quantity) {
+    public static OrderItemResponse from(Product product, Object switchOption, int quantity) {
         return OrderItemResponse.builder()
                 .productId(product.getId())
                 .productImgUrl(product.getProductImgs().get(0).getImgUrl())
@@ -29,7 +31,7 @@ public class OrderItemResponse {
                 .build();
     }
 
-    public static OrderItemResponse from(OrderItem orderItem, String productImgUrl, String productName, String switchOption, Integer viewCount) {
+    public static OrderItemResponse from(OrderItem orderItem, String productImgUrl, String productName, Object switchOption, Integer viewCount) {
         return OrderItemResponse.builder()
                 .productId(orderItem.getProductId())
                 .productImgUrl(productImgUrl)

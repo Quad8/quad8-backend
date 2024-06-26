@@ -210,12 +210,12 @@ public class OrderService {
                     .orElse(null);
             CustomOption customOption = customRepository.findById(orderItem.getProductId())
                     .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
-            String switchOption = customOption.toString();
+            Object switchOption = customOption.toString();
 
             if (object != null) {
                 Object individualColor = object.getObjects();
-                OrderProductOptionResponse optionResponse = new OrderProductOptionResponse(individualColor, customOption, objectMapper);
-                switchOption = optionResponse.toString();
+                switchOption = new OrderProductOptionResponse(individualColor, customOption, objectMapper);
+                log.info("{}", switchOption);
             }
             return OrderItemResponse.from(orderItem, customOption.getImgUrl(), "커스텀 키보드", switchOption, 0);
         }
