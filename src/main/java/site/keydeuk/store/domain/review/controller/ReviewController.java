@@ -64,7 +64,7 @@ public class ReviewController {
     ) {
         Long userId = principalDetails.getUserId();
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-        List<ReviewDto> response = reviewService.getUserReviews(userId,pageable, request.getStartDate(), request.getEndDate());
+        List<ReviewDto> response = reviewService.getUserReviews(userId, pageable, request.getStartDate(), request.getEndDate());
         return CommonResponse.ok(response);
     }
 
