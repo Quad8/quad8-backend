@@ -86,8 +86,6 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewDto> getUserReviews(Long userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Review> byUserId = reviewRepository.findByUserId(userId);
-        log.info("{}", byUserId);
         Page<Review> reviews = reviewRepository.findByUserIdAndCreatedAtBetween(userId, startDate, endDate, pageable);
         log.info("{}", reviews.getContent());
         return getReviewDtos(userId, reviews.getContent());

@@ -4,10 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
+import site.keydeuk.store.domain.order.dto.request.OrderListRequest;
 import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
@@ -28,7 +32,7 @@ public class OrderController {
     public CommonResponse<Long> createOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody @Valid List<OrderCreateRequest> requests
-    ){
+    ) {
         Long userId = principalDetails.getUserId();
         Long orderId = orderService.createOrder(userId, requests);
         return CommonResponse.ok(orderId);
@@ -45,9 +49,11 @@ public class OrderController {
     @Operation(summary = "전체 주문 조회", description = "로그인된 사용자의 전체 주문 내역을 조회합니다.")
     @GetMapping
     public CommonResponse<List<OrderResponse>> getAllOrders(
-            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @ParameterObject OrderListRequest request) {
         Long userId = principalDetails.getUserId();
-        List<OrderResponse> responses = orderService.getAllOrders(userId);
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        List<OrderResponse> responses = orderService.getAllOrders(userId, pageable, request.getStartDate(), request.getEndDate());
         return CommonResponse.ok(responses);
     }
 
