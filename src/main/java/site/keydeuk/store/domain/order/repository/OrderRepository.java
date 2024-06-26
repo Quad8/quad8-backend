@@ -1,6 +1,5 @@
 package site.keydeuk.store.domain.order.repository;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.jpa.repository.JpaRepository;
 import site.keydeuk.store.entity.Order;
 import site.keydeuk.store.entity.enums.OrderStatus;
@@ -12,6 +11,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserId(Long userId);
 
     Optional<Order> findByPaymentOrderId(String paymentOrderId);
+
     List<Order> findByUserIdAndStatusNot(Long userId, OrderStatus status);
+
     List<Order> findByUserIdAndStatus(Long userId, OrderStatus status);
 }
