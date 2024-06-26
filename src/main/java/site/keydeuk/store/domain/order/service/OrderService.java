@@ -219,6 +219,7 @@ public class OrderService {
             }
             return OrderItemResponse.from(orderItem, customOption.getImgUrl(), "커스텀 키보드", switchOption, 0);
         }
+
         Integer productId = orderItem.getProductId();
         Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         Long switchOptionId = orderItem.getSwitchOptionId();

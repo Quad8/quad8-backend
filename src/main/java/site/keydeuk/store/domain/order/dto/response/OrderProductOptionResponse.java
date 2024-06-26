@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 import site.keydeuk.store.entity.CustomOption;
 
 import java.util.Objects;
