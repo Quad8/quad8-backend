@@ -22,7 +22,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
-    private Long id;
 
     @Transactional
     public Long join(JoinRequest joinRequest, MultipartFile imgFile) {
