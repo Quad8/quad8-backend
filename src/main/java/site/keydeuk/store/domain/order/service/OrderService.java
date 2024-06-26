@@ -2,6 +2,8 @@ package site.keydeuk.store.domain.order.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
@@ -22,6 +24,7 @@ import site.keydeuk.store.domain.shipping.repository.ShippingRepository;
 import site.keydeuk.store.entity.*;
 import site.keydeuk.store.entity.enums.OrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +47,7 @@ public class OrderService {
      * 주문 생성
      * 주문하기 -> 결제 정보 페이지 로 넘어갈때 주문 정보 저장
      * 저장된 주문 정보는 결제 승인시 사용
+     *
      * @param requests 주문할 상품들 정보
      */
     @Transactional
@@ -81,6 +85,7 @@ public class OrderService {
     /**
      * 결제 정보 조회
      * 결제 페이지를 띄울때 필요한 데이터 조회
+     *
      * @param orderId 주문 저장시 반환된 주문 아이디
      */
     @Transactional(readOnly = true)
@@ -112,11 +117,12 @@ public class OrderService {
 
     /**
      * 결제 완료 된 주문 전체 조회
+     *
      * @param userId 유저 아이디
      */
     @Transactional(readOnly = true)
-    public List<OrderResponse> getAllOrders(Long userId) {
-        List<Order> orders = orderRepository.findByUserIdAndStatusNot(userId, OrderStatus.READY);
+    public List<OrderResponse> getAllOrders(Long userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
+        Page<Order> orders = orderRepository.findByUserIdAndStatusNotAndCreatedAtBetween(userId, OrderStatus.READY, startDate, endDate, pageable);
         return orders.stream()
                 .map(this::toOrderResponse)
                 .toList();
@@ -124,7 +130,8 @@ public class OrderService {
 
     /**
      * 결제 완료 된 주문 상세 조회
-     * @param userId 유저 아이디
+     *
+     * @param userId  유저 아이디
      * @param orderId 주문 아이디
      */
     @Transactional(readOnly = true)
@@ -183,11 +190,12 @@ public class OrderService {
 
     /**
      * 구매 확정 된 주문 전체 조회
+     *
      * @param userId 유저 아이디
      */
     @Transactional(readOnly = true)
-    public List<Order>  getAllOrdersStatusConfirmedByUserId(Long userId) {
-        return  orderRepository.findByUserIdAndStatus(userId, OrderStatus.CONFIRMED);
+    public List<Order> getAllOrdersStatusConfirmedByUserId(Long userId) {
+        return orderRepository.findByUserIdAndStatus(userId, OrderStatus.CONFIRMED);
     }
 
     private OrderResponse toOrderResponse(Order order) {
