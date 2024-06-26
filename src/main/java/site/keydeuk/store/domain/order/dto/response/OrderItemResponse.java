@@ -1,20 +1,25 @@
 package site.keydeuk.store.domain.order.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import site.keydeuk.store.entity.OrderItem;
 import site.keydeuk.store.entity.Product;
 
+import java.util.Optional;
+
 @Builder
-public record OrderItemResponse(
-        Integer productId,
-        String productImgUrl,
-        String productName,
-        String switchOption,
-        Integer quantity,
-        Integer viewCount,
-        Integer price
-) {
-    public static OrderItemResponse from(Product product, String switchOption, int quantity) {
+@Getter
+@RequiredArgsConstructor
+public class OrderItemResponse {
+    private final Integer productId;
+    private final String productImgUrl;
+    private final String productName;
+    private final Object switchOption;
+    private final Integer quantity;
+    private final Integer viewCount;
+    private final Integer price;
+    public static OrderItemResponse from(Product product, Object switchOption, int quantity) {
         return OrderItemResponse.builder()
                 .productId(product.getId())
                 .productImgUrl(product.getProductImgs().get(0).getImgUrl())
@@ -26,7 +31,7 @@ public record OrderItemResponse(
                 .build();
     }
 
-    public static OrderItemResponse from(OrderItem orderItem, String productImgUrl, String productName, String switchOption, Integer viewCount) {
+    public static OrderItemResponse from(OrderItem orderItem, String productImgUrl, String productName, Object switchOption, Integer viewCount) {
         return OrderItemResponse.builder()
                 .productId(orderItem.getProductId())
                 .productImgUrl(productImgUrl)

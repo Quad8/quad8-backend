@@ -1,5 +1,6 @@
 package site.keydeuk.store.domain.order.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -7,12 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
-import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
-import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
-import site.keydeuk.store.domain.order.dto.response.OrderItemResponse;
-import site.keydeuk.store.domain.order.dto.response.OrderResponse;
+import site.keydeuk.store.domain.order.dto.response.*;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
 import site.keydeuk.store.domain.order.repository.OrderRepository;
 import site.keydeuk.store.domain.payment.repository.PaymentRepository;
@@ -40,8 +39,10 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final ProductSwitchOptionRepository productSwitchOptionRepository;
     private final CustomRepository customRepository;
+    private final CustomObjectRepository customObjectRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 주문 생성
@@ -213,11 +214,20 @@ public class OrderService {
 
     private OrderItemResponse toOrderItemResponse(OrderItem orderItem) {
         if (orderItem.getProductId() > 100000) {
+            CustomObject object = customObjectRepository.findById(orderItem.getProductId())
+                    .orElse(null);
             CustomOption customOption = customRepository.findById(orderItem.getProductId())
                     .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
-            String switchOption = customOption.toString();
+            Object switchOption = customOption.toString();
+
+            if (object != null) {
+                Object individualColor = object.getObjects();
+                switchOption = new OrderProductOptionResponse(individualColor, customOption, objectMapper);
+                log.info("{}", switchOption);
+            }
             return OrderItemResponse.from(orderItem, customOption.getImgUrl(), "커스텀 키보드", switchOption, 0);
         }
+
         Integer productId = orderItem.getProductId();
         Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         Long switchOptionId = orderItem.getSwitchOptionId();
