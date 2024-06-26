@@ -65,6 +65,15 @@ public class UserController {
         return CommonResponse.ok(UserResponse.from(user));
     }
 
+    @GetMapping("/{userId}")
+    @Operation(summary = "타인 정보 조회", description = "클릭한 사용자의 정보를 반환합니다.")
+    public CommonResponse<UserResponse> getUserInfo(
+            @PathVariable Long userId
+    ) {
+        User user = userService.findById(userId);
+        return CommonResponse.ok(UserResponse.from(user));
+    }
+
     @PutMapping(path = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "내 정보 수정", description = "사용자 프로필 정보를 수정합니다.")
     public CommonResponse<Void> updateProfile(
