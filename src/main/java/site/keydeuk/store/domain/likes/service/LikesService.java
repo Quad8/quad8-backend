@@ -1,6 +1,8 @@
 package site.keydeuk.store.domain.likes.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
@@ -49,8 +51,9 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public List<LikedProductsResponse> getLikedProducts(Long userId) {
-        List<Likes> likes = likesRepository.findByUserId(userId);
+    public List<LikedProductsResponse> getLikedProducts(Long userId, Pageable pageable) {
+        Page<Likes> likesPage = likesRepository.findByUserId(userId, pageable);
+        List<Likes> likes = likesPage.getContent();
         List<Integer> productIds = likes.stream()
                 .map(like -> like.getProduct().getId())
                 .toList();

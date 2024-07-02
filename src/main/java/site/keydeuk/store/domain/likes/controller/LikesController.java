@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
@@ -45,9 +47,14 @@ public class LikesController {
 
     @Operation(summary = "좋아요한 상품 조회", description = "사용자가 좋아요한 모든 상품을 조회합니다.")
     @GetMapping("/products")
-    public CommonResponse<List<LikedProductsResponse>> getLikedProducts(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<List<LikedProductsResponse>> getLikedProducts(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Parameter(description = "현재 페이지, default 0", example = "0") @RequestParam(name = "page", defaultValue = "0") int page,
+            @Parameter(description = "개수, default 10", example = "10") @RequestParam(name = "size", defaultValue = "10") int size
+            ) {
         Long userId = principalDetails.getUserId();
-        List<LikedProductsResponse> likedProducts = likesService.getLikedProducts(userId);
+        Pageable pageable =  PageRequest.of(page, size);
+        List<LikedProductsResponse> likedProducts = likesService.getLikedProducts(userId, pageable);
         return CommonResponse.ok(likedProducts);
     }
 }
