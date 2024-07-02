@@ -18,3 +18,8 @@ nohup java -jar $JAR_PATH > $APP_LOG 2> $ERROR_LOG &
 
 CURRENT_PID=$(pgrep -f $JAR_NAME)
 echo "$TIME_NOW > 실행된 프로세스 아이디 $CURRENT_PID 입니다" >> $DEPLOY_LOG
+
+# Nginx 서비스 재시작
+echo "$TIME_NOW > Nginx 서버 재시작" >> $DEPLOY_LOG
+sudo systemctl restart nginx
+echo "$TIME_NOW > Nginx 서버 재시작 완료" >> $DEPLOY_LOG
