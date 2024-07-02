@@ -48,6 +48,6 @@ cloud:
 jwt:
   secret:
   grant-type: Bearer
-  token-validate-in-seconds: 36000
+  token-validate-in-seconds: 600
 toss:
   secret-key: ${TOSS_SECRET_KEY}
