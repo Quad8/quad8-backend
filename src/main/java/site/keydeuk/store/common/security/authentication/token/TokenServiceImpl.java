@@ -45,6 +45,8 @@ public class TokenServiceImpl implements TokenService {
             if (!token.equals(refreshToken.refreshToken())) {
                 throw new CustomException(INVALID_TOKEN);
             }
+            isBlackListToken(token);
+            addBlackList(token);
 
             return generatedToken(randomToken, refreshToken.email());
         } catch (ExpiredJwtException e) {
