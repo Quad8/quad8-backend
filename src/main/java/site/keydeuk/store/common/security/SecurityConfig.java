@@ -69,6 +69,7 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_ALL_POST_URLS = new String[]{
             "/api/v1/users/**",
+            "/api/v1/reissue"
     };
 
     private final ObjectMapper objectMapper;
