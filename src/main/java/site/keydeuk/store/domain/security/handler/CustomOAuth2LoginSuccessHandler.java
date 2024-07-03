@@ -61,7 +61,7 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
 //            response.addCookie(authCookie);
 //            log.info("Added authToken cookie: {}", authCookie.getValue());
 
-            String redirectURL = UriComponentsBuilder.fromUriString("http://43.201.71.50:8080/api/v1/oauth2/signUp")
+            String redirectURL = UriComponentsBuilder.fromUriString("http://13.124.105.54:8080/api/v1/oauth2/signUp")
                     .queryParam("email", user.getEmail())
                     .queryParam("provider", user.getProvider())
                     .queryParam("providerId", user.getProviderId())
