@@ -131,8 +131,8 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:3000" //프론트 주소
-                , "http://localhost:3001",
+                "http://localhost:3000", //프론트 주소
+                "http://localhost:3001",
                 "https://keydeuk.com/",
                 "http://13.125.98.110:3000"
         ));
@@ -163,6 +163,8 @@ public class SecurityConfig {
                                 "http://localhost:*",
                                 "http://43.201.71.50",
                                 "http://43.201.71.50:*",
+                                "http://13.124.105.54",
+                                "http://13.124.105.54:*",
                                 "http://www.keydeuk-be.shop",
                                 "https://www.keydeuk-be.shop"
                         )
