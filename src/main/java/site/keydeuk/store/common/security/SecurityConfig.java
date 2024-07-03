@@ -103,7 +103,6 @@ public class SecurityConfig {
                                 .failureHandler(createAuthenticationFailureHandler())
                 )
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
-                        .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService)) //로그인 완료 후 회원 정보 받기
                         .successHandler(customOAuth2LoginSuccessHandler()))
                 .with(
