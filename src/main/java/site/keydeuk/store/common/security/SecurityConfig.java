@@ -133,7 +133,10 @@ public class SecurityConfig {
                 "http://localhost:3000", //프론트 주소
                 "http://localhost:3001",
                 "https://keydeuk.com/",
-                "http://13.125.98.110:3000"
+                "https://keydeuk-be.shop",
+                "http://13.125.98.110:3000",
+                "http://13.124.105.54:8080"
+
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
@@ -164,8 +167,9 @@ public class SecurityConfig {
                                 "http://43.201.71.50:*",
                                 "http://13.124.105.54",
                                 "http://13.124.105.54:*",
-                                "http://www.keydeuk-be.shop",
-                                "https://www.keydeuk-be.shop"
+                                "http://13.124.105.54:8080",
+                                "https://keydeuk-be.shop",
+                                "http://keydeuk-be.shop"
                         )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowCredentials(true)
