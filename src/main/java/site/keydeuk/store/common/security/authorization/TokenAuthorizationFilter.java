@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static site.keydeuk.store.common.response.ErrorCode.INVALID_TOKEN;
-import static site.keydeuk.store.common.response.ErrorCode.LOGOUT_ACCESS_TOKEN;
 import static site.keydeuk.store.common.security.authorization.SecurityErrorCode.ERROR_KEY;
 import static site.keydeuk.store.common.security.authorization.SecurityErrorCode.TOKEN_EXPIRED;
 
@@ -53,7 +52,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
             log.info("accessToken = {}", token);
 
             if (tokenService.isBlackListToken(token)) {
-                throw new InvalidJwtException(LOGOUT_ACCESS_TOKEN);
+                throw new InvalidJwtException(INVALID_TOKEN);
             }
 
             try {

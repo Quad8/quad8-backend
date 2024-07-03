@@ -33,6 +33,6 @@ public class SecurityService implements UserDetailsService {
     }
 
     public AuthenticationToken reissue(ReissueRequest reissueRequest) {
-        return tokenService.reissueToken(reissueRequest.refreshToken());
+        return tokenService.reissueToken(reissueRequest.refreshToken(), reissueRequest.accessToken());
     }
 }

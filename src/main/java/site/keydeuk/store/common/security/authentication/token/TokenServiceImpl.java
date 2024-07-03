@@ -33,24 +33,23 @@ public class TokenServiceImpl implements TokenService {
     private final RedisService redisService;
 
     @Override
-    public AuthenticationToken reissueToken(String token) {
+    public AuthenticationToken reissueToken(String refreshToken, String accessToken) {
         try {
-            String randomToken = tokenProvider.getSubject(token);
+            String randomToken = tokenProvider.getSubject(refreshToken);
             log.info("Fetch randomToken = [{}]", randomToken);
 
-            RefreshToken refreshToken = redisService.get(REDIS_REFERS_TOKEN_PREFIX + randomToken, RefreshToken.class)
+            RefreshToken token = redisService.get(REDIS_REFERS_TOKEN_PREFIX + randomToken, RefreshToken.class)
                     .orElseThrow(() -> new CustomException(INVALID_TOKEN));
-            log.info("Fetch userId = [{}]", refreshToken.email());
+            log.info("Fetch userId = [{}]", token.email());
 
-            if (!token.equals(refreshToken.refreshToken())) {
+            if (!refreshToken.equals(token.refreshToken())) {
                 throw new CustomException(INVALID_TOKEN);
             }
-            isBlackListToken(token);
-            addBlackList(token);
 
-            return generatedToken(randomToken, refreshToken.email());
+            addBlackList(accessToken);
+            return generatedToken(randomToken, token.email());
         } catch (ExpiredJwtException e) {
-            log.info("[{}] 이미 만료된 토큰입니다.", token);
+            log.info("[{}] 이미 만료된 토큰입니다.", refreshToken);
             throw new CustomException(EXPIRED_TOKEN);
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             throw new CustomException(INVALID_TOKEN);
