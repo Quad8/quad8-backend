@@ -43,24 +43,6 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
         if (user.getRole().equals(RoleType.ROLE_GUEST)) {
             log.info("소셜 로그인 성공 -> 가입 안되어 있는 유저인것 확인 -> 회원가입 페이지 이동");
 
-            String randomToken = UUID.randomUUID().toString();
-            AuthenticationToken authenticationToken = tokenService.generatedToken(randomToken, user.getEmail());//여기 작성해야함
-
-//TODO: 토큰 넘겨주기, 둘 중 하나의 방법으로
-
-//            토큰 헤더에 포함
-//            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + authenticationToken);
-//            log.info("Added Authorization header: {} {}", JwtConstants.ACCESS, JwtConstants.JWT_TYPE + authenticationToken);
-
-//            토큰을 쿠키에 포함
-//            Cookie authCookie = new Cookie("authToken", authenticationToken.accessToken());
-//            authCookie.setHttpOnly(true);
-//            authCookie.setSecure(false);
-//            authCookie.setPath("/");
-//            authCookie.setMaxAge(60 * 60); // 1시간
-//            response.addCookie(authCookie);
-//            log.info("Added authToken cookie: {}", authCookie.getValue());
-
             String redirectURL = UriComponentsBuilder.fromUriString("http://13.124.105.54:8080/api/v1/oauth2/signUp")
                     .queryParam("email", user.getEmail())
                     .queryParam("provider", user.getProvider())
