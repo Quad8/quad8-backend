@@ -1,6 +1,9 @@
 package site.keydeuk.store.domain.communitycomment.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
@@ -55,11 +58,20 @@ public class CommunityCommentService {
         commentRepository.delete(comment);
     }
 
-    /** 게시글에 작성된 댓글 조회 */
-    public List<CommentResponseDto> getCommentListByPost(Long communityId){
-        List<CommunityComment> comments = commentRepository.findByCommunity_Id(communityId);
+    /** 게시글에 작성된 댓글 조회(첫 5개만 보임) */
+    public List<CommentResponseDto> getCommentListByPost(Long communityId, Pageable pageable){
+        List<CommunityComment> comments = commentRepository.findByCommunity_Id(communityId,pageable);
 
         return comments.stream().map(CommentResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /** 마지막 댓글 id 기준으로 5개씩 댓글 조회 */
+    public List<CommentResponseDto> findNext5CommentsByLastCommentId(Long commentId){
+        PageRequest pageRequest = PageRequest.of(0,5);
+        Page<CommunityComment> page = commentRepository.findByCommunityCommentIdLessThan(commentId,pageRequest);
+
+        return page.stream().map(CommentResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
