@@ -43,7 +43,7 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
         if (user.getRole().equals(RoleType.ROLE_GUEST)) {
             log.info("소셜 로그인 성공 -> 가입 안되어 있는 유저인것 확인 -> 회원가입 페이지 이동");
 
-            String redirectURL = UriComponentsBuilder.fromUriString("http://13.124.105.54:8080/api/v1/oauth2/signUp")
+            String redirectURL = UriComponentsBuilder.fromUriString("https://keydeuk-be.shop/api/v1/oauth2/signUp")
                     .queryParam("email", user.getEmail())
                     .queryParam("provider", user.getProvider())
                     .queryParam("providerId", user.getProviderId())
