@@ -76,7 +76,8 @@ public class CommunityController {
     public CommonResponse<?> getPostDetailById(@PathVariable("id") Long id,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         PostResponseDto dto = communityService.getPostById(id);
-        List<CommentResponseDto> comments = commentService.getCommentListByPost(dto.getId());
+        Pageable pageable = PageRequest.of(0,5);
+        List<CommentResponseDto> comments = commentService.getCommentListByPost(dto.getId(),pageable);
         dto.setComments(comments);
         dto.setCommentCount(comments.size());
         dto.setLikeCount(communityLikesService.countByCommunityId(id));
