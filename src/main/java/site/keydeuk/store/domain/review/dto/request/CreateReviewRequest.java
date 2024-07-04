@@ -31,6 +31,7 @@ public record CreateReviewRequest(
 ) {
         public Review toEntity(CreateReviewRequest request, User user, Product product) {
                 return Review.builder()
+                        .orderId(request.orderId)
                         .content(request.content)
                         .score(request.score)
                         .option1(request.option1)
