@@ -50,7 +50,6 @@ public class SecurityConfig {
             "/login",
             "/",
             "/logout",
-            "/",
     };
 
     private static final String[] PERMIT_ALL_GET_URLS = new String[]{
@@ -136,7 +135,6 @@ public class SecurityConfig {
                 "https://keydeuk-be.shop",
                 "http://13.125.98.110:3000",
                 "http://13.124.105.54:8080"
-
         ));
         corsConfiguration.setAllowedMethods(List.of(
                 GET.name(),
