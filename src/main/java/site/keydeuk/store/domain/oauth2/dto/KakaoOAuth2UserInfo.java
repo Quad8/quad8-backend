@@ -1,11 +1,10 @@
 package site.keydeuk.store.domain.oauth2.dto;
 
-import site.keydeuk.store.domain.oauth2.dto.OAuth2UserInfo;
 import site.keydeuk.store.entity.enums.ProviderType;
 
 import java.util.Map;
 
-import static site.keydeuk.store.entity.enums.ProviderType.*;
+import static site.keydeuk.store.entity.enums.ProviderType.KAKAO;
 
 public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
     private final String providerId;
