@@ -51,7 +51,7 @@ public class Review extends BaseTimeEntity {
     }
 
     @Builder
-    public Review(String content, Integer score, Integer option1, Integer option2, Integer option3, User user, Product product) {
+    public Review(Long orderId, String content, Integer score, Integer option1, Integer option2, Integer option3, User user, Product product) {
         this.content = content;
         this.score = score;
         this.option1 = option1;
@@ -59,6 +59,7 @@ public class Review extends BaseTimeEntity {
         this.option3 = option3;
         this.user = user;
         this.product = product;
+        this.orderId = orderId;
     }
 
     @Override
