@@ -72,14 +72,26 @@ public class ImageService {
         return objectUrl;
     }
     public List<String> uploadReviewImages(List<MultipartFile> multipartFiles) {
-        String objectKey = "keydeuk/product/review/" + UUID.randomUUID() + ".png";
+//        String objectKey = "keydeuk/product/review/" + UUID.randomUUID() + ".png";
 
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
+            String originalFilename = multipartFile.getOriginalFilename();
+            String extension = getFileExtension(originalFilename);
+
+            // 확장자를 포함하여 객체 키 생성
+            String objectKey = "keydeuk/product/review/" + UUID.randomUUID() + "." + extension;
             String imageUrl = uploadImage(objectKey, multipartFile);
             imageUrls.add(imageUrl);
         }
         return imageUrls;
+    }
+    // 파일 확장자 추출 메서드
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            throw new IllegalArgumentException("Invalid file name: " + filename);
+        }
+        return filename.substring(filename.lastIndexOf('.') + 1);
     }
 
     public String uploadCommunityImage(MultipartFile multipartFile) {
