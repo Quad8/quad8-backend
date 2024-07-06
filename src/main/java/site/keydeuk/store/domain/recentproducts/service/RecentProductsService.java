@@ -30,7 +30,7 @@ public class RecentProductsService {
 
         zSetOperations.add(key, dto, System.currentTimeMillis());
         zSetOperations.removeRange(key, 0, -MAX_RECENT_PRODUCTS - 1);
-        redisTemplate.expire(key, 30, TimeUnit.DAYS);
+        redisTemplate.expire(key, 7, TimeUnit.DAYS);
     }
 
     public Set<Object> getRecentProducts(Long userId) {

@@ -30,7 +30,7 @@ public class RecentProductsController {
         return CommonResponse.ok(recentProductsService.getRecentProducts(userId));
     }
 
-    @Operation(summary = "최근 본 상품 목록 저장", description = "유저가 최근 본 상품 목록에 저장합니다.")
+    @Operation(summary = "최근 본 상품 목록 저장", description = "유저가 최근 본 상품 목록에 저장합니다. 최대 7일까지만 저장됩니다.")
     @Parameter(name = "userId", description = "유저 ID", example = "167")
     @Parameter(name = "productId", description = "상품 ID", example = "1")
     @PostMapping("/{userId}")
