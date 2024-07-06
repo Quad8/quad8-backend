@@ -216,7 +216,7 @@ public class ProductService {
         return new OptionProductsResponseDto(productsIdBy4.get(randomIndex));
     }
 
-    private Product getProductById(Integer productId){
+    public Product getProductById(Integer productId){
         return productRepository.findById(productId).orElseThrow(
                 ()-> new NoSuchElementException("Product not found with id: " + productId)
         );
