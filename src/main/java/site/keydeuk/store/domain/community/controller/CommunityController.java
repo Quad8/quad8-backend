@@ -47,9 +47,7 @@ public class CommunityController {
     @Operation(summary = "커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/purchase-history")
     public CommonResponse<?> getPurchaseHistory(@AuthenticationPrincipal PrincipalDetails principalDetails){
-        if (principalDetails == null){
-            return CommonResponse.error("로그인 후 접근 가능합니다.");
-        }
+
         return CommonResponse.ok(communityService.getPurchaseHistory(principalDetails.getUserId()));
     }
 
@@ -95,12 +93,11 @@ public class CommunityController {
     public CommonResponse<?> getPostsByUserId(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                               @ParameterObject @Valid CommunityListRequestDto requestDto){
 
-        if (principalDetails == null){
-            return CommonResponse.error("로그인 후 접근 가능합니다.");
-        }
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
 
         Page<CommunityListResponseDto> page = communityService.getPostsByUserId(requestDto.getSort(),pageable, principalDetails.getUserId());
+
+        if (page == null) return CommonResponse.ok("조회된 게시글이 없습니다.",page);
 
         if (page.getTotalPages() <= requestDto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
 
@@ -127,7 +124,6 @@ public class CommunityController {
                                         @PathVariable("id")Long id,
                                         @Validated @RequestPart("postDto") UpdatePostDto dto,
                                         @RequestPart(value = "files",required = false)@Parameter(description = "이미지 파일") List<MultipartFile> files){
-        if (principalDetails == null) return CommonResponse.error("로그인 후 접근 가능합니다.");
 
         if (communityService.findPostByuserIdAndCommunityId(principalDetails.getUserId(), id) == null) return CommonResponse.error("작성한 게시글이 아닙니다.");
 

@@ -29,7 +29,7 @@ public class CartController {
 
     @Operation(summary = "장바구니 조회", description = "로그인한 유저의 장바구니 목록을 조회합니다.")
     @GetMapping("/get")
-    private CommonResponse<?> getUserCartList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+    public CommonResponse<?> getUserCartList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         CartByUserResponseDto dto = cartService.getCartByUserId(principalDetails.getUserId());
 
