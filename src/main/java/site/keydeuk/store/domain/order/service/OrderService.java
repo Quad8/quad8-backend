@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
+import site.keydeuk.store.domain.order.dto.OrderDto;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
+import site.keydeuk.store.domain.order.dto.request.OrderUpdateRequest;
 import site.keydeuk.store.domain.order.dto.response.*;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
 import site.keydeuk.store.domain.order.repository.OrderRepository;
@@ -117,6 +119,19 @@ public class OrderService {
     }
 
     /**
+     * 결제 전 주문 정보 업데이트
+     * @param orderId 주문 id
+     * @param request 바뀐 정보들
+     */
+    @Transactional
+    public OrderResponse updateOrder(Long orderId, OrderUpdateRequest request) {
+        Order order = orderRepository.findByIdAndPaymentOrderId(orderId, request.paymentOrderId())
+                .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        order.updateShippingInfo(request.shippingAddressId(), request.deliveryMessage());
+        return toOrderResponse(order);
+    }
+
+    /**
      * 결제 완료 된 주문 전체 조회
      *
      * @param userId 유저 아이디
@@ -209,6 +224,7 @@ public class OrderService {
                 .orderStatus(order.getStatus())
                 .purchaseDate(order.getCreatedAt())
                 .confirmationDate(order.getUpdatedAt()) //구매 확정 날짜 저장이지만 임시로
+                .deliveryMessage(order.getDeliveryMessage())
                 .build();
     }
 

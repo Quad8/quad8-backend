@@ -18,4 +18,5 @@ public class OrderResponse {
     private final OrderStatus orderStatus;
     private final LocalDateTime purchaseDate;
     private final LocalDateTime confirmationDate;
+    private final String deliveryMessage;
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.order.dto.request.OrderCreateRequest;
 import site.keydeuk.store.domain.order.dto.request.OrderListRequest;
+import site.keydeuk.store.domain.order.dto.request.OrderUpdateRequest;
 import site.keydeuk.store.domain.order.dto.response.OrderCreateResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.dto.response.OrderResponse;
@@ -43,6 +44,16 @@ public class OrderController {
     public CommonResponse<OrderCreateResponse> getOrderResponse(
             @PathVariable Long orderId) {
         OrderCreateResponse response = orderService.getOrderResponse(orderId);
+        return CommonResponse.ok(response);
+    }
+
+
+    @Operation(summary = "결제 정보 수정", description = "결제 정보를 수정합니다.")
+    @PutMapping("/{orderId}/payment")
+    public CommonResponse<OrderResponse> putOrderResponse(
+            @PathVariable Long orderId,
+            @RequestBody @Valid OrderUpdateRequest request) {
+        OrderResponse response = orderService.updateOrder(orderId, request);
         return CommonResponse.ok(response);
     }
 

@@ -14,8 +14,9 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserId(Long userId);
-
     Optional<Order> findByPaymentOrderId(String paymentOrderId);
+
+    Optional<Order> findByIdAndPaymentOrderId(Long id, String paymentOrderId);
 
     @Query("SELECT o FROM Order o WHERE o.userId = :userId AND o.status <> :status AND o.createdAt BETWEEN :startDate AND :endDate")
     Page<Order> findByUserIdAndStatusNotAndCreatedAtBetween(
