@@ -9,20 +9,23 @@ import java.util.Map;
 @Builder
 public record UserReviewResponse(
         List<ReviewDto> reviewDtoList,
-        Long reviewCounts,
+        Long totalElements,
         int totalPages,
-        boolean isFirst
+        boolean first,
+        boolean last
 ) {
     public static UserReviewResponse of(List<ReviewDto> reviewDtoList,
-                                    Long reviewCounts,
-                                    int totalPages,
-                                    boolean isFirst
+                                        Long reviewCounts,
+                                        int totalPages,
+                                        boolean isFirst,
+                                        boolean isLast
     ) {
         return UserReviewResponse.builder()
                 .reviewDtoList(reviewDtoList)
-                .reviewCounts(reviewCounts)
+                .totalElements(reviewCounts)
                 .totalPages(totalPages)
-                .isFirst(isFirst)
+                .first(isFirst)
+                .last(isLast)
                 .build();
     }
 }
