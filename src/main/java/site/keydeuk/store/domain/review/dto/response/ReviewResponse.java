@@ -10,19 +10,28 @@ import java.util.Map;
 public record ReviewResponse(
         List<ReviewDto> reviewDtoList,
         Double averageScore,
-        Long reviewCounts,
-        Map<String, Map<Integer, Double>> reviewStatistics
+        Map<String, Map<Integer, Double>> reviewStatistics,
+        Long totalElements,
+        int totalPages,
+        boolean first,
+        boolean last
 ) {
     public static ReviewResponse of(List<ReviewDto> reviewDtoList,
                                     Double averageScore,
                                     Long reviewCounts,
-                                    Map<String, Map<Integer, Double>> reviewStatistics
+                                    Map<String, Map<Integer, Double>> reviewStatistics,
+                                    int totalPages,
+                                    boolean isFirst,
+                                    boolean isLast
     ) {
         return ReviewResponse.builder()
                 .reviewDtoList(reviewDtoList)
                 .averageScore(averageScore)
-                .reviewCounts(reviewCounts)
                 .reviewStatistics(reviewStatistics)
+                .totalElements(reviewCounts)
+                .totalPages(totalPages)
+                .first(isFirst)
+                .last(isLast)
                 .build();
     }
 }

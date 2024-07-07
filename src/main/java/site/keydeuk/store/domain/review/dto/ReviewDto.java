@@ -1,9 +1,9 @@
 package site.keydeuk.store.domain.review.dto;
 
 import lombok.Builder;
+import org.springframework.data.domain.Pageable;
 import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
 import site.keydeuk.store.entity.Review;
-import site.keydeuk.store.entity.ReviewImg;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,9 +24,10 @@ public record ReviewDto(
         Long likeCount,
         Boolean likedByUser,
         Integer productId,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        Pageable pageable
 ) {
-    public static ReviewDto of(Review review,String switchOption, ReviewUserResponse writer, Long likeCount, Boolean likedByUser) {
+    public static ReviewDto of(Review review,String switchOption, ReviewUserResponse writer, Long likeCount, Boolean likedByUser, Pageable pageable) {
         List<ReviewImgDto> reviewImgs = getReviewImgDtos(review);
 
         return ReviewDto.builder()
@@ -45,6 +46,7 @@ public record ReviewDto(
                 .likedByUser(likedByUser)
                 .productId(review.getProduct().getId())
                 .updatedAt(review.getUpdatedAt())
+                .pageable(pageable)
                 .build();
     }
 

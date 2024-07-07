@@ -20,6 +20,7 @@ import site.keydeuk.store.domain.review.dto.ReviewImgDto;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
 import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
 import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
+import site.keydeuk.store.domain.review.dto.response.UserReviewResponse;
 import site.keydeuk.store.domain.review.repository.ReviewRepository;
 import site.keydeuk.store.domain.reviewLikes.repository.ReviewLikesRepository;
 import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
@@ -85,10 +86,15 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewDto> getUserReviews(Long userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
+    public UserReviewResponse getUserReviews(Long userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
         Page<Review> reviews = reviewRepository.findByUserIdAndCreatedAtBetween(userId, startDate, endDate, pageable);
         log.info("{}", reviews.getContent());
-        return getReviewDtos(userId, reviews.getContent());
+        List<ReviewDto> reviewDtos = getReviewDtos(userId, reviews.getContent(), reviews.getPageable());
+        long reviewCounts = reviews.getTotalElements();
+        int totalPages = reviews.getTotalPages();
+        boolean isFirst = reviews.isFirst();
+        boolean isLast = reviews.isLast();
+        return UserReviewResponse.of(reviewDtos, reviewCounts, totalPages, isFirst, isLast);
     }
 
     @Transactional(readOnly = true)
@@ -116,23 +122,25 @@ public class ReviewService {
                 throw new CustomException(COMMON_INVALID_PARAMETER);
             }
         }
-        ;
-        List<ReviewDto> reviewDtoList = getReviewDtos(userId, reviews.getContent());
+        List<ReviewDto> reviewDtoList = getReviewDtos(userId, reviews.getContent(), reviews.getPageable());
 
         Double averageScore = reviewRepository.findAverageScoreByProductId(productId);
-        Long reviewCounts = reviewRepository.countByProductId(productId);
         Map<String, Map<Integer, Double>> reviewStatistics = getReviewStatistics(productId);
-        return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics);
+        Long reviewCounts = reviews.getTotalElements();
+        int totalPages = reviews.getTotalPages();
+        boolean isFirst = reviews.isFirst();
+        boolean isLast = reviews.isLast();
+        return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics, totalPages, isFirst, isLast);
     }
 
-    private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews) {
+    private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews, Pageable pageable) {
         return reviews.stream()
                 .map(review -> {
                     String switchOptionName = getSwitchOptionName(review);
                     ReviewUserResponse writer = ReviewUserResponse.from(review.getUser());
                     Long likeCount = reviewLikesRepository.countByReviewId(review.getId());
                     Boolean likedByUser = userId != null && reviewLikesRepository.existsByReviewIdAndUserId(review.getId(), userId);
-                    return ReviewDto.of(review, switchOptionName, writer, likeCount, likedByUser);
+                    return ReviewDto.of(review, switchOptionName, writer, likeCount, likedByUser, pageable);
                 })
                 .toList();
     }
