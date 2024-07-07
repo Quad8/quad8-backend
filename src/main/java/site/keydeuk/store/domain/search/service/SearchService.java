@@ -15,6 +15,10 @@ public class SearchService {
 
     private final ProductRepository productRepository;
 
+    /** 상품명 전체 목록 조회 */
+    public List<String> getProductNames(){
+        return productRepository.findAllNames();
+    }
     public List<Product> searchProducts(String search){
         return productRepository.findProductBySearch(search);
     }
