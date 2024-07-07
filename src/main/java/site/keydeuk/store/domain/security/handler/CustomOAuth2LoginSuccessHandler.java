@@ -35,35 +35,36 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        log.info("OAuth2 login success");
-        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-        log.info("Princpal Details: {}", ((PrincipalDetails) authentication.getPrincipal()).getUser());
+        try {
+            log.info("OAuth2 login success");
+            User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+            log.info("Principal Details: {}", ((PrincipalDetails) authentication.getPrincipal()).getUser());
 
-        // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
-        if (user.getRole().equals(RoleType.ROLE_GUEST)) {
-            log.info("소셜 로그인 성공 -> 가입 안되어 있는 유저인것 확인 -> 회원가입 페이지 이동");
+            // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
+            if (user.getRole().equals(RoleType.ROLE_GUEST)) {
+                log.info("소셜 로그인 성공 -> 가입 안되어 있는 유저인 것 확인 -> 회원가입 페이지 이동");
 
-            String redirectURL = UriComponentsBuilder.fromUriString("https://keydeuk-be.shop/api/v1/oauth2/signUp")
-                    .queryParam("email", user.getEmail())
-                    .queryParam("provider", user.getProvider())
-                    .queryParam("providerId", user.getProviderId())
-                    .queryParam("nickname", user.getNickname())
-                    .queryParam("imgUrl", user.getImgUrl())
-                    .build()
-                    .encode(StandardCharsets.UTF_8)
-                    .toUriString();
+                String redirectURL = UriComponentsBuilder.fromUriString("https://keydeuk-be.shop/api/v1/oauth2/signUp")
+                        .queryParam("email", user.getEmail())
+                        .queryParam("provider", user.getProvider())
+                        .queryParam("providerId", user.getProviderId())
+                        .queryParam("nickname", user.getNickname())
+                        .queryParam("imgUrl", user.getImgUrl())
+                        .build()
+                        .encode(StandardCharsets.UTF_8)
+                        .toUriString();
 
-            log.debug("회원가입으로 redirect");
-            clearAuthenticationAttributes(request);
-            response.sendRedirect(redirectURL);
-        } else {
-            String email = authentication.getName();
-            log.info("Authentication Name = {}", email);
-
-            String newRandomToken = UUID.randomUUID().toString();
-            AuthenticationToken authenticationToken = tokenService.generatedToken(newRandomToken, email);
-
-            sendResponse(response, authenticationToken);
+                log.debug("회원가입으로 redirect: " + redirectURL);
+                clearAuthenticationAttributes(request);
+                response.sendRedirect(redirectURL);
+            } else {
+                // 로그인 성공 시의 기본 처리
+                log.debug("기존 회원으로 로그인 성공");
+                response.sendRedirect("/dashboard");
+            }
+        } catch (Exception e) {
+            log.error("OAuth2 로그인 성공 핸들러에서 오류 발생: ", e);
+            throw e;
         }
     }
 
