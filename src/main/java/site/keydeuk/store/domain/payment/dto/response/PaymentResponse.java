@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.payment.dto;
+package site.keydeuk.store.domain.payment.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
