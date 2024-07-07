@@ -24,7 +24,7 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @Operation(summary = "검색창 검색", description = "검색창에 입력된 검색어를 포함한 삼품 목록을 조회합니다.")
+    @Operation(summary = "검색창 검색(미구현!!회의 이후 재구현 예정)", description = "검색창에 입력된 검색어를 포함한 삼품 목록을 조회합니다.")
     @GetMapping()
     public CommonResponse<?> getSearchedProducts(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                                  @RequestParam @NotBlank @Size(min = 1,max = 100) String search){
@@ -32,13 +32,10 @@ public class SearchController {
         return CommonResponse.ok(searchService.searchProducts(search));
     }
 
-    public CommonResponse<?> addProduct(){
+    @Operation(summary = "상품명 전체 목록", description = "검색어 자동 완성을 위한 상품명 전체 목록 조회")
+    @GetMapping("all/products-name")
+    public CommonResponse<?> getAllProductsName(){
 
-        return CommonResponse.ok();
-    }
-
-    public CommonResponse<?> deleteAllProduct(){
-
-        return CommonResponse.ok();
+        return CommonResponse.ok(searchService.getProductNames());
     }
 }
