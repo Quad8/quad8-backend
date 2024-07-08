@@ -54,7 +54,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
                 .domain("localhost")
-                .domain("")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
