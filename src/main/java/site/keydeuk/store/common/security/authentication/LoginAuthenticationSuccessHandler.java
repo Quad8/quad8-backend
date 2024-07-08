@@ -48,7 +48,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn())
-                .secure(true)
                 .sameSite("None")
                 .build();
 
@@ -57,7 +56,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
-                .secure(true)
                 .sameSite("None")
                 .build();
 
