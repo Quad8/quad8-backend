@@ -27,6 +27,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("loadUser 실행");
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         // resistrationId 가져오기 -> registrationId = 어떤 소셜 로그인 이용했는지
