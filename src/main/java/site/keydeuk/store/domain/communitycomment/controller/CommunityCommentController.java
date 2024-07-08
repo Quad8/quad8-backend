@@ -36,10 +36,11 @@ public class CommunityCommentController {
         return CommonResponse.ok("댓글이 삭제되었습니다.");
     }
 
-    @Operation(summary = "커뮤니티 댓글 무한 스크롤", description = "마지막 댓글 id 이후 5개의 댓글을 불러옵니다.")
-    @GetMapping("/{commentId}")
-    public CommonResponse<?> getCommentByCommentId(@PathVariable @Parameter(description = "마지막 댓글 id", required = true)Long commentId){
+    @Operation(summary = "커뮤니티 댓글 무한 스크롤", description = "마지막 댓글 ID 이후 5개의 댓글을 불러옵니다.")
+    @GetMapping("/{communityId}/{commentId}")
+    public CommonResponse<?> getCommentByCommentId(@PathVariable @Parameter(description = "커뮤니티 ID", required = true)Long communityId
+                                            ,@PathVariable @Parameter(description = "마지막 댓글 ID", required = true)Long commentId){
 
-        return CommonResponse.ok(commentService.findNext5CommentsByLastCommentId(commentId));
+        return CommonResponse.ok(commentService.findNext5CommentsByLastCommentId(communityId,commentId));
     }
 }

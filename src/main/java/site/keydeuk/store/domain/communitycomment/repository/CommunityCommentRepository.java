@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import site.keydeuk.store.entity.CommunityComment;
 
@@ -19,7 +20,7 @@ public interface CommunityCommentRepository extends JpaRepository<CommunityComme
 
     void deleteByCommunity_Id(Long id);
 
-    @Query(value = "select c from CommunityComment c where c.id > ?1")
-    Page<CommunityComment> findByCommunityCommentIdLessThan(Long commentId, PageRequest pageRequest);
+    @Query(value = "select c from CommunityComment c where c.community.id = :communityId and c.id > :commentId")
+    Page<CommunityComment> findByCommunityCommentIdLessThan(@Param("communityId")Long communityId,@Param("commentId")Long commentId, PageRequest pageRequest);
 
 }

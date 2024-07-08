@@ -14,11 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.review.dto.ReviewDto;
 import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
 import site.keydeuk.store.domain.review.dto.request.ReviewListRequest;
 import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
 import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
+import site.keydeuk.store.domain.review.dto.response.UserReviewResponse;
 import site.keydeuk.store.domain.review.service.ReviewService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
@@ -58,13 +58,13 @@ public class ReviewController {
 
     @GetMapping("/user")
     @Operation(summary = "사용자 리뷰 조회", description = "사용자가 작성한 모든 리뷰를 조회합니다.")
-    public CommonResponse<List<ReviewDto>> getUserReviews(
+    public CommonResponse<UserReviewResponse> getUserReviews(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @ParameterObject ReviewListRequest request
     ) {
         Long userId = principalDetails.getUserId();
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-        List<ReviewDto> response = reviewService.getUserReviews(userId, pageable, request.getStartDate(), request.getEndDate());
+        UserReviewResponse response = reviewService.getUserReviews(userId, pageable, request.getStartDate(), request.getEndDate());
         return CommonResponse.ok(response);
     }
 

@@ -72,8 +72,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice
     );
+    @Query("select p.name from Product p ")
+    List<String> findAllNames();
 
 
-
+    @Query("select p from Product p where p.name like %:search%")
+    List<Product> findProductBySearch(@Param("search") String search);
 
 }

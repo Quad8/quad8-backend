@@ -45,7 +45,7 @@ public class ProductListResponseDto {
             this.thumbnail = product.getProductImgs().get(0).getImgUrl();
 
         }else {
-            log.info("product_{} is empty",product.getId());
+            log.error("product_{} is empty",product.getId());
         }
     }
 

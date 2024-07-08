@@ -67,9 +67,9 @@ public class CommunityCommentService {
     }
 
     /** 마지막 댓글 id 기준으로 5개씩 댓글 조회 */
-    public List<CommentResponseDto> findNext5CommentsByLastCommentId(Long commentId){
+    public List<CommentResponseDto> findNext5CommentsByLastCommentId(Long communityId,Long commentId){
         PageRequest pageRequest = PageRequest.of(0,5);
-        Page<CommunityComment> page = commentRepository.findByCommunityCommentIdLessThan(commentId,pageRequest);
+        Page<CommunityComment> page = commentRepository.findByCommunityCommentIdLessThan(communityId,commentId,pageRequest);
 
         return page.stream().map(CommentResponseDto::fromEntity)
                 .collect(Collectors.toList());
