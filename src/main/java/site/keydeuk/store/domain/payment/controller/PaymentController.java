@@ -4,17 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
-import site.keydeuk.store.domain.payment.dto.PaymentConfirmRequest;
-import site.keydeuk.store.domain.payment.dto.PaymentConfirmResponse;
-import site.keydeuk.store.domain.payment.dto.PaymentResponse;
+import site.keydeuk.store.domain.payment.dto.response.PaymentResponse;
 import site.keydeuk.store.domain.payment.dto.request.PaymentRequest;
+import site.keydeuk.store.domain.payment.dto.response.PaymentSuccessResponse;
 import site.keydeuk.store.domain.payment.service.PaymentService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
-import site.keydeuk.store.entity.Payment;
 
 @Slf4j
 @RestController
@@ -36,11 +33,11 @@ public class PaymentController {
     }
     @Operation(summary = "결제 성공 처리", description = "결제 성공 시 호출되는 API 입니다.")
     @PostMapping("/success")
-    public CommonResponse<PaymentResponse> success(
+    public CommonResponse<PaymentSuccessResponse> success(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody PaymentRequest request) {
         log.info("결제 성공 처리: {}", request);
-        PaymentResponse response = paymentService.paymentSuccess(principalDetails.getUserId(), request.paymentKey(), request.paymentOrderId());
+        PaymentSuccessResponse response = paymentService.paymentSuccess(principalDetails.getUserId(), request.paymentKey(), request.paymentOrderId());
         return CommonResponse.ok("결제가 성공적으로 처리되었습니다.", response);
     }
 

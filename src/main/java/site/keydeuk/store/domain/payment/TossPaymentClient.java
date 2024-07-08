@@ -4,8 +4,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import site.keydeuk.store.domain.payment.dto.PaymentConfirmRequest;
-import site.keydeuk.store.domain.payment.dto.PaymentConfirmResponse;
+import site.keydeuk.store.domain.payment.dto.request.PaymentConfirmRequest;
+import site.keydeuk.store.domain.payment.dto.response.PaymentConfirmResponse;
 
 
 @Component

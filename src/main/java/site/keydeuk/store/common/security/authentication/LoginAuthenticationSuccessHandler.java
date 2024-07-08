@@ -37,7 +37,16 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         String randomToken = UUID.randomUUID().toString();
         AuthenticationToken authenticationToken = tokenService.generatedToken(randomToken, userId);
 
+        addTokenToHeader(response, authenticationToken);
         sendResponse(response, authenticationToken);
+    }
+
+    private void addTokenToHeader(HttpServletResponse response, AuthenticationToken authenticationToken) {
+        String accessToken = "accessToken=" + authenticationToken.accessToken() + "; HttpOnly; Secure; Path=/; Max-Age=3600";
+        String refreshToken = "refreshToken=" + authenticationToken.refreshToken() + "; HttpOnly; Secure; Path=/; Max-Age=604800";
+
+        response.setHeader("Set-Cookie", accessToken);
+        response.addHeader("Set-Cookie", refreshToken);
     }
 
     private void sendResponse(HttpServletResponse response, AuthenticationToken authenticationToken) throws IOException {

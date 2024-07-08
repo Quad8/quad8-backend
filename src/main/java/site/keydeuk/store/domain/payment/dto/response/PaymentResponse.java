@@ -1,4 +1,4 @@
-package site.keydeuk.store.domain.payment.dto;
+package site.keydeuk.store.domain.payment.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,6 +12,9 @@ public record PaymentResponse(
 
         @Schema(description = "주문 ID", example = "67890")
         Long orderId,
+
+        @Schema(description = "결제 주문 id", example = "941ef1d3-8011-490e-9c60-26b6b6ec6b24")
+        String paymentOrderId,
 
         @Schema(description = "결제 키", example = "payment_abcdef123456")
         String paymentKey,

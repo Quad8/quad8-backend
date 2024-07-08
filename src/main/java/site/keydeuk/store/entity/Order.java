@@ -21,6 +21,7 @@ public class Order extends BaseTimeEntity {
     private Long userId;
     private String paymentOrderId;
     private Long shippingAddressId;
+    private String deliveryMessage;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Integer totalPrice = 0;
@@ -36,5 +37,10 @@ public class Order extends BaseTimeEntity {
 
     public void updateStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void updateShippingInfo(Long shippingAddressId, String deliveryMessage) {
+        this.shippingAddressId = shippingAddressId;
+        this.deliveryMessage = deliveryMessage;
     }
 }

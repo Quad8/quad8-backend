@@ -1,6 +1,4 @@
-package site.keydeuk.store.domain.payment.dto;
-
-import site.keydeuk.store.domain.payment.dto.request.PaymentRequest;
+package site.keydeuk.store.domain.payment.dto.request;
 
 public record PaymentConfirmRequest(
         String paymentKey,
