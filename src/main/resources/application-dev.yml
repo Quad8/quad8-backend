@@ -51,3 +51,8 @@ jwt:
   token-validate-in-seconds: 3600
 toss:
   secret-key: ${TOSS_SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
