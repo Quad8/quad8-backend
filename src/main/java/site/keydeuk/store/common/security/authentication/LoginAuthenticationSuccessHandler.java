@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import site.keydeuk.store.common.response.CommonResponse;
@@ -21,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
 public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
+    private static final int TOKEN_REFRESH_INTERVAL = 24;
     private final ObjectMapper objectMapper;
     private final TokenService tokenService;
 
@@ -42,11 +43,24 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
     }
 
     private void addTokenToHeader(HttpServletResponse response, AuthenticationToken authenticationToken) {
-        String accessToken = "accessToken=" + authenticationToken.accessToken() + "; HttpOnly; Secure; Path=/; Max-Age=3600";
-        String refreshToken = "refreshToken=" + authenticationToken.refreshToken() + "; HttpOnly; Secure; Path=/; Max-Age=604800";
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authenticationToken.accessToken())
+                .path("/")
+                .httpOnly(true)
+                .maxAge(authenticationToken.expiresIn())
+                .secure(true)
+                .sameSite("None")
+                .build();
 
-        response.setHeader("Set-Cookie", accessToken);
-        response.addHeader("Set-Cookie", refreshToken);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
+                .path("/")
+                .httpOnly(true)
+                .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
     }
 
     private void sendResponse(HttpServletResponse response, AuthenticationToken authenticationToken) throws IOException {
