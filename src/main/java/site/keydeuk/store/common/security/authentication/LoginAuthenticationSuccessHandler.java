@@ -45,7 +45,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
     private void addTokenToHeader(HttpServletRequest request,
                                   HttpServletResponse response,
                                   AuthenticationToken authenticationToken) {
-        String domain = request.getServerName();
+        String domain = request.getHeader("Origin");
         log.info(domain);
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authenticationToken.accessToken())
                 .domain(domain)
