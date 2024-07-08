@@ -48,7 +48,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn())
-                .sameSite("None")
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
@@ -56,7 +55,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
-                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
