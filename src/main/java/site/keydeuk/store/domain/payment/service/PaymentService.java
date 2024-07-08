@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.cart.repository.CartRepository;
+import site.keydeuk.store.domain.order.dto.response.OrderDetailResponse;
 import site.keydeuk.store.domain.order.repository.OrderRepository;
+import site.keydeuk.store.domain.order.service.OrderService;
 import site.keydeuk.store.domain.payment.PaymentClient;
 import site.keydeuk.store.domain.payment.dto.request.PaymentConfirmRequest;
+import site.keydeuk.store.domain.payment.dto.request.PaymentRequest;
 import site.keydeuk.store.domain.payment.dto.response.PaymentConfirmResponse;
 import site.keydeuk.store.domain.payment.dto.response.PaymentResponse;
-import site.keydeuk.store.domain.payment.dto.request.PaymentRequest;
+import site.keydeuk.store.domain.payment.dto.response.PaymentSuccessResponse;
 import site.keydeuk.store.domain.payment.repository.PaymentRepository;
 import site.keydeuk.store.entity.*;
 import site.keydeuk.store.entity.enums.OrderStatus;
@@ -25,6 +28,7 @@ import static site.keydeuk.store.common.response.ErrorCode.*;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private final OrderService orderService;
     private final PaymentRepository paymentRepository;
     private final PaymentClient paymentClient;
     private final OrderRepository orderRepository;
@@ -60,6 +64,7 @@ public class PaymentService {
         return PaymentResponse.builder()
                 .id(savedPayment.getId())
                 .orderId(savedPayment.getOrder().getId())
+                .paymentOrderId(savedPayment.getOrder().getPaymentOrderId())
                 .paymentKey(savedPayment.getPaymentKey())
                 .method(savedPayment.getMethod())
                 .totalAmount(savedPayment.getTotalAmount())
@@ -71,11 +76,12 @@ public class PaymentService {
 
     /**
      * 결제 결과 성공시 로직
-     * @param paymentId
-     * @param orderId
+     * @param userId 사용자 id
+     * @param paymentKey toss가 제공하는 결제 키
+     * @param paymentOrderId 결제 주문 id
      */
     @Transactional
-    public PaymentResponse paymentSuccess(Long userId, String paymentKey, String paymentOrderId) {
+    public PaymentSuccessResponse paymentSuccess(Long userId, String paymentKey, String paymentOrderId) {
         Payment payment = getPaymentByPaymentKey(paymentKey);
         Order order = payment.getOrder();
 
@@ -107,11 +113,12 @@ public class PaymentService {
         cart.updateTotalCount(removedCount);
 
         cartRepository.save(cart);
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        return PaymentResponse.builder()
+        PaymentResponse paymentResponse = PaymentResponse.builder()
                 .id(payment.getId())
                 .orderId(payment.getOrder().getId())
+                .paymentOrderId(payment.getOrder().getPaymentOrderId())
                 .paymentKey(payment.getPaymentKey())
                 .method(payment.getMethod())
                 .totalAmount(payment.getTotalAmount())
@@ -119,6 +126,8 @@ public class PaymentService {
                 .requestedAt(payment.getRequestedAt())
                 .approvedAt(payment.getApprovedAt())
                 .build();
+        OrderDetailResponse orderDetailResponse = orderService.getOrder(userId, savedOrder.getId());
+        return PaymentSuccessResponse.of(paymentResponse, orderDetailResponse);
     }
 
     private Payment getPaymentByPaymentKey(String paymentKey) {
