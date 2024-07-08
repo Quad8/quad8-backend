@@ -125,7 +125,7 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse updateOrder(Long orderId, OrderUpdateRequest request) {
-        Order order = orderRepository.findByIdAndPaymentOrderId(orderId, request.paymentOrderId())
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
         order.updateShippingInfo(request.shippingAddressId(), request.deliveryMessage());
         return toOrderResponse(order);
@@ -174,6 +174,7 @@ public class OrderService {
                 .orderId(order.getId())
                 .orderItems(orderItemResponses)
                 .shippingAddress(shippingAddressDto)
+                .deliveryMessage(order.getDeliveryMessage())
                 .totalAmount(payment.getTotalAmount())
                 .purchaseDate(payment.getApprovedAt())
                 .confirmationDate(order.getUpdatedAt())
