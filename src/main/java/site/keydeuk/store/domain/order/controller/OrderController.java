@@ -36,7 +36,7 @@ public class OrderController {
     ) {
         Long userId = principalDetails.getUserId();
         Long orderId = orderService.createOrder(userId, requests);
-        return CommonResponse.ok(orderId);
+        return CommonResponse.ok("주문이 성공적으로 생성되었습니다.",orderId);
     }
 
     @Operation(summary = "결제 정보 조회", description = "결제 정보를 조회합니다.")
@@ -44,7 +44,7 @@ public class OrderController {
     public CommonResponse<OrderCreateResponse> getOrderResponse(
             @PathVariable Long orderId) {
         OrderCreateResponse response = orderService.getOrderResponse(orderId);
-        return CommonResponse.ok(response);
+        return CommonResponse.ok("결제 정보 조회에 성공했습니다.",response);
     }
 
 
