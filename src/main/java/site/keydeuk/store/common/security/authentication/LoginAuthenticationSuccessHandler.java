@@ -44,17 +44,21 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     private void addTokenToHeader(HttpServletResponse response, AuthenticationToken authenticationToken) {
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authenticationToken.accessToken())
-                .domain("")
+                .domain("keydeuk.com")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn())
+                .secure(true)
+                .sameSite("None")
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
-                .domain("")
+                .domain("keydeuk.com")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
+                .secure(true)
+                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
