@@ -45,10 +45,8 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
     private void addTokenToHeader(HttpServletRequest request,
                                   HttpServletResponse response,
                                   AuthenticationToken authenticationToken) {
-        String domain = request.getHeader("Origin");
-        log.info(domain);
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authenticationToken.accessToken())
-                .domain(domain)
+                .domain("keydeuk.com")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn())
@@ -57,7 +55,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
-                .domain(domain)
+                .domain("keydeuk.com")
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
