@@ -38,13 +38,17 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         String randomToken = UUID.randomUUID().toString();
         AuthenticationToken authenticationToken = tokenService.generatedToken(randomToken, userId);
 
-        addTokenToHeader(response, authenticationToken);
+        addTokenToHeader(request, response, authenticationToken);
         sendResponse(response, authenticationToken);
     }
 
-    private void addTokenToHeader(HttpServletResponse response, AuthenticationToken authenticationToken) {
+    private void addTokenToHeader(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  AuthenticationToken authenticationToken) {
+        String domain = request.getServerName();
+        log.info(domain);
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authenticationToken.accessToken())
-                .domain("keydeuk.com")
+                .domain(domain)
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn())
@@ -53,7 +57,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationToken.refreshToken())
-                .domain("keydeuk.com")
+                .domain(domain)
                 .path("/")
                 .httpOnly(true)
                 .maxAge(authenticationToken.expiresIn() * TOKEN_REFRESH_INTERVAL)
