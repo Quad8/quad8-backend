@@ -35,8 +35,8 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        log.info("OAuth2 login success");
         try {
-            log.info("OAuth2 login success");
             User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
             log.info("Principal Details: {}", ((PrincipalDetails) authentication.getPrincipal()).getUser());
 
