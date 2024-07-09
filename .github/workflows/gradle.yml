@@ -34,7 +34,6 @@ jobs:
         sed -i "s|username:.*|username: ${{ secrets.EC2_DB_USERNAME }}|" ./src/main/resources/application-dev.yml
         sed -i "s|password:.*|password: ${{ secrets.EC2_DB_PASSWORD }}|" ./src/main/resources/application-dev.yml
         sed -i "s|client-id:.*|client-id: ${{ secrets.KAKAO_CLIENT_ID }}|" ./src/main/resources/application-dev.yml
-        sed -i "s|client-secret:.*|client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}|" ./src/main/resources/application-dev.yml
         sed -i "s|access-key:.*|access-key: ${{ secrets.AWS_S3_ACCESS_KEY }}|" ./src/main/resources/application-dev.yml
         sed -i "s|secret-key:.*|secret-key: ${{ secrets.AWS_S3_SECRET_KEY }}|" ./src/main/resources/application-dev.yml
         sed -i "s|bucket:.*|bucket: ${{ secrets.AWS_S3_BUCKET_NAME }}|" ./src/main/resources/application-dev.yml
