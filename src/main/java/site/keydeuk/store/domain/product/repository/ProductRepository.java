@@ -77,6 +77,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
 
     @Query("select p from Product p where p.name like %:search%")
-    List<Product> findProductBySearch(@Param("search") String search);
+    Page<Product> findProductBySearch(@Param("search") String search, Pageable pageable);
 
 }
