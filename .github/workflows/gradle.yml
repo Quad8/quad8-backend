@@ -33,6 +33,12 @@ jobs:
       run: | 
         sed -i "s|username:.*|username: ${{ secrets.EC2_DB_USERNAME }}|" ./src/main/resources/application-dev.yml
         sed -i "s|password:.*|password: ${{ secrets.EC2_DB_PASSWORD }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|access-key:.*|access-key: ${{ secrets.AWS_S3_ACCESS_KEY }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|secret-key:.*|secret-key: ${{ secrets.AWS_S3_SECRET_KEY }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|bucket:.*|bucket: ${{ secrets.AWS_S3_BUCKET_NAME }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|uri: mongodb://.*|uri: ${{ secrets.DB_MONGO_URL }}|" ./src/main/resources/application-dev.yml
+        sed -i "s|secret:.*|secret: ${{ secrets.JWT_SECRET }}|" ./src/main/resources/application-dev.yml
+        sed -i '/toss:/,/secret-key:/s/secret-key:.*/secret-key: '"${{ secrets.TOSS_SECRET_KEY }}"'/' ./src/main/resources/application-dev.yml
 
     #(4)
     - name: Grant execute permission for gradlew
