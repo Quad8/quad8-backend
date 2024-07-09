@@ -33,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
     private final RedisService redisService;
 
     @Override
-    public AuthenticationToken reissueToken(String refreshToken, String accessToken) {
+    public String reissueToken(String refreshToken, String accessToken) {
         try {
             String randomToken = tokenProvider.getSubject(refreshToken);
             log.info("Fetch randomToken = [{}]", randomToken);
@@ -47,7 +47,8 @@ public class TokenServiceImpl implements TokenService {
             }
 
             addBlackList(accessToken);
-            return generatedToken(randomToken, token.email());
+            AuthenticationToken authenticationToken = generateNewAccessToken(token.email(), refreshToken);
+            return authenticationToken.accessToken();
         } catch (ExpiredJwtException e) {
             log.info("[{}] 이미 만료된 토큰입니다.", refreshToken);
             throw new CustomException(EXPIRED_TOKEN);
@@ -119,5 +120,10 @@ public class TokenServiceImpl implements TokenService {
                 .email(email)
                 .refreshToken(token.refreshToken())
                 .build();
+    }
+
+    private AuthenticationToken generateNewAccessToken(String username, String existingRefreshToken) {
+        Token token = tokenProvider.generateTokenWithExistingRefreshToken(username, existingRefreshToken);
+        return AuthenticationToken.of(token);
     }
 }

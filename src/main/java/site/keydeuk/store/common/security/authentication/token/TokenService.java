@@ -4,7 +4,7 @@ import site.keydeuk.store.common.security.authentication.dto.AuthenticationToken
 
 public interface TokenService {
 
-    AuthenticationToken reissueToken(String refreshToken, String accessToken);
+    String reissueToken(String refreshToken, String accessToken);
 
     AuthenticationToken generatedToken(String randomToken, String email);
 
