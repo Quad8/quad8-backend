@@ -32,7 +32,7 @@ public class SecurityService implements UserDetailsService {
         return new PrincipalDetails(user);
     }
 
-    public AuthenticationToken reissue(ReissueRequest reissueRequest) {
+    public String reissue(ReissueRequest reissueRequest) {
         return tokenService.reissueToken(reissueRequest.refreshToken(), reissueRequest.accessToken());
     }
 }
