@@ -46,6 +46,8 @@ public class SearchController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<ProductResponseDto> pages = searchService.searchProducts(search,pageable,userId);
+
+        if (pages.isEmpty()) return CommonResponse.ok(null);
         if (pages.getTotalPages() <= page) throw new CustomException(INVALID_PAGEABLE_PAGE);
 
         return CommonResponse.ok(pages);
