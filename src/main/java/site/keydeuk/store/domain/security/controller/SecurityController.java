@@ -27,10 +27,10 @@ public class SecurityController {
     @Operation(summary = "토큰 재발급", description = "액세스 토큰과 리프레시 토큰을 재발급합니다.")
     @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = AuthenticationToken.class)))
     @PostMapping("/reissue")
-    public CommonResponse<AuthenticationToken> reissue(
+    public CommonResponse<String> reissue(
             @Parameter(description = "토큰 재발급 요청 데이터", required = true, content = @Content(schema = @Schema(implementation = ReissueRequest.class)))
             @RequestBody ReissueRequest reissueRequest) {
-        AuthenticationToken token = securityService.reissue(reissueRequest);
+        String token = securityService.reissue(reissueRequest);
         return CommonResponse.ok(token);
     }
 }

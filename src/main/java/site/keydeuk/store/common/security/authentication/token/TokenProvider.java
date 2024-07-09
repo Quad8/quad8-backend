@@ -108,6 +108,16 @@ public class TokenProvider {
                 .compact();
     }
 
+    public Token generateTokenWithExistingRefreshToken(String username, String existingRefreshToken) {
+        return Token.builder()
+                .grantType(grantType)
+                .refreshToken(existingRefreshToken)
+                .refreshTokenExpired(getExpiration(existingRefreshToken))
+                .accessToken(createAccessToken(username))
+                .accessTokenExpired(accessTokenExpiredTime)
+                .build();
+    }
+
     private Map<String, Object> createHeader() {
         Map<String, Object> header = new HashMap<>();
         header.put("alg", HS256.getValue());
