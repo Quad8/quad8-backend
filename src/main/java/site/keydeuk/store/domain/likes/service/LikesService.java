@@ -44,13 +44,6 @@ public class LikesService {
     }
 
     @Transactional
-    public void deleteLike(Long userId, Integer productId) {
-        Likes like = likesRepository.findByUserIdAndProductId(userId, productId)
-                .orElseThrow(() -> new CustomException(LIKED_PRODUCTS_NOT_FOUND));
-
-        likesRepository.delete(like);
-    }
-    @Transactional
     public void deleteLikes(Long userId, List<Long> request) {
         List<Likes> like = likesRepository.findByUserIdAndProductIdIn(userId, request)
                 .orElseThrow(() -> new CustomException(LIKED_PRODUCTS_NOT_FOUND));

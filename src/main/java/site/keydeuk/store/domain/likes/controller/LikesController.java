@@ -35,17 +35,6 @@ public class LikesController {
         return CommonResponse.ok("좋아요가 등록되었습니다.",LikesResponse.from(like));
     }
 
-    @Operation(summary = "좋아요 삭제", description = "특정 상품에 대해 좋아요를 삭제합니다.")
-    @DeleteMapping("/{productId}")
-    public CommonResponse<Integer> deleteLike(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable @Parameter(description = "좋아요를 삭제할 상품의 ID", required = true) Integer productId
-    ) {
-        Long userId = principalDetails.getUserId();
-        likesService.deleteLike(userId, productId);
-        return CommonResponse.ok("좋아요가 삭제되었습니다.", productId);
-    }
-
     @Operation(summary = "좋아요 다중 삭제", description = "특정 상품에 대해 여러개의 좋아요를 삭제합니다.")
     @DeleteMapping("")
     public CommonResponse<List<Long>> deleteLikes(
