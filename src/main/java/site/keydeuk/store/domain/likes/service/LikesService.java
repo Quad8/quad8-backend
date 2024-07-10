@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.likes.dto.request.LikeDeleteRequest;
 import site.keydeuk.store.domain.likes.dto.response.LikedProductsResponse;
 import site.keydeuk.store.domain.likes.repository.LikesRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
@@ -43,11 +44,11 @@ public class LikesService {
     }
 
     @Transactional
-    public void deleteLike(Long userId, Integer productId) {
-        Likes like = likesRepository.findByUserIdAndProductId(userId, productId)
+    public void deleteLikes(Long userId, List<Long> request) {
+        List<Likes> like = likesRepository.findByUserIdAndProductIdIn(userId, request)
                 .orElseThrow(() -> new CustomException(LIKED_PRODUCTS_NOT_FOUND));
 
-        likesRepository.delete(like);
+        likesRepository.deleteAll(like);
     }
 
     @Transactional(readOnly = true)

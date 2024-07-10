@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
+import site.keydeuk.store.domain.likes.dto.request.LikeDeleteRequest;
 import site.keydeuk.store.domain.likes.dto.response.LikedProductsResponse;
 import site.keydeuk.store.domain.likes.dto.response.LikesResponse;
 import site.keydeuk.store.domain.likes.service.LikesService;
@@ -34,15 +35,15 @@ public class LikesController {
         return CommonResponse.ok("좋아요가 등록되었습니다.",LikesResponse.from(like));
     }
 
-    @Operation(summary = "좋아요 삭제", description = "특정 상품에 대해 좋아요를 삭제합니다.")
-    @DeleteMapping("/{productId}")
-    public CommonResponse<Integer> deleteLike(
+    @Operation(summary = "좋아요 다중 삭제", description = "특정 상품에 대해 여러개의 좋아요를 삭제합니다.")
+    @DeleteMapping("")
+    public CommonResponse<List<Long>> deleteLikes(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable @Parameter(description = "좋아요를 삭제할 상품의 ID", required = true) Integer productId
+            @RequestBody LikeDeleteRequest request
     ) {
         Long userId = principalDetails.getUserId();
-        likesService.deleteLike(userId, productId);
-        return CommonResponse.ok("좋아요가 삭제되었습니다.", productId);
+        likesService.deleteLikes(userId, request.getProductIds());
+        return CommonResponse.ok("좋아요가 삭제되었습니다.", request.getProductIds());
     }
 
     @Operation(summary = "좋아요한 상품 조회", description = "사용자가 좋아요한 모든 상품을 조회합니다.")
