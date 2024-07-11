@@ -25,6 +25,7 @@ import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -51,9 +52,8 @@ public class CommunityService {
         //1. order userid로 조회
         List<Order> orders = orderService.getAllOrdersStatusConfirmedByUserId(userId);
 
-        if (orders.isEmpty()) throw new CustomException(ORDER_HISTORY_NOT_FOUND);
-        log.info("userId: {}",userId);
-        log.info("sixe :{}",orders.size());
+        if (orders.isEmpty()) return Collections.emptyList();
+
         List<OrderItem> orderItemList = new ArrayList<>();
         //2. order중 1000000번 이상인 것만 조회
         for(Order order : orders){
