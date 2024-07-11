@@ -19,6 +19,8 @@ public class CommunityListResponseDto {
 
     private Long id;
 
+    private Long userId;
+
     private String title;
 
     private Long likeCount;
@@ -37,6 +39,7 @@ public class CommunityListResponseDto {
 
     public CommunityListResponseDto(Community community, Long commentCount){
         this.id = community.getId();
+        this.userId = community.getUser().getId();
         this.title = community.getTitle();
         this.likeCount = 0L;
         this.commentCount = commentCount;
