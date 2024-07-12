@@ -92,9 +92,10 @@ public class ReviewService {
         List<ReviewDto> reviewDtos = getReviewDtos(userId, reviews.getContent(), reviews.getPageable());
         long reviewCounts = reviews.getTotalElements();
         int totalPages = reviews.getTotalPages();
+        int currentPage = reviews.getNumber();
         boolean isFirst = reviews.isFirst();
         boolean isLast = reviews.isLast();
-        return UserReviewResponse.of(reviewDtos, reviewCounts, totalPages, isFirst, isLast);
+        return UserReviewResponse.of(reviewDtos, reviewCounts, totalPages,currentPage, isFirst, isLast);
     }
 
     @Transactional(readOnly = true)
@@ -128,9 +129,10 @@ public class ReviewService {
         Map<String, Map<Integer, Double>> reviewStatistics = getReviewStatistics(productId);
         Long reviewCounts = reviews.getTotalElements();
         int totalPages = reviews.getTotalPages();
+        int currentPage = reviews.getNumber();
         boolean isFirst = reviews.isFirst();
         boolean isLast = reviews.isLast();
-        return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics, totalPages, isFirst, isLast);
+        return ReviewResponse.of(reviewDtoList, averageScore, reviewCounts, reviewStatistics, totalPages,currentPage, isFirst, isLast);
     }
 
     private List<ReviewDto> getReviewDtos(Long userId, List<Review> reviews, Pageable pageable) {
