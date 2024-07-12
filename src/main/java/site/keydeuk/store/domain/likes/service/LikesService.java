@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
 import site.keydeuk.store.domain.likes.dto.request.LikeDeleteRequest;
+import site.keydeuk.store.domain.likes.dto.response.LikedProductsPage;
 import site.keydeuk.store.domain.likes.dto.response.LikedProductsResponse;
 import site.keydeuk.store.domain.likes.repository.LikesRepository;
 import site.keydeuk.store.domain.product.repository.ProductRepository;
@@ -52,22 +53,27 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public List<LikedProductsResponse> getLikedProducts(Long userId, Pageable pageable) {
+    public LikedProductsPage getLikedProductsPage(Long userId, Pageable pageable) {
         Page<Likes> likesPage = likesRepository.findByUserId(userId, pageable);
         List<Likes> likes = likesPage.getContent();
         List<Integer> productIds = likes.stream()
                 .map(like -> like.getProduct().getId())
                 .toList();
         List<Product> products = productRepository.findAllById(productIds);
-        return products.stream()
+        List<LikedProductsResponse> likedProductsResponses = products.stream()
                 .map(product -> LikedProductsResponse.builder()
                         .productId(product.getId())
                         .productName(product.getName())
                         .price(product.getPrice())
                         .productImg(
                                 product.getProductImgs().isEmpty() ? null : product.getProductImgs().get(0).getImgUrl()
-                        ).build())
+                        )
+                        .build())
                 .toList();
+        return LikedProductsPage.builder()
+                .likedProductsResponses(likedProductsResponses)
+                .pageable(likesPage.getPageable())
+                .build();
     }
 
     public boolean existsByUserIdAndProductId(Long userId, Integer productId){
