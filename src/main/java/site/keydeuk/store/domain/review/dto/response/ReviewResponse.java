@@ -13,6 +13,7 @@ public record ReviewResponse(
         Map<String, Map<Integer, Double>> reviewStatistics,
         Long totalElements,
         int totalPages,
+        int currentPage,
         boolean first,
         boolean last
 ) {
@@ -21,6 +22,7 @@ public record ReviewResponse(
                                     Long reviewCounts,
                                     Map<String, Map<Integer, Double>> reviewStatistics,
                                     int totalPages,
+                                    int currentPage,
                                     boolean isFirst,
                                     boolean isLast
     ) {
@@ -30,6 +32,7 @@ public record ReviewResponse(
                 .reviewStatistics(reviewStatistics)
                 .totalElements(reviewCounts)
                 .totalPages(totalPages)
+                .currentPage(currentPage)
                 .first(isFirst)
                 .last(isLast)
                 .build();

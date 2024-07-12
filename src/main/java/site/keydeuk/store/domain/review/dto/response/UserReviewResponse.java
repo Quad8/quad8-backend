@@ -11,12 +11,14 @@ public record UserReviewResponse(
         List<ReviewDto> reviewDtoList,
         Long totalElements,
         int totalPages,
+        int currentPage,
         boolean first,
         boolean last
 ) {
     public static UserReviewResponse of(List<ReviewDto> reviewDtoList,
                                         Long reviewCounts,
                                         int totalPages,
+                                        int currentPage,
                                         boolean isFirst,
                                         boolean isLast
     ) {
@@ -24,6 +26,7 @@ public record UserReviewResponse(
                 .reviewDtoList(reviewDtoList)
                 .totalElements(reviewCounts)
                 .totalPages(totalPages)
+                .currentPage(currentPage)
                 .first(isFirst)
                 .last(isLast)
                 .build();
