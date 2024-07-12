@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import site.keydeuk.store.common.response.CommonResponse;
 import site.keydeuk.store.domain.likes.dto.request.LikeDeleteRequest;
+import site.keydeuk.store.domain.likes.dto.response.LikedProductsPage;
 import site.keydeuk.store.domain.likes.dto.response.LikedProductsResponse;
 import site.keydeuk.store.domain.likes.dto.response.LikesResponse;
 import site.keydeuk.store.domain.likes.service.LikesService;
@@ -25,7 +26,7 @@ import java.util.List;
 public class LikesController {
     private final LikesService likesService;
 
-    @Operation(summary = "좋아요 등록", description = "특정 상품에 대해 좋아요를 등록합니다.")
+    @Operation(summary = "찜 등록", description = "특정 상품에 대해 찜을 등록합니다.")
     @PostMapping("/{productId}")
     public CommonResponse<LikesResponse> addLikes(
             @AuthenticationPrincipal @Parameter PrincipalDetails principalDetails,
@@ -35,7 +36,7 @@ public class LikesController {
         return CommonResponse.ok("좋아요가 등록되었습니다.",LikesResponse.from(like));
     }
 
-    @Operation(summary = "좋아요 다중 삭제", description = "특정 상품에 대해 여러개의 좋아요를 삭제합니다.")
+    @Operation(summary = "찜 다중 삭제", description = "특정 상품에 대해 여러개의 찜을 삭제합니다.")
     @DeleteMapping("")
     public CommonResponse<List<Long>> deleteLikes(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
@@ -46,16 +47,16 @@ public class LikesController {
         return CommonResponse.ok("좋아요가 삭제되었습니다.", request.getProductIds());
     }
 
-    @Operation(summary = "좋아요한 상품 조회", description = "사용자가 좋아요한 모든 상품을 조회합니다.")
+    @Operation(summary = "찜한 상품 조회", description = "사용자가 찜한 모든 상품을 조회합니다.")
     @GetMapping("/products")
-    public CommonResponse<List<LikedProductsResponse>> getLikedProducts(
+    public CommonResponse<LikedProductsPage> getLikedProductsPage(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "현재 페이지, default 0", example = "0") @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "개수, default 10", example = "10") @RequestParam(name = "size", defaultValue = "10") int size
-            ) {
+    ) {
         Long userId = principalDetails.getUserId();
         Pageable pageable =  PageRequest.of(page, size);
-        List<LikedProductsResponse> likedProducts = likesService.getLikedProducts(userId, pageable);
-        return CommonResponse.ok(likedProducts);
+        LikedProductsPage response = likesService.getLikedProductsPage(userId, pageable);
+        return CommonResponse.ok("찜한 상품 조회 완료",response);
     }
 }
