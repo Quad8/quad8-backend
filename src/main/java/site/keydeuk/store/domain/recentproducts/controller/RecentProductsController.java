@@ -22,21 +22,18 @@ public class RecentProductsController {
     private final RecentProductsService recentProductsService;
 
     @Operation(summary = "최근 본 상품 목록 조회", description = "유저가 최근 본 상품 목록(최대 8개)을 조회합니다.")
-    @Parameter(name = "userId", description = "유저 ID", example = "167")
-    @GetMapping("/{userId}")
-    public CommonResponse<?> getRecentlyViewedProducts(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                       @PathVariable("userId")Long userId){
+    @GetMapping()
+    public CommonResponse<?> getRecentlyViewedProducts(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        return CommonResponse.ok(recentProductsService.getRecentProducts(userId));
+        return CommonResponse.ok(recentProductsService.getRecentProducts(principalDetails.getUserId()));
     }
 
     @Operation(summary = "최근 본 상품 목록 저장", description = "유저가 최근 본 상품 목록에 저장합니다. 최대 7일까지만 저장됩니다.")
-    @Parameter(name = "userId", description = "유저 ID", example = "167")
     @Parameter(name = "productId", description = "상품 ID", example = "1")
-    @PostMapping("/{userId}")
+    @PostMapping("/{productId}")
     public CommonResponse<?> addProduct(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                       @PathVariable("userId")Long userId,  @RequestParam Integer productId){
-        recentProductsService.addProduct(userId,productId);
+                                                       @PathVariable("productId")Integer productId){
+        recentProductsService.addProduct(principalDetails.getUserId(),productId);
         return CommonResponse.ok("저장되었습니다.",null);
     }
 }

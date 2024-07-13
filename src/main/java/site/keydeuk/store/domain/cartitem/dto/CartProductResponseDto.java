@@ -13,7 +13,7 @@ public class CartProductResponseDto {
 
     private Long id;
 
-    private int prductId;
+    private int productId;
 
     private int price;
 
@@ -40,7 +40,7 @@ public class CartProductResponseDto {
         }
         return CartProductResponseDto.builder()
                 .id(item.getId())
-                .prductId(product.getId())
+                .productId(product.getId())
                 .price(product.getPrice())
                 .count(item.getCount())
                 .thumbsnail(product.getProductImgs().get(0).getImgUrl())
@@ -61,7 +61,7 @@ public class CartProductResponseDto {
         }
         return CartProductResponseDto.builder()
                 .id(item.getId())
-                .prductId(product.getId())
+                .productId(product.getId())
                 .price(product.getPrice())
                 .count(item.getCount())
                 .thumbsnail(product.getProductImgs().get(0).getImgUrl())
