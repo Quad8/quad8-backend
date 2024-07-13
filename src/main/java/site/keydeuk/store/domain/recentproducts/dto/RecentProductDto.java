@@ -18,17 +18,30 @@ public class RecentProductDto {
 
     private String name;
 
-    private String thumnail;
+    private String thumbnail;
 
     private int price;
 
-    public RecentProductDto(Product product){
+    private String category;
+
+    private boolean isLiked;
+
+    private Long reviewCount;
+
+    public RecentProductDto(Product product,boolean isLiked, Long reviewCount){
         this.productId = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
+        this.isLiked = isLiked;
+        this.reviewCount = reviewCount;
+        if (product.getProductCategory().getId() >3){
+            this.category = "etc";
+        }else {
+            this.category = product.getProductCategory().getName();
+        }
         List<ProductImg> productImgs = product.getProductImgs();
         if (!productImgs.isEmpty()){
-            this.thumnail = product.getProductImgs().get(0).getImgUrl();
+            this.thumbnail = product.getProductImgs().get(0).getImgUrl();
 
         }else {
             log.info("product_{} is empty",product.getId());
