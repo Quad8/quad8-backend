@@ -72,7 +72,11 @@ public class LikesService {
                 .toList();
         return LikedProductsPage.builder()
                 .likedProductsResponses(likedProductsResponses)
-                .pageable(likesPage.getPageable())
+                .totalPages(likesPage.getTotalPages())
+                .currentPage(likesPage.getNumber())
+                .totalElements(likesPage.getNumberOfElements())
+                .first(likesPage.isFirst())
+                .last(likesPage.isLast())
                 .build();
     }
 
