@@ -6,10 +6,10 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record CouponResponse(
+public record AvaliableCouponResponse(
         @Schema(description = "쿠폰 id", example = "1")
         Long id,
-        @Schema(description = "쿠폰 이름", example = "깜짝 쿠능폰")
+        @Schema(description = "쿠폰 이름", example = "깜짝 쿠폰")
         String name,
         @Schema(description = "쿠폰 가격", example = "4000")
         Integer price,
@@ -17,7 +17,7 @@ public record CouponResponse(
         Integer minPrice,
         @Schema(description = "쿠폰 만료 기간", example = "2024-07-12T00:00:00")
         LocalDateTime expiredAt,
-        @Schema(description = "쿠폰 만료 여부", example = "true")
-        Boolean isExpired
+        @Schema(description = "쿠폰 사용 가능 여부", example = "true")
+        Boolean isAvailable
 ) {
 }
