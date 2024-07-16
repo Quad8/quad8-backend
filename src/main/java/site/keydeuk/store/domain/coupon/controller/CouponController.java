@@ -31,6 +31,7 @@ public class CouponController {
         return CommonResponse.ok(confirm);
     }
 
+    @Operation(summary = "쿠폰 조회", description = "유저가 보유하고 있는 쿠폰을 조회합니다.")
     @GetMapping("/user/coupon")
     public CommonResponse<List<CouponResponse>> getCouponsByUserId(
             @AuthenticationPrincipal PrincipalDetails principalDetails
