@@ -13,6 +13,7 @@ import site.keydeuk.store.entity.Coupon;
 import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.UserCoupon;
 
+import static site.keydeuk.store.common.response.ErrorCode.USER_ALREADY_HAS_WELCOME_COUPON;
 import static site.keydeuk.store.common.response.ErrorCode.USER_NOT_FOUND;
 
 @Service
@@ -27,11 +28,14 @@ public class CouponService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+        validateWelcomeCouponEligibility(userId, request);
+
         Coupon coupon = Coupon.builder()
                 .name(request.name())
                 .price(request.price())
                 .minPrice(request.minPrice())
                 .expiredAt(request.expiredDate())
+                .isWelcome(request.isWelcome())
                 .build();
         Coupon savedCoupon = couponRepository.save(coupon);
         UserCoupon userCoupon = UserCoupon.builder()
@@ -48,5 +52,14 @@ public class CouponService {
                 .minPrice(savedCoupon.getMinPrice())
                 .expiredAt(savedCoupon.getExpiredAt())
                 .build();
+    }
+
+    private void validateWelcomeCouponEligibility(Long userId, CreateCouponRequest request) {
+        if (request.isWelcome()) {
+            boolean isWelcomeTrue = userCouponRepository.existsByUserIdAndCouponIsWelcomeTrue(userId);
+            if (isWelcomeTrue) {
+                throw new CustomException(USER_ALREADY_HAS_WELCOME_COUPON);
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ public record CreateCouponRequest(
         @Schema(description = "쿠폰 만료 기간", example = "2024-07-12T00:00:00")
         @NotNull(message = "쿠폰 만료 기간은 필수 입력 항목입니다.")
         LocalDateTime expiredDate,
+        @Schema(description = "회원가입 쿠폰 여부", example = "true")
         Boolean isWelcome
 ) {
 }

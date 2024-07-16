@@ -23,4 +23,5 @@ public class Coupon extends BaseTimeEntity {
     private Integer price;
     private Integer minPrice;
     private LocalDateTime expiredAt;
+    private Boolean isWelcome;
 }
