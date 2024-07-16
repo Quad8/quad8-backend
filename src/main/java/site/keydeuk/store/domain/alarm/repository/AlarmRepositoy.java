@@ -1,10 +1,10 @@
 package site.keydeuk.store.domain.alarm.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import site.keydeuk.store.entity.Notification;
 
 @Repository
-public interface AlarmRepositoy {
-    SseEmitter save(String emitterId, SseEmitter sseEmitter);
+public interface AlarmRepositoy extends JpaRepository<Notification,Long> {
 
 }
