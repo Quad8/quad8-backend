@@ -13,6 +13,9 @@ import site.keydeuk.store.entity.Coupon;
 import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.UserCoupon;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static site.keydeuk.store.common.response.ErrorCode.USER_ALREADY_HAS_WELCOME_COUPON;
 import static site.keydeuk.store.common.response.ErrorCode.USER_NOT_FOUND;
 
@@ -52,6 +55,39 @@ public class CouponService {
                 .minPrice(savedCoupon.getMinPrice())
                 .expiredAt(savedCoupon.getExpiredAt())
                 .build();
+    }
+
+    @Transactional
+    public List<CouponResponse> findCouponsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        List<UserCoupon> userCoupons = userCouponRepository.findByUserId(userId);
+
+        removeExpiredCoupons(userCoupons);
+
+        return userCoupons.stream()
+                .map(userCoupon -> {
+                    Coupon coupon = userCoupon.getCoupon();
+                    return CouponResponse.builder()
+                            .id(coupon.getId())
+                            .name(coupon.getName())
+                            .price(coupon.getPrice())
+                            .minPrice(coupon.getMinPrice())
+                            .expiredAt(coupon.getExpiredAt())
+                            .build();
+                })
+                .toList();
+    }
+
+    private void removeExpiredCoupons(List<UserCoupon> userCoupons) {
+        // 만료된 쿠폰 삭제
+        userCoupons.removeIf(userCoupon -> {
+            boolean isExpired = userCoupon.getCoupon().getExpiredAt().isBefore(LocalDateTime.now());
+            if (isExpired) {
+                userCouponRepository.delete(userCoupon);
+            }
+            return isExpired;
+        });
     }
 
     private void validateWelcomeCouponEligibility(Long userId, CreateCouponRequest request) {
