@@ -14,6 +14,8 @@ public record PaymentRequest(
         String paymentOrderId,
 
         @Schema(description = "결제 금액", example = "1000")
-        Long amount
+        Long amount,
+        @Schema(description = "결제 통화", example = "KRW")
+        String currency
 ) {
 }
