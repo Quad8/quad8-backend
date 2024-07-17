@@ -47,7 +47,7 @@ public class CommunityCommentService {
                 .content(dto.getContent())
                 .build();
         commentRepository.save(comment);
-        alarmService.send(user,COMMUNITY,"댓글이 달렸습니다.",communityId);
+        alarmService.send(community.getUser(),COMMUNITY,"댓글이 달렸습니다.",communityId);
         return comment.getId();
     }
     /** 댓글 삭제하기 */
