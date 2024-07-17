@@ -58,10 +58,23 @@ public class AlarmService {
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
-                    sendNotification(emitter, eventId, key, new AlarmDto(notification));
+                    sendCommunityNotification(emitter, eventId, key, new AlarmDto(notification));
                 }
         );
     }
+
+    private void sendCommunityNotification(SseEmitter emitter, String eventId, String key, AlarmDto alarmDto) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(eventId)
+                    .name("communityAlarm")
+                    .data(alarmDto));
+        } catch (IOException e) {
+            emitter.completeWithError(e);
+           // emitterRepository.deleteById(eventId);
+        }
+    }
+
     @Transactional
     public void deleteAlarm(Long id){
         Notification notification = alarmRepositoy.findById(id).orElseThrow(()-> new CustomException(AlARM_NOT_FOUND));
