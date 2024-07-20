@@ -27,6 +27,7 @@ public class AlarmController {
     public ResponseEntity<SseEmitter> subscribe(@AuthenticationPrincipal PrincipalDetails principalDetails
                 , @RequestHeader(value = "Last-Event-ID",required = false,defaultValue = "")String lastEventId
     ){
+        log.info("last-id: {}",lastEventId);
         return ResponseEntity.ok(alarmService.subscribe(principalDetails.getUser(),lastEventId));
     }
 

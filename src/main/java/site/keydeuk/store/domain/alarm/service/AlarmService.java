@@ -2,6 +2,7 @@ package site.keydeuk.store.domain.alarm.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,7 +15,6 @@ import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.enums.NotificationType;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static site.keydeuk.store.common.response.ErrorCode.AlARM_NOT_FOUND;
@@ -32,6 +32,7 @@ public class AlarmService {
     public SseEmitter subscribe(User user, String lastEventId){
         String userId = user.getId()+"";
         String emitterId = user.getId()+"_"+System.currentTimeMillis();
+
         SseEmitter emitter = emitterRepository.save(emitterId,new SseEmitter(DEFAULT_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
@@ -55,23 +56,26 @@ public class AlarmService {
         String userId = receiver.getId()+"";
         String eventId = receiver.getId() + "_" + System.currentTimeMillis();
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserId(userId);
+
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
-                    sendCommunityNotification(emitter, eventId, key, new AlarmDto(notification));
+                    sendNotification(emitter, eventId, key, new AlarmDto(notification));
+
                 }
         );
     }
 
     private void sendCommunityNotification(SseEmitter emitter, String eventId, String key, AlarmDto alarmDto) {
+
         try {
             emitter.send(SseEmitter.event()
                     .id(eventId)
                     .name("communityAlarm")
                     .data(alarmDto));
         } catch (IOException e) {
-            emitter.completeWithError(e);
-           // emitterRepository.deleteById(eventId);
+           // emitter.completeWithError(e);
+            emitterRepository.deleteById(eventId);
         }
     }
 
@@ -99,8 +103,8 @@ public class AlarmService {
     }
 
 
-
     private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) { // (4)
+        log.info("emmitereId:{}",emitterId);
         try {
             emitter.send(SseEmitter.event()
                     .id(eventId)
@@ -113,7 +117,10 @@ public class AlarmService {
     }
 
     private void sendLostData(String lastEventId, String userId, String emitterId, SseEmitter emitter) { // (6)
+        log.info("여기 안오니");
         Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByUserId(userId);
+        log.info("eventCaches: {}",eventCaches);
+
         eventCaches.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
