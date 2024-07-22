@@ -1,13 +1,14 @@
 package site.keydeuk.store.domain.communitycomment.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.keydeuk.store.common.event.comment.CommentCreatedEvent;
 import site.keydeuk.store.common.exception.CustomException;
-import site.keydeuk.store.domain.alarm.service.AlarmService;
 import site.keydeuk.store.domain.community.repository.CommunityRepository;
 import site.keydeuk.store.domain.communitycomment.dto.CommentResponseDto;
 import site.keydeuk.store.domain.communitycomment.dto.create.CommentDto;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static site.keydeuk.store.common.response.ErrorCode.*;
-import static site.keydeuk.store.entity.enums.NotificationType.COMMUNITY;
 
 @RequiredArgsConstructor
 @Service
@@ -30,9 +30,7 @@ public class CommunityCommentService {
     private final UserRepository userRepository;
     private final CommunityRepository communityRepository;
 
-    private final AlarmService alarmService;
-
-
+    private final ApplicationEventPublisher eventPublisher;
     /** 댓글 작성하기*/
     @Transactional
     public Long addComment(Long userId, Long communityId, CommentDto dto){
@@ -47,7 +45,10 @@ public class CommunityCommentService {
                 .content(dto.getContent())
                 .build();
         commentRepository.save(comment);
-        alarmService.send(community.getUser(),COMMUNITY,"댓글이 달렸습니다.",communityId);
+
+        //* 댓글 알림
+        String content = String.format("%s 에 댓글이 달렸습니다.",community.getTitle());
+        eventPublisher.publishEvent(new CommentCreatedEvent(this,communityId,content));
         return comment.getId();
     }
     /** 댓글 삭제하기 */

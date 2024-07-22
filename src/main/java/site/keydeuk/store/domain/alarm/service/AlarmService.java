@@ -2,7 +2,6 @@ package site.keydeuk.store.domain.alarm.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -16,7 +15,6 @@ import site.keydeuk.store.entity.User;
 import site.keydeuk.store.entity.enums.NotificationType;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,8 +68,8 @@ public class AlarmService {
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
+                    log.info("key : {}",key);
                     sendNotification(emitter, eventId, key, new AlarmDto(notification),eventName);
-                    emitterRepository.deleteById(key);
                 }
         );
     }
@@ -119,12 +117,16 @@ public class AlarmService {
 
     private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data, String eventName) { // (4)
         try {
+            log.info("send, emit: {}",emitterId);
+            log.info("send, eventId: {}",eventId);
             emitter.send(SseEmitter.event()
                     .id(eventId)
                     .name(eventName)
                     .data(data)
             );
         } catch (IOException exception) {
+            log.info("fail, emit: {}",emitterId);
+            log.info("fail, eventId: {}",eventId);
             emitterRepository.deleteById(emitterId);
         }
     }
@@ -141,7 +143,7 @@ public class AlarmService {
                 .forEach(entry ->{
                     log.info("Sending notification for entry: {}", entry);
                     sendNotification(emitter, entry.getKey(), emitterId, entry.getValue(),"LOSTEVENT");
-                    emitterRepository.deleteEventCacheById(entry.getKey());
+                    //emitterRepository.deleteEventCacheById(entry.getKey());
                 } );
     }
 }
