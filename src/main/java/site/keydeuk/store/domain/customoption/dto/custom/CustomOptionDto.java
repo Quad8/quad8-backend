@@ -29,7 +29,7 @@ public class CustomOptionDto {
 
     private String imgUrl;
 
-    private int price;
+    private Long price;
 
     public CustomOption toEntity(){
         return CustomOption.builder()

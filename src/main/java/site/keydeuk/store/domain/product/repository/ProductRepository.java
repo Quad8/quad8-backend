@@ -50,8 +50,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
             @Param("category") String category,
             @Param("companies") List<String> companies,
             @Param("switchOptions") List<String> switchOptions,
-            @Param("minPrice") Integer minPrice,
-            @Param("maxPrice") Integer maxPrice
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice
     );
 
     @Query("SELECT p, COUNT(oi.id) AS orderCount " +
@@ -69,8 +69,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     List<Product> findProductsByETCOrderedByOrderCountAndFiltered(
             @Param("companies") List<String> companies,
             @Param("switchOptions") List<String> switchOptions,
-            @Param("minPrice") Integer minPrice,
-            @Param("maxPrice") Integer maxPrice
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice
     );
     @Query("select p.name from Product p ")
     List<String> findAllNames();

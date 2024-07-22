@@ -19,7 +19,7 @@ public class ProductResponseDto {
 
     private String thumbnail;
 
-    private int price;
+    private Long price;
 
     private Long reviewCount;
 

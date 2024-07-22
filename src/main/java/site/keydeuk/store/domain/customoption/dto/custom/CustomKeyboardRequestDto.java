@@ -48,7 +48,7 @@ public class CustomKeyboardRequestDto {
 
     @NotNull
     @Schema(description = "가격", example = "99000")
-    private int price;
+    private Long price;
 
     @Schema(description = "키캡 옵션", example = "{\n" +
             "    \"Q\": \"#ffffff\",\n" +

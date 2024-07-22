@@ -36,5 +36,5 @@ public class CustomOption extends BaseTimeEntity {
 
     private String imgUrl;
 
-    private int price;
+    private Long price;
 }

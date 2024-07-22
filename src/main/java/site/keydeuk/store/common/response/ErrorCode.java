@@ -76,7 +76,10 @@ public enum ErrorCode {
     INVALID_PAGEABLE_PAGE(BAD_REQUEST, "잘못된 페이지 접근입니다."),
 
     //Coupon
-    USER_ALREADY_HAS_WELCOME_COUPON(CONFLICT, "이미 회원가입 쿠폰을 발급 받았습니다.")
+    USER_ALREADY_HAS_WELCOME_COUPON(CONFLICT, "이미 회원가입 쿠폰을 발급 받았습니다."),
+
+    //Alarm
+    AlARM_NOT_FOUND(NOT_FOUND,"해당 알림을 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

@@ -12,10 +12,10 @@ public record CreateCouponRequest(
         String name,
         @Schema(description = "쿠폰 가격", example = "4000")
         @NotNull(message = "쿠폰 가격은 필수 입력 항목입니다.")
-        Integer price,
+        Long price,
         @Schema(description = "주문 최소 금액", example = "40000")
         @NotNull(message = "주문 최소 금액은 필수 입력 항목입니다.")
-        Integer minPrice,
+        Long minPrice,
         @Schema(description = "쿠폰 만료 기간", example = "2024-07-12T00:00:00")
         @NotNull(message = "쿠폰 만료 기간은 필수 입력 항목입니다.")
         LocalDateTime expiredDate,

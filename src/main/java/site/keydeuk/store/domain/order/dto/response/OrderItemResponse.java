@@ -18,7 +18,7 @@ public class OrderItemResponse {
     private final Object switchOption;
     private final Integer quantity;
     private final Integer viewCount;
-    private final Integer price;
+    private final Long price;
     public static OrderItemResponse from(Product product, Object switchOption, int quantity) {
         return OrderItemResponse.builder()
                 .productId(product.getId())

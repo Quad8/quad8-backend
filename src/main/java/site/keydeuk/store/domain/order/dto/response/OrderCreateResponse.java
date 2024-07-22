@@ -11,6 +11,6 @@ public record OrderCreateResponse(
         String paymentOrderId,
         List<OrderItemResponse> orderItemResponses,
         ShippingAddressResponse shippingAddressResponse,
-        Integer totalPrice
+        Long totalPrice
 ) {
 }

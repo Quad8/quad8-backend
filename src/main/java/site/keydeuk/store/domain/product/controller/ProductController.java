@@ -89,8 +89,8 @@ public class ProductController {
         }
 
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
-        int minPrice = dto.getMinPrice() != null ? dto.getMinPrice() : 0;
-        int maxPrice = dto.getMaxPrice() != null ? dto.getMaxPrice() : Integer.MAX_VALUE;
+        long minPrice = dto.getMinPrice() != null ? dto.getMinPrice() : 0L;
+        long maxPrice = dto.getMaxPrice() != null ? dto.getMaxPrice() : Integer.MAX_VALUE;
 
         if (dto.getSort().equals("popular")){
             return CommonResponse.ok(productService.getProductListByCategoryOrderByPopular(category,dto.getCompanies(),
