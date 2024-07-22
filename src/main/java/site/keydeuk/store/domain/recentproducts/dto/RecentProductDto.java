@@ -20,7 +20,7 @@ public class RecentProductDto {
 
     private String thumbnail;
 
-    private int price;
+    private Long price;
 
     private String category;
 

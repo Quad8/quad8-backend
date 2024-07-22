@@ -193,12 +193,12 @@ public class OrderService {
         orderRepository.deleteAll(orders);
     }
 
-    private Integer getPrice(Integer productId) {
+    private Long getPrice(Integer productId) {
         if (productId > 100000) {
             CustomOption customOption = customRepository.findById(productId)
                     .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
             log.info("{}", customOption.getPrice());
-            return customOption.getPrice();
+            return (long) customOption.getPrice();
         }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));

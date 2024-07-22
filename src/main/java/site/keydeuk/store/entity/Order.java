@@ -24,7 +24,7 @@ public class Order extends BaseTimeEntity {
     private String deliveryMessage;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private Integer totalPrice = 0;
+    private Long totalPrice = 0L;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -32,7 +32,7 @@ public class Order extends BaseTimeEntity {
         this.orderItems.addAll(orderItems);
         this.totalPrice = this.orderItems.stream()
                 .map(OrderItem::calculatePrice)
-                .reduce(0, Math::addExact);
+                .reduce(0L, Math::addExact);
     }
 
     public void updateStatus(OrderStatus status) {

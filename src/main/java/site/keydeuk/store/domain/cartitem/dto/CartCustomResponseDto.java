@@ -33,7 +33,7 @@ public class CartCustomResponseDto {
 
     private String imgUrl;
 
-    private int price;
+    private Long price;
 
     private Object individualColor;// productId로 조회
 

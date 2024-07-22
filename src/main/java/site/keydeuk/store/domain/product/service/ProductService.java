@@ -80,7 +80,7 @@ public class ProductService {
 
     /**카테고리 별 상품 조회*/
     public Page<ProductListResponseDto> getProductListByCategory(String category, List<String> companies, List<String> switchOptions,
-                                                  int minPrice, int maxPrice,String sort,Pageable pageable, Long userId){
+                                                  long minPrice, long maxPrice,String sort,Pageable pageable, Long userId){
         Specification<Product> spec = Specification.where(ProductSpecification.categoryEquals(category));
 
         if (companies != null && !companies.isEmpty()) {
@@ -126,7 +126,7 @@ public class ProductService {
 
     /**카테고리 별 인기 상품 조회*/
     public Page<ProductListResponseDto> getProductListByCategoryOrderByPopular(String category, List<String> companies, List<String> switchOptions
-            , int minPrice, int maxPrice,Pageable pageable,Long userId){
+            , long minPrice, long maxPrice,Pageable pageable,Long userId){
         List<Product> products;
         if (category.equals("etc")){
             products = productRepository.findProductsByETCOrderedByOrderCountAndFiltered(companies,switchOptions,minPrice,maxPrice);
