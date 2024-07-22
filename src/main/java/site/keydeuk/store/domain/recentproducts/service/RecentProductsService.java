@@ -10,6 +10,8 @@ import site.keydeuk.store.domain.recentproducts.dto.RecentProductDto;
 import site.keydeuk.store.domain.review.service.ReviewService;
 import site.keydeuk.store.entity.Product;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -29,21 +31,27 @@ public class RecentProductsService {
         String key = RECENT_PRODUCTS_KEY_PREFIX+userId;
         ZSetOperations<String,Object> zSetOperations = redisTemplate.opsForZSet();
 
-        boolean isLiked = false;
-        if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,productId);
-        Long reviewCount =reviewService.countByProductId(productId);
-
-        //상품 정보 찾기
-        RecentProductDto dto = new RecentProductDto(productService.getProductById(productId),isLiked,reviewCount);
-
-        zSetOperations.add(key, dto, System.currentTimeMillis());
+        zSetOperations.add(key, productId, System.currentTimeMillis());
         zSetOperations.removeRange(key, 0, -MAX_RECENT_PRODUCTS - 1);
         redisTemplate.expire(key, 7, TimeUnit.DAYS);
     }
 
-    public Set<Object> getRecentProducts(Long userId) {
+    public List<RecentProductDto> getRecentProducts(Long userId) {
         String key = RECENT_PRODUCTS_KEY_PREFIX + userId;
         ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
-        return zSetOperations.reverseRange(key, 0, MAX_RECENT_PRODUCTS - 1);
+        Set<Object> productIds = zSetOperations.reverseRange(key, 0, MAX_RECENT_PRODUCTS - 1);
+
+        List<RecentProductDto> recentProducts = new ArrayList<>();
+        for (Object productIdObj : productIds) {
+            Integer productId = (Integer) productIdObj;
+
+            boolean isLiked = false;
+            if (userId != null) isLiked = likesService.existsByUserIdAndProductId(userId,productId);
+            Long reviewCount =reviewService.countByProductId(productId);
+            RecentProductDto dto = new RecentProductDto(productService.getProductById(productId),isLiked,reviewCount);
+            recentProducts.add(dto);
+        }
+
+        return recentProducts;
     }
 }
