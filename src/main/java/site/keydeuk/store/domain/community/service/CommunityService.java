@@ -24,6 +24,7 @@ import site.keydeuk.store.domain.order.service.OrderService;
 import site.keydeuk.store.domain.user.repository.UserRepository;
 import site.keydeuk.store.entity.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -208,6 +209,7 @@ public class CommunityService {
                 communityImgRepository.deleteById(id);
             }
         }
+        community.setUpdatedAt(LocalDateTime.now());
         communityRepository.save(community);
         if (files != null){
             for (MultipartFile file: files){
