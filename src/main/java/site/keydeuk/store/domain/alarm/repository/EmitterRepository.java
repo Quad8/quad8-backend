@@ -56,4 +56,8 @@ public class EmitterRepository {
                 }
         );
     }
+    public void deleteEventCacheById(String id){
+        eventCache.remove(id);
+    }
+
 }
