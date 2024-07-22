@@ -20,7 +20,7 @@ public class OptionProductsResponseDto {
 
     private String categoryName;
 
-    private int price;
+    private Long price;
 
     private String thumbnail;
 

@@ -16,7 +16,7 @@ public class ProductListResponseDto {
 
     private String name;
 
-    private int price;
+    private Long price;
 
     private Long reviewscount;
 

@@ -20,8 +20,8 @@ public class Coupon extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Integer price;
-    private Integer minPrice;
+    private Long price;
+    private Long minPrice;
     private LocalDateTime expiredAt;
     private Boolean isWelcome;
 }

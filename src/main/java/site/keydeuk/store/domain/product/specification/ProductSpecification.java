@@ -37,7 +37,7 @@ public class ProductSpecification {
         };
     }
 
-    public static Specification<Product> priceBetween(int minPrice, int maxPrice) {
+    public static Specification<Product> priceBetween(long minPrice, long maxPrice) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
     }
 }

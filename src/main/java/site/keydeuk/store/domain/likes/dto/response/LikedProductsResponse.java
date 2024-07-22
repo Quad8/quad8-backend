@@ -7,6 +7,6 @@ public record LikedProductsResponse(
         Integer productId,
         String productImg,
         String productName,
-        Integer price
+        Long price
 ) {
 }

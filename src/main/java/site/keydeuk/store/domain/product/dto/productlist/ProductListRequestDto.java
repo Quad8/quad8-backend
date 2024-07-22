@@ -34,10 +34,10 @@ public class ProductListRequestDto {
     private List<String> switchTypes;
 
     @Schema(description = "최소 가격", example = "1000")
-    private Integer minPrice;
+    private Long minPrice;
 
     @Schema(description = "최대 가격", example = "199000")
-    private Integer maxPrice;
+    private Long maxPrice;
 
     public ProductListRequestDto( String sort){
         this.sort = sort;

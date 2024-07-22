@@ -32,7 +32,7 @@ public class CustomDetailDto {
 
     private String imgUrl;
 
-    private int price;
+    private Long price;
 
     private Object individualColor;// productId로 조회
 
