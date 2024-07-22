@@ -17,7 +17,7 @@ import site.keydeuk.store.domain.security.PrincipalDetails;
 @Slf4j
 @Tag(name = "Alarm", description = "알람 관련 API입니다.")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/alarm/")
+@RequestMapping("/api/v1/alarm")
 @RestController
 public class AlarmController {
 
@@ -29,6 +29,12 @@ public class AlarmController {
     ){
         log.info("last-id: {}",lastEventId);
         return ResponseEntity.ok(alarmService.subscribe(principalDetails.getUser(),lastEventId));
+    }
+
+    @Operation(summary = "알림 목록",description = "알림 목록 내역을 조회합니다.")
+    @GetMapping
+    public CommonResponse<?> getNotifications(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        return CommonResponse.ok(alarmService.getNotifications(principalDetails.getUser()));
     }
 
     @Operation(summary = "알림 읽음",description = "알림을 읽었음으로 처리합니다.")
