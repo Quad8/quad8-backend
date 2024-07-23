@@ -17,6 +17,7 @@ public class OrderDetailResponse {
     private final ShippingAddressDto shippingAddress;
     private final String deliveryMessage;
     private final Long totalAmount;
+    private final Long couponAmount;
     private final LocalDateTime purchaseDate;
     private final LocalDateTime confirmationDate;
 }

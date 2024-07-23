@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.domain.coupon.repository.CouponRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
 import site.keydeuk.store.domain.customoption.repository.CustomRepository;
 import site.keydeuk.store.domain.order.dto.OrderDto;
@@ -44,6 +45,7 @@ public class OrderService {
     private final CustomObjectRepository customObjectRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingRepository shippingRepository;
+    private final CouponRepository couponRepository;
     private final ObjectMapper objectMapper;
 
     /**
@@ -127,6 +129,11 @@ public class OrderService {
     public OrderResponse updateOrder(Long orderId, OrderUpdateRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        if (request.couponId() != null) {
+            Coupon coupon = couponRepository.findById(request.couponId())
+                    .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
+            order.updateCouponPrice(coupon.getPrice());
+        }
         order.updateShippingInfo(request.shippingAddressId(), request.deliveryMessage());
         return toOrderResponse(order);
     }
@@ -176,6 +183,7 @@ public class OrderService {
                 .shippingAddress(shippingAddressDto)
                 .deliveryMessage(order.getDeliveryMessage())
                 .totalAmount(payment.getTotalAmount())
+                .couponAmount(order.getCouponPrice())
                 .purchaseDate(payment.getApprovedAt())
                 .confirmationDate(order.getUpdatedAt())
                 .build();
@@ -226,6 +234,7 @@ public class OrderService {
                 .purchaseDate(order.getCreatedAt())
                 .confirmationDate(order.getUpdatedAt()) //구매 확정 날짜 저장이지만 임시로
                 .deliveryMessage(order.getDeliveryMessage())
+                .totalPrice(order.getTotalPrice())
                 .build();
     }
 

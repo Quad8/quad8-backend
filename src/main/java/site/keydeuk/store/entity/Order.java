@@ -25,6 +25,7 @@ public class Order extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Long totalPrice = 0L;
+    private Long couponPrice = 0L;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -42,5 +43,9 @@ public class Order extends BaseTimeEntity {
     public void updateShippingInfo(Long shippingAddressId, String deliveryMessage) {
         this.shippingAddressId = shippingAddressId;
         this.deliveryMessage = deliveryMessage;
+    }
+    public void updateCouponPrice(Long couponPrice) {
+        this.couponPrice = couponPrice;
+        this.totalPrice = totalPrice - couponPrice;
     }
 }
