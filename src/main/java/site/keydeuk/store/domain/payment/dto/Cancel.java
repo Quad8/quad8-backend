@@ -7,7 +7,7 @@ public class Cancel {
     private BigDecimal cancelAmount;
     private String cancelReason;
     private BigDecimal taxFreeAmount;
-    private long taxExemptionAmount;
+    private Long taxExemptionAmount;
     private BigDecimal refundableAmount;
     private BigDecimal easyPayDiscountAmount;
     private LocalDateTime canceledAt;

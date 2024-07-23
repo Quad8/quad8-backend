@@ -17,28 +17,28 @@ public class PaymentConfirmResponse {
     private String paymentKey;
     private String orderId;
     private String orderName;
-    private String taxExemptionAmount;
+    private long taxExemptionAmount;
     private PaymentStatus status;
     private ZonedDateTime requestedAt;
     private ZonedDateTime approvedAt;
     private boolean useEscrow;
     private boolean cultureExpense;
     private Card card;
-    private VirtualAccount virtualAccount;
-    private Transfer transfer;
-    private MobilePhone mobilePhone;
-    private GiftCertificate giftCertificate;
-    private String cashReceipt;
-    private String cashReceipts;
-    private String discount;
-    private List<Cancel> cancels;
-    private String secret;
+    private VirtualAccount virtualAccount; // null 가능
+    private Transfer transfer; // null 가능
+    private MobilePhone mobilePhone; // null 가능
+    private GiftCertificate giftCertificate; // null 가능
+    private String cashReceipt; // null 가능
+    private String cashReceipts; // null 가능
+    private String discount; // null 가능
+    private List<Cancel> cancels; // null 가능
+    private String secret; // null 가능
     private PaymentType type;
     private EasyPay easyPay;
-    private String easyPayAmount;
-    private String easyPayDiscountAmount;
+    private long easyPayAmount;
+    private long easyPayDiscountAmount;
     private String country;
-    private String failure;
+    private String failure; // null 가능
     private boolean isPartialCancelable;
     private Receipt receipt;
     private Checkout checkout;
