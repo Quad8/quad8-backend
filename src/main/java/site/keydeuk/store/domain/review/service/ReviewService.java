@@ -21,6 +21,7 @@ import site.keydeuk.store.domain.review.dto.request.CreateReviewRequest;
 import site.keydeuk.store.domain.review.dto.request.UpdateReviewRequest;
 import site.keydeuk.store.domain.review.dto.response.ReviewResponse;
 import site.keydeuk.store.domain.review.dto.response.UserReviewResponse;
+import site.keydeuk.store.domain.review.repository.ReviewImgRepository;
 import site.keydeuk.store.domain.review.repository.ReviewRepository;
 import site.keydeuk.store.domain.reviewLikes.repository.ReviewLikesRepository;
 import site.keydeuk.store.domain.user.dto.response.ReviewUserResponse;
@@ -39,6 +40,7 @@ import static site.keydeuk.store.common.response.ErrorCode.OPTION_NOT_FOUND;
 public class ReviewService {
     private final ImageService imageService;
     private final ReviewRepository reviewRepository;
+    private final ReviewImgRepository reviewImgRepository;
     private final ReviewLikesRepository reviewLikesRepository;
     private final OrderItemsRepository orderItemsRepository;
     private final ProductRepository productRepository;
@@ -184,7 +186,7 @@ public class ReviewService {
                 .map(ReviewImgDto::id)
                 .toList();
 
-        review.getReviewImages().removeIf(img -> !existingImgIds.contains(img.getId()));
+        reviewImgRepository.deleteByReviewIdAndIdNotIn(reviewId, existingImgIds);
 
         if (reviewImgs != null && !reviewImgs.isEmpty()) {
             List<String> newImageUrls = imageService.uploadReviewImages(reviewImgs);
