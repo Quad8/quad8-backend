@@ -27,7 +27,7 @@ public class TossPaymentClient implements PaymentClient {
     }
 
     @Override
-    public PaymentConfirmResponse confirm(PaymentConfirmRequest request) throws JsonProcessingException {
+    public PaymentConfirmResponse confirm(PaymentConfirmRequest request){
         String s = restClient.post()
                 .uri(DOMAIN + CONFIRM_PATH)
                 .header("Authorization", "Basic " + secretKey)
@@ -36,6 +36,10 @@ public class TossPaymentClient implements PaymentClient {
                 .body(String.class);
         log.info("결제 승인 요청시 응답, {}",s);
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(s, PaymentConfirmResponse.class);
+        try {
+            return objectMapper.readValue(s, PaymentConfirmResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

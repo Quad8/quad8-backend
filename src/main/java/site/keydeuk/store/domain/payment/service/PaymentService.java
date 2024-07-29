@@ -39,7 +39,7 @@ public class PaymentService {
      * @param request 결제 승인을 위한 값들: 결제 키, 결제 주문 아이디, 총 금액
      */
     @Transactional
-    public PaymentResponse confirm(PaymentRequest request) throws JsonProcessingException {
+    public PaymentResponse confirm(PaymentRequest request) {
         String paymentOrderId = request.paymentOrderId();
         Order order = orderRepository.findByPaymentOrderId(paymentOrderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
