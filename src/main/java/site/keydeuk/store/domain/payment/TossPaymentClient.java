@@ -18,12 +18,15 @@ public class TossPaymentClient implements PaymentClient {
     private static final String CONFIRM_PATH = "/confirm";
     private final RestClient restClient;
     private final String secretKey;
+    private final ObjectMapper objectMapper;
 
     public TossPaymentClient(RestClient restClient,
-                             @Value("${toss.secret-key}") String secretKey) {
+                             @Value("${toss.secret-key}") String secretKey,
+                             ObjectMapper objectMapper) {
         this.restClient = restClient;
         String key = secretKey + ":";
         this.secretKey = new String(Base64.encodeBase64(key.getBytes()));
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -35,7 +38,6 @@ public class TossPaymentClient implements PaymentClient {
                 .retrieve()
                 .body(String.class);
         log.info("결제 승인 요청시 응답, {}",s);
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(s, PaymentConfirmResponse.class);
         } catch (JsonProcessingException e) {
