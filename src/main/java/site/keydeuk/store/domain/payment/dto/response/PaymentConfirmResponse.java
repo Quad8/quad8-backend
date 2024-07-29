@@ -35,7 +35,7 @@ public class PaymentConfirmResponse {
     private String discount; // null 가능
     private List<Cancel> cancels; // null 가능
     private String secret; // null 가능
-    private PaymentType type;
+    private String type;
     private EasyPay easyPay;
     private long easyPayAmount;
     private long easyPayDiscountAmount;
