@@ -87,7 +87,7 @@ public class ReviewController {
     public CommonResponse<Long> updateReview(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long reviewId,
-            @RequestPart("createReviewRequest") @Valid UpdateReviewRequest updateReviewRequest,
+            @RequestPart("updateReviewRequest") @Valid UpdateReviewRequest updateReviewRequest,
             @RequestPart(value = "reviewImgs", required = false) List<MultipartFile> reviewImgs
     ) {
         Long userId = principalDetails.getUserId();
