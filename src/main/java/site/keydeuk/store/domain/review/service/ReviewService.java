@@ -83,7 +83,6 @@ public class ReviewService {
         if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
-
         reviewRepository.delete(review);
     }
 
