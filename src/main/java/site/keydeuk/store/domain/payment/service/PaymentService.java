@@ -1,5 +1,6 @@
 package site.keydeuk.store.domain.payment.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class PaymentService {
      * @param request 결제 승인을 위한 값들: 결제 키, 결제 주문 아이디, 총 금액
      */
     @Transactional
-    public PaymentResponse confirm(PaymentRequest request) {
+    public PaymentResponse confirm(PaymentRequest request) throws JsonProcessingException {
         String paymentOrderId = request.paymentOrderId();
         Order order = orderRepository.findByPaymentOrderId(paymentOrderId)
                 .orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
