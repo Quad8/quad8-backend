@@ -1,6 +1,9 @@
 package site.keydeuk.store.domain.payment.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import site.keydeuk.store.domain.payment.CardTypeDeserializer;
 
@@ -9,8 +12,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonDeserialize(using = CardTypeDeserializer.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public enum CardType {
     CREDIT("신용"),
     CHECK("체크"),
@@ -20,7 +25,7 @@ public enum CardType {
     private static final Map<String, CardType> CACHE = Arrays.stream(CardType.values())
             .collect(Collectors.toUnmodifiableMap(cardType -> cardType.displayName, Function.identity()));
 
-    private final String displayName;
+    private String displayName;
 
     public static CardType from(String displayName) {
         if (CACHE.containsKey(displayName)) {
