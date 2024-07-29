@@ -18,7 +18,7 @@ public class Card {
     private InterestPayer interestPayer;
     private String approveNo;
     private String useCardPoint;
-    private CardType cardType;
+    private String cardType;
     private OwnerType ownerType;
     private AcquireStatus acquireStatus;
     private String receiptUrl;
