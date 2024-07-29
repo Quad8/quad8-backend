@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MobilePhone {
     private String customerMobilePhone;
-    private SettlementStatus settlementStatus;
+    private String settlementStatus;
     private String receiptUrl;
 }
