@@ -1,20 +1,24 @@
 package site.keydeuk.store.domain.payment.dto;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Card {
-    private final String issuerCode;
-    private final String acquirerCode;
-    private final String number;
-    private final int installmentPlanMonths;
-    private final boolean isInterestFree;
-    private final InterestPayer interestPayer;
-    private final String approveNo;
-    private final String useCardPoint;
-    private final CardType cardType;
-    private final OwnerType ownerType;
-    private final AcquireStatus acquireStatus;
-    private final String receiptUrl;
-    private final int amount;
+    private String issuerCode;
+    private String acquirerCode;
+    private String number;
+    private int installmentPlanMonths;
+    private boolean isInterestFree;
+    private InterestPayer interestPayer;
+    private String approveNo;
+    private String useCardPoint;
+    private CardType cardType;
+    private OwnerType ownerType;
+    private AcquireStatus acquireStatus;
+    private String receiptUrl;
+    private int amount;
 }
