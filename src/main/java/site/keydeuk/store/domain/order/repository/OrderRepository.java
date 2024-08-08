@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByIdAndPaymentOrderId(Long id, String paymentOrderId);
 
-    @Query("SELECT o FROM Order o WHERE o.userId = :userId AND o.status <> :status AND o.createdAt BETWEEN :startDate AND :endDate")
+    @Query("SELECT o FROM Order o WHERE o.userId = :userId AND o.status <> :status AND o.createdAt BETWEEN :startDate AND :endDate ORDER BY o.id DESC")
     Page<Order> findByUserIdAndStatusNotAndCreatedAtBetween(
             @Param("userId") Long userId,
             @Param("status") OrderStatus status,
