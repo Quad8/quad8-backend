@@ -172,6 +172,7 @@ public class OrderService {
 
         return OrderDetailResponse.builder()
                 .orderId(order.getId())
+                .paymentOrderId(order.getPaymentOrderId())
                 .orderItems(orderItemResponses)
                 .shippingAddress(shippingAddressDto)
                 .deliveryMessage(order.getDeliveryMessage())
