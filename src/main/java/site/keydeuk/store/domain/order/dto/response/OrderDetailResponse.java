@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderDetailResponse {
     private final Long orderId;
+    private final String paymentOrderId;
     private final List<OrderItemResponse> orderItems;
     private final ShippingAddressDto shippingAddress;
     private final String deliveryMessage;
