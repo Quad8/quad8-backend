@@ -30,12 +30,16 @@ public class ProductSpecification {
 
     public static Specification<Product> switchOptionsIn(List<String> switchOptions) {
         return (root, query, criteriaBuilder) -> {
+            query.distinct(true); // 중복 제거
             Join<Product, ProductSwitchOption> join = root.join("switchOptions", JoinType.INNER);
-            return criteriaBuilder.or(switchOptions.stream()
-                    .map(option -> criteriaBuilder.like(join.get("optionName"),"%"+option+"%"))
-                    .toArray(Predicate[]::new));
+
+            Predicate[] predicates = switchOptions.stream()
+                    .map(option -> criteriaBuilder.like(join.get("optionName"), "%" + option + "%"))
+                    .toArray(Predicate[]::new);
+            return criteriaBuilder.or(predicates);
         };
     }
+
 
     public static Specification<Product> priceBetween(long minPrice, long maxPrice) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
