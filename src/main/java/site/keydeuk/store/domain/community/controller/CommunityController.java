@@ -43,6 +43,7 @@ public class CommunityController {
     private final CommunityCommentService commentService;
     private final CommunityLikesService communityLikesService;
     private final CustomService customService;
+    private final CommunityCommentService communityCommentService;
 
     @Operation(summary = "커스텀키보드 구매내역 조회", description = "커스텀 키보드 구매내역을 조회합니다.")
     @GetMapping("/purchase-history")
@@ -77,7 +78,7 @@ public class CommunityController {
         Pageable pageable = PageRequest.of(0,5);
         List<CommentResponseDto> comments = commentService.getCommentListByPost(dto.getId(),pageable);
         dto.setComments(comments);
-        dto.setCommentCount(comments.size());
+        dto.setCommentCount(communityCommentService.getCommentCountByPost(id));
         dto.setLikeCount(communityLikesService.countByCommunityId(id));
 
         if (principalDetails != null){
