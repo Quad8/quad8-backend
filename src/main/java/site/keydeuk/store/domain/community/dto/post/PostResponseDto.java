@@ -27,6 +27,8 @@ public class PostResponseDto {
 
     private int commentCount;
 
+    private Long userId;
+
     private String nickName;
 
     private String userImage;
@@ -50,6 +52,7 @@ public class PostResponseDto {
         this.content = community.getContent();
         this.likeCount = 0L;
         this.commentCount = 0;
+        this.userId = community.getUser().getId();
         this.nickName = community.getUser().getNickname();
         this.userImage = community.getUser().getImgUrl();
         this.reviewImages = community.getCommunityImg();
@@ -65,6 +68,7 @@ public class PostResponseDto {
         this.content = community.getContent();
         this.likeCount = 0L;
         this.commentCount = 0;
+        this.userId = community.getUser().getId();
         this.nickName = community.getUser().getNickname();
         this.userImage = community.getUser().getImgUrl();
         this.reviewImages = community.getCommunityImg();
