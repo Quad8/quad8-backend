@@ -92,9 +92,11 @@ public class AlarmService {
     }
 
     @Transactional
-    public void deleteAlarm(Long id){
-        Notification notification = alarmRepositoy.findById(id).orElseThrow(()-> new CustomException(AlARM_NOT_FOUND));
-        alarmRepositoy.delete(notification);
+    public void deleteAlarms(List<Long> ids){
+        for (Long id :ids){
+            Notification notification = alarmRepositoy.findById(id).orElseThrow(()-> new CustomException(AlARM_NOT_FOUND));
+            alarmRepositoy.delete(notification);
+        }
     }
 
     @Transactional
