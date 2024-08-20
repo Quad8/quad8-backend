@@ -19,6 +19,11 @@ public class OrderProductOptionResponse {
     private CustomOption customOption;
     private ObjectMapper objectMapper;
 
+    public OrderProductOptionResponse(CustomOption customOption, ObjectMapper objectMapper) {
+        this.customOption = customOption;
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public String toString() {
         try {
