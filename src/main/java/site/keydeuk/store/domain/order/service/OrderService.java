@@ -236,7 +236,8 @@ public class OrderService {
                     .orElse(null);
             CustomOption customOption = customRepository.findById(orderItem.getProductId())
                     .orElseThrow(() -> new CustomException(OPTION_NOT_FOUND));
-            Object switchOption = customOption.toString();
+
+            Object switchOption = new OrderProductOptionResponse(customOption, objectMapper);
 
             if (object != null) {
                 Object individualColor = object.getObjects();
