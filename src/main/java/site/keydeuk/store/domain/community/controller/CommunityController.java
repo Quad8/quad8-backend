@@ -64,6 +64,7 @@ public class CommunityController {
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
         Page<CommunityListResponseDto> page = communityService.getPostList(requestDto.getSort(),pageable,userId);
 
+        if (page.isEmpty()) return CommonResponse.ok("조회된 게시글이 없습니다.",page);
         if (page.getTotalPages() <= requestDto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
 
         return CommonResponse.ok(page);
@@ -98,7 +99,7 @@ public class CommunityController {
 
         Page<CommunityListResponseDto> page = communityService.getPostsByUserId(requestDto.getSort(),pageable, principalDetails.getUserId());
 
-        if (page == null) return CommonResponse.ok("조회된 게시글이 없습니다.",page);
+        if (page.isEmpty()) return CommonResponse.ok("조회된 게시글이 없습니다.",page);
 
         if (page.getTotalPages() <= requestDto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
 

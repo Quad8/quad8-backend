@@ -66,6 +66,7 @@ public class ProductController {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
         Page<ProductListResponseDto> page = productService.getProductAllList(dto.getSort(), pageable,userId);
 
+        if (page.isEmpty()) return CommonResponse.ok("조회된 목록이 없습니다.",page);
         if (page.getTotalPages() <= dto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
 
         return CommonResponse.ok(page);
@@ -98,6 +99,8 @@ public class ProductController {
         }
 
         Page<ProductListResponseDto> page = productService.getProductListByCategory(category,dto.getCompanies(), dto.getSwitchTypes(), minPrice, maxPrice,dto.getSort(),pageable,userId);
+
+        if (page.isEmpty()) return CommonResponse.ok("조회된 목록이 없습니다.",page);
         if (page.getTotalPages() <= dto.getPage()) throw new CustomException(INVALID_PAGEABLE_PAGE);
 
         return CommonResponse.ok(page);
