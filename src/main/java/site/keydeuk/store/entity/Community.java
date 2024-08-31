@@ -7,10 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Getter
 @Builder
@@ -39,7 +38,6 @@ public class Community {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "community")

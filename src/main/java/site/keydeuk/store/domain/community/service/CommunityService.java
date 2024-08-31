@@ -177,6 +177,8 @@ public class CommunityService {
                 .viewCount(0)
                 .customOptionId(postDto.getProductId())
                 .build();
+
+        community.setUpdatedAt(LocalDateTime.now());
         communityRepository.save(community);
 
         for (MultipartFile file: files){
@@ -185,6 +187,7 @@ public class CommunityService {
                     .community(community)
                     .imgUrl(imgUrl)
                     .build();
+
         communityImgRepository.save(communityImg);
         }
         return community.getId();
