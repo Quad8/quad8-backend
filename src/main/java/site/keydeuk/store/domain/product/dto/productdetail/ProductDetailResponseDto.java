@@ -1,6 +1,7 @@
 package site.keydeuk.store.domain.product.dto.productdetail;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import site.keydeuk.store.domain.productswitchoption.dto.ProductSwitchOptionDto;
 import site.keydeuk.store.entity.Product;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Setter
+@NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ProductDetailResponseDto {
 

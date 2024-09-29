@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.keydeuk.store.common.exception.CustomException;
+import site.keydeuk.store.common.redis.service.RedisService;
 import site.keydeuk.store.common.response.ErrorCode;
 import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.domain.order.repository.OrderItemsRepository;
@@ -33,6 +34,7 @@ import java.util.*;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
 import static site.keydeuk.store.common.response.ErrorCode.OPTION_NOT_FOUND;
+import static site.keydeuk.store.domain.product.service.ProductService.PRODUCT_KEY_PREFIX;
 
 @Service
 @Slf4j
@@ -46,6 +48,8 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ProductSwitchOptionRepository productSwitchOptionRepository;
+
+    private final RedisService redisService;
 
     @Transactional
     public Long createReview(Long userId, Integer productId, CreateReviewRequest createReviewRequest, List<MultipartFile> reviewImgs) {
@@ -71,6 +75,9 @@ public class ReviewService {
                 .toList();
         review.addReviewImgs(reviewImgList);
 
+        // 리뷰 작성 시 product 상세보기 cahce 삭제
+        deleteCacheProductDedatil(productId);
+
         return savedReview.getId();
     }
 
@@ -83,7 +90,12 @@ public class ReviewService {
         if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
+
+        int productId = review.getProduct().getId();
         reviewRepository.delete(review);
+
+        // 리뷰 삭제 시 product 상세보기 cahce 삭제
+        deleteCacheProductDedatil(productId);
     }
 
     @Transactional(readOnly = true)
@@ -261,5 +273,11 @@ public class ReviewService {
 
     private boolean isReviewExistsByUserAndProduct(Long userId, Integer productId, Long orderId) {
         return reviewRepository.existsReviewByUserIdAndProductIdAndOrderId(userId, productId, orderId);
+    }
+
+    /** 상품 상세보기 Cache 삭제 */
+    private void deleteCacheProductDedatil(int productId){
+        String key = PRODUCT_KEY_PREFIX+productId;
+        redisService.delete(key);
     }
 }

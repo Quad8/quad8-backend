@@ -15,4 +15,8 @@ public interface RedisService {
     boolean setIfAbsent(String key, Object value, Long expiredTime);
 
     boolean delete(String key);
+
+   void addToSortedSet(String prefixKey, String key);
+
+    void checkSizeAndRemoveKey(String prefixKey, int size);
 }

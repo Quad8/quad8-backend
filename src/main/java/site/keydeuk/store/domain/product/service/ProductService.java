@@ -2,15 +2,20 @@ package site.keydeuk.store.domain.product.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import site.keydeuk.store.common.redis.service.RedisService;
 import site.keydeuk.store.domain.customoption.dto.OptionProductsResponseDto;
 import site.keydeuk.store.domain.likes.service.LikesService;
 import site.keydeuk.store.domain.product.dto.productdetail.ProductDetailResponseDto;
@@ -31,18 +36,72 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final LikesService likesService;
     private final ReviewService reviewService;
+    private final RedisService redisService;
+    private static final int MAX_CACHE_PRODUCT = 200;
+    private static final long PRODUCT_EXPIRE_DAY = 604800;
+    public static final String PRODUCT_KEY_PREFIX = "cache:product:";
+
+    private Map<Integer,Integer> viewCount = new HashMap<>();
 
     /** 상품 상세 조회 */
     public ProductDetailResponseDto getProductDetailById(Integer productId){
 
-        Product product = getProductById(productId);
+        // 캐시에서 데이터 조회
+        String key = PRODUCT_KEY_PREFIX+productId;
+        Optional<ProductDetailResponseDto> optionalCacheDto = redisService.get(key, ProductDetailResponseDto.class);
 
-        // 조회수 증가
-        product.setViews(product.getViews()+1);
-        productRepository.save(product);
-        Long reviewCount = reviewService.countByProductId(productId);
-        Double scope = reviewService.getAverageScoreByProductId(productId);
-        return new ProductDetailResponseDto(product,reviewCount,scope);
+        if (optionalCacheDto.isPresent()) {// cacheDto가 null이 아닐 때의 로직
+            log.info("[info]: cache hit! productId: {}",key);
+
+            //조회 수 증가
+            incrementViewCountMap(productId);
+            return optionalCacheDto.get();
+
+        } else {
+            // cacheDto가 null일 때의 로직
+            Product product = getProductById(productId);
+
+            // 조회 수 증가
+            incrementViewCountMap(productId);
+
+            Long reviewCount = reviewService.countByProductId(productId);
+            Double scope = reviewService.getAverageScoreByProductId(productId);
+            ProductDetailResponseDto responseDto = new ProductDetailResponseDto(product,reviewCount,scope);
+
+            //캐시 저장, Sorted Set에 키 추가
+            redisService.set(key, responseDto,PRODUCT_EXPIRE_DAY);
+            redisService.addToSortedSet(PRODUCT_KEY_PREFIX,key);
+
+            //200개 넘으면 오래된 것 순으로 삭제
+            redisService.checkSizeAndRemoveKey(PRODUCT_KEY_PREFIX,MAX_CACHE_PRODUCT);
+            return responseDto;
+        }
+
+    }
+
+    private void incrementViewCountMap(Integer productId){
+        viewCount.merge(productId, 1, Integer::sum);
+    }
+
+    @Transactional
+    public void saveViewCount(){
+        if (!viewCount.isEmpty()){
+            for(Map.Entry<Integer, Integer> entry : viewCount.entrySet()){
+                Integer productId = entry.getKey();
+                Integer count = entry.getValue();
+
+                Product product = getProductById(productId);
+                product.setViews(product.getViews()+count);
+
+                //캐시 삭제
+                redisService.delete(PRODUCT_KEY_PREFIX+productId);
+            }
+            productRepository.saveAll(viewCount.keySet().stream().map(
+                this::getProductById).collect(Collectors.toList()));
+
+            log.info("[info] 누적된 조회수 DB 저장");
+            viewCount.clear();
+        }
     }
 
 
@@ -144,8 +203,6 @@ public class ProductService {
 
         return new PageImpl<>(dtos,pageable,dtos.size());
     }
-
-
 
     /** 옵션 상품 목록 */
     public List<OptionProductsResponseDto> getOptionProductList(){
