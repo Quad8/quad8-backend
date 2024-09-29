@@ -86,17 +86,25 @@ public class ImageService {
         }
         return imageUrls;
     }
+
+    public String uploadCommunityImage(MultipartFile multipartFile) {
+        String objectKey = "keydeuk/product/community/" + UUID.randomUUID() + ".png";
+        return uploadImage(objectKey, multipartFile);
+    }
+
+    public void deleteImage(String url) {
+        String filepath = url.substring(url.lastIndexOf("keydeuk"));
+        amazonS3Client.deleteObject(bucketName, filepath);
+
+    }
+
+
     // 파일 확장자 추출 메서드
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
             throw new IllegalArgumentException("Invalid file name: " + filename);
         }
         return filename.substring(filename.lastIndexOf('.') + 1);
-    }
-
-    public String uploadCommunityImage(MultipartFile multipartFile) {
-        String objectKey = "keydeuk/product/community/" + UUID.randomUUID() + ".png";
-        return uploadImage(objectKey, multipartFile);
     }
 
     private String uploadImage(String objectKey, MultipartFile multipartFile) {

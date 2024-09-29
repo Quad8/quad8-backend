@@ -229,12 +229,12 @@ public class CommunityService {
 
     /** 커뮤니티 글 삭제하기*/
     @Transactional
-    public void deletePost(Long communityId){
+    public void deletePost(Community community){
+        long communityId = community.getId();
         communityImgService.deleteAllImgByCommunityId(communityId);
         communityLikesService.deleteAllLikesByCommunityId(communityId);
         communityCommentService.deleteAllCommentByCommunityId(communityId);
         communityRepository.deleteById(communityId);
-
     }
 
     public Community findPostByuserIdAndCommunityId(Long userId, Long CommunityId){

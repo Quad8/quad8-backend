@@ -114,10 +114,21 @@ public class CustomService {
         }
 
     }
+
+    /** 커스텀 키보드 DB 삭제 */
+    @Transactional
+    public void deleteCustomKeyboad(int customId){
+        customRepository.deleteById(customId);
+        customObjectRepository.deleteById(customId);
+        log.info("[Custom] Delete 커스텀 키보드 Id:{}",customId);
+    }
+
     public boolean existBycustomId(Integer id){
         boolean flag = false;
         if (customRepository.findById(id).isPresent()) flag = true;
         return flag;
     }
+
+
 
 }

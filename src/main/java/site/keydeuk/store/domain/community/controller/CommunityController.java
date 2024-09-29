@@ -29,6 +29,7 @@ import site.keydeuk.store.domain.customoption.service.CustomService;
 import site.keydeuk.store.domain.security.PrincipalDetails;
 
 import java.util.List;
+import site.keydeuk.store.entity.Community;
 
 import static site.keydeuk.store.common.response.ErrorCode.INVALID_PAGEABLE_PAGE;
 
@@ -136,9 +137,10 @@ public class CommunityController {
     @DeleteMapping("/delete/{id}")
     public CommonResponse<?> deletePost(@AuthenticationPrincipal PrincipalDetails principalDetails,@PathVariable("id")Long id){
         // user가 쓴 게시글 맞는지 확인
-        if (communityService.findPostByuserIdAndCommunityId(principalDetails.getUserId(), id) == null) return CommonResponse.error("작성한 게시글이 아닙니다.");
+        Community community = communityService.findPostByuserIdAndCommunityId(principalDetails.getUserId(), id);
+        if (community == null) return CommonResponse.error("작성한 게시글이 아닙니다.");
 
-        communityService.deletePost(id);
+        communityService.deletePost(community);
 
         return CommonResponse.ok("게시글이 삭제되었습니다.");
     }

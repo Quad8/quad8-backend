@@ -90,12 +90,20 @@ public class ReviewService {
         if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
-
+        deleteReviewImages(review.getReviewImages());
         int productId = review.getProduct().getId();
         reviewRepository.delete(review);
 
         // 리뷰 삭제 시 product 상세보기 cahce 삭제
         deleteCacheProductDedatil(productId);
+    }
+
+    /** S3 image 삭제 */
+    @Transactional
+    public void deleteReviewImages(List<ReviewImg> list){
+        for (ReviewImg img : list){
+            imageService.deleteImage(img.getImgUrl());
+        }
     }
 
     @Transactional(readOnly = true)
