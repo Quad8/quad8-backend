@@ -79,7 +79,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void addToSortedSet(String prefixKey, String key){
-        log.info("[확인]: prefix {}, key {}", prefixKey,key);
         long now = System.currentTimeMillis();
         redisTemplate.opsForZSet().add(prefixKey,key,now);
     }
@@ -87,9 +86,6 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void checkSizeAndRemoveKey(String prefixKey, int size){
         Long currentSize = redisTemplate.opsForZSet().size(prefixKey);
-
-        log.info("[확인]: prefix {}, size {}, current:{}", prefixKey,size,currentSize);
-
 
         if (currentSize!= null && currentSize > size){
             // 오래된 키 삭제
