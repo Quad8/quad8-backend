@@ -11,7 +11,10 @@ import site.keydeuk.store.domain.cartitem.dto.CustomUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.dto.delete.DeleteCartItemRequestDto;
 import site.keydeuk.store.domain.cartitem.dto.update.ProductUpdateRequestDto;
 import site.keydeuk.store.domain.cartitem.repository.CartItemRepository;
+import site.keydeuk.store.domain.customoption.repository.CustomObjectRepository;
+import site.keydeuk.store.domain.customoption.service.CustomObjectService;
 import site.keydeuk.store.domain.customoption.service.CustomService;
+import site.keydeuk.store.domain.image.service.ImageService;
 import site.keydeuk.store.entity.*;
 
 import static site.keydeuk.store.common.response.ErrorCode.COMMON_INVALID_PARAMETER;
@@ -24,6 +27,7 @@ public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
     private final CustomService customService;
+    private final ImageService imageService;
 
     public CartItemWithProduct findCartItemByCartIdAndProductId(Long cartId, Integer productId) {
         return cartItemRepository.findByCartIdAndProductId(cartId, productId);
@@ -86,11 +90,17 @@ public class CartItemService {
                 cart.setTotalCount(cart.getTotalCount() - 1);
             }else if (cartItem instanceof CartItemWithCustom){
                 CartItemWithCustom customItem = (CartItemWithCustom) cartItem;
+                int customId = customItem.getCustomOption().getId();
+                String url = customItem.getCustomOption().getImgUrl();
+
                 cartItemRepository.deleteByIdAndCartId(cartItemId, cartItem.getCart().getId());
                 cart.setTotalCount(cart.getTotalCount() - 1);
                 /**
                  * cartitem 테이블만 삭제됨, custom table은 살아 있어 어떻게 처리할지
                  * */
+                log.info("[cart] Delete cart by customKeyboard id :{}",customId);
+                customService.deleteCustomKeyboad(customId);
+                imageService.deleteImage(url);
             }
         }
     }
