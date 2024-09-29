@@ -76,4 +76,30 @@ public class RedisServiceImpl implements RedisService {
         log.info("Delete Redis Key = [{}]", key);
         return Boolean.TRUE.equals(redisTemplate.delete(key));
     }
+
+    @Override
+    public void addToSortedSet(String prefixKey, String key){
+        log.info("[확인]: prefix {}, key {}", prefixKey,key);
+        long now = System.currentTimeMillis();
+        redisTemplate.opsForZSet().add(prefixKey,key,now);
+    }
+
+    @Override
+    public void checkSizeAndRemoveKey(String prefixKey, int size){
+        Long currentSize = redisTemplate.opsForZSet().size(prefixKey);
+
+        log.info("[확인]: prefix {}, size {}, current:{}", prefixKey,size,currentSize);
+
+
+        if (currentSize!= null && currentSize > size){
+            // 오래된 키 삭제
+            String oldestKey = redisTemplate.opsForZSet().range(prefixKey,0,0)
+                .stream().findFirst().orElse(null);
+            if (oldestKey!= null){
+                redisTemplate.opsForZSet().remove(prefixKey, oldestKey);
+                delete(oldestKey);
+            }
+
+        }
+    }
 }
